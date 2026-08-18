@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 
 import { CONTACT_DATA } from '../../../../core/data/contact';
+import { Project } from '../../../../core/models/project.model';
+import { ProjectService } from '../../../../core/services/project.service';
 import { ThemeMode, ThemeService } from '../../../../core/services/theme.service';
 import { UserService } from '../../../../core/services/user.service';
 
@@ -20,6 +22,11 @@ interface ConfigsForm {
   homologationAlerts: boolean;
 }
 
+interface LanguageOption {
+  label: string;
+  value: ConfigsForm['language'];
+}
+
 @Component({
   selector: 'app-configs',
   standalone: true,
@@ -30,14 +37,31 @@ interface ConfigsForm {
 })
 export class ConfigsComponent {
   private readonly userService = inject(UserService);
+  private readonly projectService = inject(ProjectService);
   private readonly themeService = inject(ThemeService);
   private readonly meetingRecipient = CONTACT_DATA.email;
+  private saveFeedbackTimeout?: ReturnType<typeof setTimeout>;
 
   protected readonly saved = signal(false);
   protected readonly meetingModalOpen = signal(false);
   protected readonly meetingSent = signal(false);
   protected readonly meetingSubject = signal('');
+  protected readonly meetingMessage = signal('');
+  protected readonly meetingProjectId = signal('');
   protected readonly meetingError = signal<string | null>(null);
+  protected readonly languageMenuOpen = signal(false);
+  protected readonly projectMenuOpen = signal(false);
+  protected readonly projects = signal<Project[]>([]);
+  protected readonly languageOptions: LanguageOption[] = [
+    {
+      label: 'Portugues',
+      value: 'pt-BR',
+    },
+    {
+      label: 'English',
+      value: 'en-US',
+    },
+  ];
   protected readonly form = signal<ConfigsForm>({
     name: '',
     email: '',
@@ -76,6 +100,11 @@ export class ConfigsComponent {
         email: user.email,
       }));
     });
+
+    this.projectService.getProjects().subscribe((projects) => {
+      this.projects.set(projects);
+      this.meetingProjectId.set(projects[0]?.id ?? '');
+    });
   }
 
   protected updateField<K extends keyof ConfigsForm>(field: K, value: ConfigsForm[K]): void {
@@ -91,18 +120,57 @@ export class ConfigsComponent {
     this.themeService.setMode(mode);
   }
 
+  protected toggleThemeMode(): void {
+    this.updateThemeMode(this.form().themeMode === 'dark' ? 'light' : 'dark');
+  }
+
   protected saveSettings(): void {
     this.saved.set(true);
+    clearTimeout(this.saveFeedbackTimeout);
+    this.saveFeedbackTimeout = setTimeout(() => this.saved.set(false), 2600);
   }
 
   @HostListener('document:keydown.escape')
   protected closeMeetingModalOnEscape(): void {
     this.closeMeetingModal();
+    this.languageMenuOpen.set(false);
+    this.projectMenuOpen.set(false);
+  }
+
+  protected toggleLanguageMenu(): void {
+    this.languageMenuOpen.update((open) => !open);
+  }
+
+  protected selectLanguage(language: ConfigsForm['language']): void {
+    this.updateField('language', language);
+    this.languageMenuOpen.set(false);
+  }
+
+  protected getSelectedLanguageLabel(): string {
+    return (
+      this.languageOptions.find((option) => option.value === this.form().language)?.label ??
+      'Selecione'
+    );
+  }
+
+  protected toggleProjectMenu(): void {
+    this.projectMenuOpen.update((open) => !open);
+  }
+
+  protected selectMeetingProject(projectId: string): void {
+    this.meetingError.set(null);
+    this.meetingProjectId.set(projectId);
+    this.projectMenuOpen.set(false);
+  }
+
+  protected getSelectedProjectName(): string {
+    return this.projects().find((project) => project.id === this.meetingProjectId())?.name ?? 'Selecione';
   }
 
   protected openMeetingModal(): void {
     this.meetingError.set(null);
     this.meetingSent.set(false);
+    this.projectMenuOpen.set(false);
     this.meetingModalOpen.set(true);
   }
 
@@ -115,11 +183,28 @@ export class ConfigsComponent {
     this.meetingSubject.set(subject);
   }
 
+  protected updateMeetingMessage(message: string): void {
+    this.meetingError.set(null);
+    this.meetingMessage.set(message);
+  }
+
   protected sendMeetingRequest(): void {
     const subject = this.meetingSubject().trim();
+    const message = this.meetingMessage().trim();
+    const projectName = this.getSelectedProjectName();
 
     if (!subject) {
       this.meetingError.set('Informe o assunto da reuniao.');
+      return;
+    }
+
+    if (!this.meetingProjectId()) {
+      this.meetingError.set('Selecione o projeto da reuniao.');
+      return;
+    }
+
+    if (!message) {
+      this.meetingError.set('Descreva o que voce quer alinhar na reuniao.');
       return;
     }
 
@@ -129,6 +214,11 @@ export class ConfigsComponent {
       'O cliente solicitou o agendamento de uma reuniao.',
       '',
       `Assunto: ${subject}`,
+      `Projeto: ${projectName}`,
+      '',
+      'Mensagem:',
+      message,
+      '',
       `Nome: ${name}`,
       `E-mail: ${email}`,
       `Empresa: ${company}`,

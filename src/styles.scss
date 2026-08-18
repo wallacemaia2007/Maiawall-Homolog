@@ -2,6 +2,386 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --motion-fast: 140ms;
+  --motion-base: 220ms;
+  --motion-slow: 420ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.18, 0.9, 0.22, 1.35);
+  --ease-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --enter-y: 14px;
+  --press-scale: 0.985;
+}
+
 * {
-    scrollbar-width: none;
+  scrollbar-width: none;
+}
+
+[class$='-page'] {
+  animation: mw-fade-in var(--motion-slow) var(--ease-soft) both;
+}
+
+[class$='-hero'] {
+  animation: mw-fade-up var(--motion-slow) var(--ease-soft) 80ms both;
+}
+
+[class*='heading'],
+[class*='title'],
+[class*='subtitle'] {
+  animation: mw-fade-up var(--motion-slow) var(--ease-soft) 120ms both;
+}
+
+[class*='card'],
+[class*='panel'],
+[class*='details'],
+[class*='summary'] {
+  animation: mw-fade-up var(--motion-slow) var(--ease-soft) both;
+  transition:
+    border-color var(--motion-base) ease,
+    box-shadow var(--motion-base) ease,
+    transform var(--motion-fast) ease;
+}
+
+[class*='card']:hover,
+[class*='panel']:hover {
+  transform: translateY(-2px);
+}
+
+[class*='grid'] > :nth-child(1),
+[class*='list'] > :nth-child(1) {
+  animation-delay: 60ms;
+}
+
+[class*='grid'] > :nth-child(2),
+[class*='list'] > :nth-child(2) {
+  animation-delay: 110ms;
+}
+
+[class*='grid'] > :nth-child(3),
+[class*='list'] > :nth-child(3) {
+  animation-delay: 160ms;
+}
+
+[class*='grid'] > :nth-child(4),
+[class*='list'] > :nth-child(4) {
+  animation-delay: 210ms;
+}
+
+button,
+a,
+input,
+textarea {
+  transition:
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+}
+
+button:active,
+a:active {
+  transform: scale(var(--press-scale));
+}
+
+input:focus,
+textarea:focus {
+  box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
+}
+
+.modal-layer {
+  animation: mw-backdrop-in var(--motion-base) ease both;
+}
+
+.modal-backdrop {
+  animation: mw-backdrop-in var(--motion-base) ease both;
+}
+
+.meeting-modal {
+  animation: mw-scale-in var(--motion-base) var(--ease-soft) both;
+  transform-origin: center;
+}
+
+.custom-select-menu {
+  animation: mw-scale-in var(--motion-fast) var(--ease-out) both;
+  transform-origin: top;
+}
+
+.custom-select-option {
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+}
+
+.custom-select-option:active {
+  transform: scale(0.99);
+}
+
+.progress-track span {
+  animation: mw-progress-fill var(--motion-slow) var(--ease-soft) both;
+  transform-origin: left center;
+}
+
+.status-badge,
+.installment-badge,
+.save-feedback {
+  animation: mw-soft-pop var(--motion-base) var(--ease-spring) both;
+}
+
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 42px 0 12px;
+  border: 1px solid #e4e4e1;
+  border-radius: 8px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, #6b6e76 50%) calc(100% - 18px) 18px / 6px 6px no-repeat,
+    linear-gradient(135deg, #6b6e76 50%, transparent 50%) calc(100% - 13px) 18px / 6px 6px no-repeat,
+    #fff;
+  color: #16171b;
+  font: inherit;
+  font-size: 0.92rem;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    transform 140ms ease;
+  will-change: transform;
+}
+
+select:hover {
+  border-color: #c9c9c4;
+}
+
+select:active {
+  transform: scale(0.995);
+}
+
+select:focus {
+  border-color: #4c3ae3;
+  background:
+    linear-gradient(225deg, transparent 50%, #4c3ae3 50%) calc(100% - 18px) 20px / 6px 6px no-repeat,
+    linear-gradient(315deg, #4c3ae3 50%, transparent 50%) calc(100% - 13px) 20px / 6px 6px no-repeat,
+    #fff;
+  box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
+}
+
+select:disabled {
+  background-color: #f2f2f0;
+  color: #8a8d94;
+  cursor: not-allowed;
+}
+
+select option {
+  background: #fff;
+  color: #16171b;
+}
+
+input[type='checkbox'] {
+  position: relative;
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  place-items: center;
+  margin: 0;
+  border: 1px solid #9da0a6;
+  border-radius: 6px;
+  appearance: none;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 140ms ease;
+  will-change: transform;
+}
+
+input[type='checkbox']::after {
+  width: 6px;
+  height: 12px;
+  margin-top: -2px;
+  border: solid #fff;
+  border-width: 0 3px 3px 0;
+  content: '';
+  opacity: 0;
+  transform: rotate(45deg) scale(0.65);
+  transition:
+    opacity 120ms ease,
+    transform 180ms cubic-bezier(0.18, 0.9, 0.22, 1.35);
+}
+
+input[type='checkbox']:hover {
+  border-color: #4c3ae3;
+  box-shadow: 0 0 0 4px rgba(76, 58, 227, 0.08);
+}
+
+input[type='checkbox']:active {
+  transform: scale(0.9);
+}
+
+input[type='checkbox']:checked {
+  border-color: #4c3ae3;
+  background: #4c3ae3;
+}
+
+input[type='checkbox']:checked::after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+input[type='checkbox']:focus-visible {
+  box-shadow: 0 0 0 4px rgba(76, 58, 227, 0.16);
+}
+
+input[type='checkbox']:disabled {
+  border-color: #d8d8d4;
+  background: #f2f2f0;
+  cursor: not-allowed;
+}
+
+.theme-switch {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 46px;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 4px;
+  border: 1px solid #e4e4e1;
+  border-radius: 999px;
+  background: #f6f6f4;
+  color: #6b6e76;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 140ms ease;
+}
+
+.theme-switch::before {
+  position: absolute;
+  inset: 4px auto 4px 4px;
+  width: calc(50% - 4px);
+  border-radius: inherit;
+  background: #fff;
+  content: '';
+  transition:
+    background-color 160ms ease,
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.theme-switch:active {
+  transform: scale(0.995);
+}
+
+.theme-switch.is-dark::before {
+  transform: translateX(100%);
+  background: #111214;
+}
+
+.theme-switch span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+.theme-switch:not(.is-dark) span:first-child,
+.theme-switch.is-dark span:last-child {
+  color: #16171b;
+}
+
+.theme-switch.is-dark span:last-child {
+  color: #fff;
+}
+
+@keyframes mw-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--enter-y));
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mw-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mw-scale-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mw-backdrop-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mw-progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes mw-soft-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  select,
+  input[type='checkbox'],
+  input[type='checkbox']::after,
+  .theme-switch,
+  .theme-switch::before {
+    transition: none;
+  }
 }

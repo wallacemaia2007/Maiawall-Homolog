@@ -39,23 +39,54 @@
 
         <div>
           <span class="field-label">Tema padrao</span>
-          <div class="segmented-control" aria-label="Tema padrao">
-            <button type="button" [class.is-active]="form().themeMode === 'light'" (click)="updateThemeMode('light')">
-              Claro
-            </button>
-            <button type="button" [class.is-active]="form().themeMode === 'dark'" (click)="updateThemeMode('dark')">
-              Escuro
-            </button>
-          </div>
+          <button
+            type="button"
+            class="theme-switch"
+            [class.is-dark]="form().themeMode === 'dark'"
+            role="switch"
+            [attr.aria-checked]="form().themeMode === 'dark'"
+            aria-label="Alternar tema padrao"
+            (click)="toggleThemeMode()"
+          >
+            <span>Claro</span>
+            <span>Escuro</span>
+          </button>
         </div>
 
-        <label class="select-row">
+        <div class="select-row">
           <span>Idioma</span>
-          <select [value]="form().language" (change)="updateField('language', $any($event.target).value)">
-            <option value="pt-BR">Portugues</option>
-            <option value="en-US">English</option>
-          </select>
-        </label>
+          <div class="custom-select" [class.is-open]="languageMenuOpen()">
+            <button
+              type="button"
+              class="custom-select-trigger"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="languageMenuOpen()"
+              (click)="toggleLanguageMenu()"
+            >
+              <span>{{ getSelectedLanguageLabel() }}</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            @if (languageMenuOpen()) {
+              <div class="custom-select-menu" role="listbox" aria-label="Idioma">
+                @for (option of languageOptions; track option.value) {
+                  <button
+                    type="button"
+                    class="custom-select-option"
+                    [class.is-selected]="form().language === option.value"
+                    role="option"
+                    [attr.aria-selected]="form().language === option.value"
+                    (click)="selectLanguage(option.value)"
+                  >
+                    {{ option.label }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
       </section>
 
       <section class="settings-panel">
@@ -150,8 +181,9 @@
       </section>
     </div>
   </div>
+</section>
 
-  @if (meetingModalOpen()) {
+@if (meetingModalOpen()) {
   <div class="modal-layer" role="presentation">
     <button type="button" class="modal-backdrop" aria-label="Fechar agendamento" (click)="closeMeetingModal()"></button>
 
@@ -160,6 +192,7 @@
         <div>
           <p class="eyebrow">Agendamento</p>
           <h3 id="meeting-title">Solicitar reuniao</h3>
+          <p class="modal-subtitle">Conte o contexto para direcionarmos a conversa ao projeto certo.</p>
         </div>
 
         <button type="button" class="modal-close" aria-label="Fechar" (click)="closeMeetingModal()">
@@ -170,12 +203,64 @@
         </button>
       </header>
 
-      <label class="meeting-subject">
-        <span>Assunto da reuniao</span>
-        <input type="text" [value]="meetingSubject()" placeholder="Ex: Revisar ajustes do site institucional"
-          (input)="updateMeetingSubject($any($event.target).value)"
-          [attr.aria-invalid]="meetingError() ? true : null" />
-      </label>
+      <div class="meeting-form">
+        <div class="select-row">
+          <span>Projeto</span>
+          <div class="custom-select" [class.is-open]="projectMenuOpen()">
+            <button
+              type="button"
+              class="custom-select-trigger"
+              aria-haspopup="listbox"
+              [attr.aria-expanded]="projectMenuOpen()"
+              (click)="toggleProjectMenu()"
+            >
+              <span>{{ getSelectedProjectName() }}</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </button>
+
+            @if (projectMenuOpen()) {
+              <div class="custom-select-menu" role="listbox" aria-label="Projeto da reuniao">
+                @for (project of projects(); track project.id) {
+                  <button
+                    type="button"
+                    class="custom-select-option"
+                    [class.is-selected]="meetingProjectId() === project.id"
+                    role="option"
+                    [attr.aria-selected]="meetingProjectId() === project.id"
+                    (click)="selectMeetingProject(project.id)"
+                  >
+                    {{ project.name }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <label class="meeting-field">
+          <span>Assunto da reuniao</span>
+          <input
+            type="text"
+            [value]="meetingSubject()"
+            placeholder="Ex: Revisar ajustes do site institucional"
+            (input)="updateMeetingSubject($any($event.target).value)"
+            [attr.aria-invalid]="meetingError() ? true : null"
+          />
+        </label>
+
+        <label class="meeting-field">
+          <span>Mensagem</span>
+          <textarea
+            [value]="meetingMessage()"
+            rows="5"
+            placeholder="Descreva os pontos que voce quer alinhar, duvidas ou prioridades para a reuniao."
+            (input)="updateMeetingMessage($any($event.target).value)"
+            [attr.aria-invalid]="meetingError() ? true : null"
+          ></textarea>
+        </label>
+      </div>
 
       @if (meetingError()) {
       <p class="meeting-error" aria-live="polite">{{ meetingError() }}</p>
@@ -191,5 +276,4 @@
       </div>
     </section>
   </div>
-  }
-</section>
+}
