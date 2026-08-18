@@ -41,6 +41,11 @@ export class DashboardLayoutComponent {
       route: '/notifications',
       icon: 'notifications',
     },
+    {
+      label: 'Pendencias',
+      route: '/pendencias',
+      icon: 'pendencias',
+    },
   ];
 
   constructor() {
@@ -83,6 +88,10 @@ export class DashboardLayoutComponent {
 
     if (url.startsWith('/notifications')) {
       return 'Notificacoes';
+    }
+
+    if (url.startsWith('/pendencias')) {
+      return 'Pendencias';
     }
 
     if (url.startsWith('/profile')) {

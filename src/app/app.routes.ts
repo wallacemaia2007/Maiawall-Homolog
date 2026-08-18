@@ -72,6 +72,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'pendencias',
+        loadComponent: () =>
+          import('./features/pendencias/pages/pendencias/pendencias.component').then(
+            (m) => m.PendenciasComponent,
+          ),
+      },
+      {
         path: 'configs',
         loadComponent: () =>
           import('./features/configs/pages/configs/configs.component').then(

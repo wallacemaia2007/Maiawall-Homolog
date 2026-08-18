@@ -1,0 +1,64 @@
+:host {
+  display: block;
+}
+
+.pendencias-page {
+  display: grid;
+  gap: 22px;
+}
+
+.pendencias-hero {
+  display: grid;
+  gap: 8px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #6b6e76;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h2 {
+  margin: 0;
+  color: #16171b;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 650;
+}
+
+.pendencias-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+  gap: 18px;
+  align-items: start;
+}
+
+app-pending-summary,
+app-pending-filters,
+app-pending-list,
+app-pending-details {
+  min-width: 0;
+}
+
+app-pending-summary,
+app-pending-list {
+  grid-column: 1;
+}
+
+app-pending-filters,
+app-pending-details {
+  grid-column: 2;
+}
+
+@media (max-width: 1040px) {
+  .pendencias-layout,
+  app-pending-summary,
+  app-pending-filters,
+  app-pending-list,
+  app-pending-details {
+    grid-column: 1;
+  }
+}
