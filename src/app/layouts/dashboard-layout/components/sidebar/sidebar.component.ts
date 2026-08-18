@@ -18,8 +18,10 @@ export interface SidebarNavItem {
 export class SidebarComponent {
   readonly collapsed = input(false);
   readonly drawerOpen = input(false);
+  readonly darkTheme = input(true);
   readonly navItems = input.required<SidebarNavItem[]>();
 
   readonly toggleCollapsed = output<void>();
+  readonly toggleTheme = output<void>();
   readonly logout = output<void>();
 }

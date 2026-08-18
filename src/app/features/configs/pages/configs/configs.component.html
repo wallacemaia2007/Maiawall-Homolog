@@ -37,15 +37,16 @@
           <p>Preferencias visuais para leitura e acompanhamento.</p>
         </div>
 
-        <div class="segmented-control" aria-label="Densidade da interface">
-          <button type="button" [class.is-active]="form().density === 'comfortable'"
-            (click)="updateField('density', 'comfortable')">
-            Confortavel
-          </button>
-          <button type="button" [class.is-active]="form().density === 'compact'"
-            (click)="updateField('density', 'compact')">
-            Compacta
-          </button>
+        <div>
+          <span class="field-label">Tema padrao</span>
+          <div class="segmented-control" aria-label="Tema padrao">
+            <button type="button" [class.is-active]="form().themeMode === 'light'" (click)="updateThemeMode('light')">
+              Claro
+            </button>
+            <button type="button" [class.is-active]="form().themeMode === 'dark'" (click)="updateThemeMode('dark')">
+              Escuro
+            </button>
+          </div>
         </div>
 
         <label class="select-row">

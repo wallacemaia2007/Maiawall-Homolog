@@ -78,6 +78,11 @@ export const routes: Routes = [
             (m) => m.ConfigsComponent,
           ),
       },
+      {
+        path: 'plans',
+        loadComponent: () =>
+          import('./features/plans/pages/plans/plans.component').then((m) => m.PlansComponent),
+      },
     ],
   },
   {

@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { filter } from 'rxjs';
 
 import { UserService } from '../../core/services/user.service';
+import { ThemeService } from '../../core/services/theme.service';
 import { SidebarComponent, SidebarNavItem } from './components/sidebar/sidebar.component';
 
 @Component({
@@ -17,9 +18,11 @@ import { SidebarComponent, SidebarNavItem } from './components/sidebar/sidebar.c
 export class DashboardLayoutComponent {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
+  private readonly themeService = inject(ThemeService);
 
   protected readonly drawerOpen = signal(false);
   protected readonly sidebarCollapsed = signal(true);
+  protected readonly darkTheme = this.themeService.darkTheme;
   protected readonly currentUser$ = this.userService.getCurrentUser();
 
   protected readonly navItems: SidebarNavItem[] = [
@@ -37,11 +40,6 @@ export class DashboardLayoutComponent {
       label: 'Notificacoes',
       route: '/notifications',
       icon: 'notifications',
-    },
-    {
-      label: 'Meu perfil',
-      route: '/profile',
-      icon: 'profile',
     },
   ];
 
@@ -68,6 +66,10 @@ export class DashboardLayoutComponent {
     this.sidebarCollapsed.update((collapsed) => !collapsed);
   }
 
+  protected toggleTheme(): void {
+    this.themeService.toggleMode();
+  }
+
   protected logout(): void {
     this.router.navigateByUrl('/login');
   }
@@ -89,6 +91,10 @@ export class DashboardLayoutComponent {
 
     if (url.startsWith('/configs')) {
       return 'Configuracoes';
+    }
+
+    if (url.startsWith('/plans')) {
+      return 'Planos';
     }
 
     return 'Dashboard';

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 
 import { CONTACT_DATA } from '../../../../core/data/contact';
+import { ThemeMode, ThemeService } from '../../../../core/services/theme.service';
 import { UserService } from '../../../../core/services/user.service';
 
 interface ConfigsForm {
@@ -10,7 +11,7 @@ interface ConfigsForm {
   company: string;
   language: 'pt-BR' | 'en-US';
   timezone: string;
-  density: 'comfortable' | 'compact';
+  themeMode: ThemeMode;
   emailNotifications: boolean;
   projectUpdates: boolean;
   reviewRequests: boolean;
@@ -29,6 +30,7 @@ interface ConfigsForm {
 })
 export class ConfigsComponent {
   private readonly userService = inject(UserService);
+  private readonly themeService = inject(ThemeService);
   private readonly meetingRecipient = CONTACT_DATA.email;
 
   protected readonly saved = signal(false);
@@ -42,7 +44,7 @@ export class ConfigsComponent {
     company: 'Maiawall Tech',
     language: 'pt-BR',
     timezone: 'America/Sao_Paulo',
-    density: 'comfortable',
+    themeMode: 'light',
     emailNotifications: true,
     projectUpdates: true,
     reviewRequests: true,
@@ -82,6 +84,11 @@ export class ConfigsComponent {
       ...form,
       [field]: value,
     }));
+  }
+
+  protected updateThemeMode(mode: ThemeMode): void {
+    this.updateField('themeMode', mode);
+    this.themeService.setMode(mode);
   }
 
   protected saveSettings(): void {

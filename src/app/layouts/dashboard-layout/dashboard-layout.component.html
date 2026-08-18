@@ -6,8 +6,10 @@
   <app-sidebar
     [collapsed]="sidebarCollapsed()"
     [drawerOpen]="drawerOpen()"
+    [darkTheme]="darkTheme()"
     [navItems]="navItems"
     (toggleCollapsed)="toggleSidebar()"
+    (toggleTheme)="toggleTheme()"
     (logout)="logout()"
   />
 
@@ -42,7 +44,8 @@
       <div class="header-actions">
         <a routerLink="/notifications" class="header-icon-button" aria-label="Abrir notificacoes">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 22a2.4 2.4 0 0 0 2.3-1.7H9.7A2.4 2.4 0 0 0 12 22Zm7-6.5-1.7-2.2V9a5.3 5.3 0 1 0-10.6 0v4.3L5 15.5V18h14v-2.5Z" />
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 01-3.46 0" />
           </svg>
         </a>
         @if (currentUser$ | async; as user) {
