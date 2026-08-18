@@ -5,43 +5,37 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  computed,
   inject,
   signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import gsap from 'gsap';
 
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-forgot-password',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  templateUrl: './forgot-password.component.html',
+  styleUrl: './forgot-password.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LoginComponent implements AfterViewInit {
+export class ForgotPasswordComponent implements AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
-  private readonly router = inject(Router);
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly destroyRef = inject(DestroyRef);
   private readonly reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  protected readonly passwordVisible = signal(false);
   protected readonly loading = signal(false);
-  protected readonly authError = signal<string | null>(null);
-
-  protected readonly passwordFieldType = computed(() =>
-    this.passwordVisible() ? 'text' : 'password',
-  );
+  protected readonly requestError = signal<string | null>(null);
+  protected readonly successModalOpen = signal(false);
+  protected readonly submittedEmail = signal('');
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   ngAfterViewInit(): void {
@@ -65,9 +59,41 @@ export class LoginComponent implements AfterViewInit {
     this.destroyRef.onDestroy(() => context.revert());
   }
 
-  protected togglePasswordVisibility(): void {
-    this.passwordVisible.update((visible) => !visible);
-    this.animatePasswordToggle();
+  protected onSubmit(): void {
+    if (this.loading()) {
+      return;
+    }
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.animateInvalidSubmit();
+      return;
+    }
+
+    this.animateSubmitClick();
+    this.requestError.set(null);
+    this.loading.set(true);
+
+    const { email } = this.form.getRawValue();
+
+    this.auth.requestPasswordRecovery(email).subscribe({
+      next: () => {
+        this.loading.set(false);
+        this.submittedEmail.set(email);
+        this.successModalOpen.set(true);
+        this.animateSuccessModal();
+      },
+      error: () => {
+        this.loading.set(false);
+        this.requestError.set(
+          'Nao foi possivel enviar o link agora. Verifique o e-mail e tente novamente.',
+        );
+      },
+    });
+  }
+
+  protected closeSuccessModal(): void {
+    this.successModalOpen.set(false);
   }
 
   protected animateFieldFocus(event: FocusEvent): void {
@@ -88,49 +114,6 @@ export class LoginComponent implements AfterViewInit {
         ease: 'power2.out',
         overwrite: true,
       },
-    );
-  }
-
-  protected onSubmit(): void {
-    if (this.loading()) {
-      return;
-    }
-
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.animateInvalidSubmit();
-      return;
-    }
-
-    this.animateSubmitClick();
-    this.authError.set(null);
-    this.loading.set(true);
-
-    const { email, password } = this.form.getRawValue();
-
-    this.auth.login({ email, password }).subscribe({
-      next: () => {
-        this.loading.set(false);
-        this.router.navigateByUrl('/dashboard');
-      },
-      error: () => {
-        this.loading.set(false);
-        this.authError.set(
-          'Nao foi possivel entrar. Verifique suas credenciais e tente novamente.',
-        );
-      },
-    });
-  }
-
-  private animatePasswordToggle(): void {
-    if (this.reduceMotion) {
-      return;
-    }
-
-    gsap.fromTo(
-      this.host.nativeElement.querySelector('[data-animate="password-toggle"]'),
-      { scale: 0.92 },
-      { scale: 1, duration: 0.24, ease: 'back.out(2)' },
     );
   }
 
@@ -172,5 +155,19 @@ export class LoginComponent implements AfterViewInit {
         ease: 'power2.out',
       },
     );
+  }
+
+  private animateSuccessModal(): void {
+    if (this.reduceMotion) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      gsap.fromTo(
+        this.host.nativeElement.querySelector('[data-animate="success-modal"]'),
+        { y: 18, opacity: 0, scale: 0.96 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.34, ease: 'back.out(1.7)' },
+      );
+    });
   }
 }

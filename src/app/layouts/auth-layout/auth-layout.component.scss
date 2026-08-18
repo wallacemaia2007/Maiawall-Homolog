@@ -11,25 +11,28 @@
   --mw-error: #C4453A;
 
   display: block;
-  width: 100%;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-.login-shell,
-.login-form-panel {
+.auth-shell,
+.auth-form-panel {
   background-color: var(--mw-canvas);
 }
 
-.login-shell {
+.auth-shell {
   overflow: hidden;
 }
 
-.login-panel {
+.auth-panel {
   background-color: var(--mw-panel);
   box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.08);
 }
 
-.login-panel::before {
+.auth-form-slot {
+  margin-inline: auto;
+}
+
+.auth-panel::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -81,64 +84,6 @@
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-.login-form {
-  margin-inline: auto;
-  padding: 0;
-}
-
 .font-display {
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-}
-
-.login-input {
-  box-shadow: 0 1px 0 rgba(22, 23, 27, 0.04);
-  transform-origin: center;
-}
-
-.login-input:hover {
-  border-color: rgba(76, 58, 227, 0.34);
-}
-
-.login-input[aria-invalid='true'] {
-  border-color: var(--mw-error);
-}
-
-.login-submit {
-  box-shadow: none;
-}
-
-.login-submit:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
-.login-error-message {
-  display: inline-block;
-  animation: login-error-enter 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-@keyframes login-error-enter {
-  0% {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-
-  60% {
-    opacity: 1;
-    transform: translateY(1px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .login-error-message {
-    animation: none;
-  }
-
-  .login-submit:active:not(:disabled) {
-    transform: none;
-  }
 }

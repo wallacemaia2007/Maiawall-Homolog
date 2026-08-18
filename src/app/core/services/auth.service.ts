@@ -11,6 +11,10 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface PasswordRecoveryRequest {
+  email: string;
+}
+
 export interface AuthSession {
   user: User;
 }
@@ -41,6 +45,18 @@ export class AuthService {
         },
       )
       .pipe(tap(() => (this.authenticated = false)));
+  }
+
+  requestPasswordRecovery(email: string): Observable<void> {
+    const request: PasswordRecoveryRequest = { email };
+
+    return this.http.post<void>(
+      this.authUrl(AUTH_ENDPOINTS.forgotPassword),
+      request,
+      {
+        withCredentials: true,
+      },
+    );
   }
 
   hasValidSession(): Observable<boolean> {
