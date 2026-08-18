@@ -1,0 +1,4 @@
+[1m[33mComponent HMR has been enabled, see https://angular.dev/hmr for more info.[39m[22m
+
+[1m[33m[1m[33mwarn[33m[22m[1m - No utility classes were detected in your source files. If this is unexpected, double-check the `content` option in your Tailwind CSS configuration.[39m[22m
+[1m[33m[1m[33mwarn[33m[22m[1m - https://tailwindcss.com/docs/content-configuration[39m[22m
