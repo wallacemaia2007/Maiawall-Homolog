@@ -2,7 +2,8 @@ export interface Project {
   id: string;
   name: string;
   description?: string;
-  clientName: string;
+  clientId?: string;
+  clientName?: string;
   isPrimary: boolean;
   status: ProjectStatus;
   progress: number;
@@ -13,6 +14,7 @@ export interface Project {
   productionUrl?: string;
   homologationUrl?: string;
   imageUrl?: string;
+  repositoryUrl?: string;
 }
 
 export type ProjectStatus =
@@ -20,13 +22,15 @@ export type ProjectStatus =
   | 'HOMOLOGATION'
   | 'CHANGES_REQUESTED'
   | 'APPROVED'
-  | 'PRODUCTION';
+  | 'PRODUCTION'
+  | 'COMPLETED';
 
 export interface ProjectActivity {
   id: string;
   projectId: string;
   title: string;
-  version: string;
+  type?: string;
+  version?: string;
   description: string;
   createdAt: string;
 }

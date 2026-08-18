@@ -30,6 +30,9 @@ async function main() {
   if (!process.env.MONGODB_URI && process.env.MONGO_URI) {
     process.env.MONGODB_URI = process.env.MONGO_URI;
   }
+  if (!process.env.MONGODB_DB_NAME && isLocalEnvironment()) {
+    process.env.MONGODB_DB_NAME = "maiawall_homolog_local";
+  }
 
   assertSeedAllowed();
 
@@ -238,11 +241,10 @@ async function main() {
 }
 
 function assertSeedAllowed() {
-  const environment = (process.env.APP_ENV || process.env.NODE_ENV || "local").toLowerCase();
+  const environment = getEnvironment();
   const databaseName = process.env.MONGODB_DB_NAME || process.env.MONGO_DB_NAME || "maiawall_homolog";
-  const isLocal = ["local", "development", "dev", "test"].includes(environment);
 
-  if (isLocal) return;
+  if (isLocalEnvironment()) return;
 
   const expectedConfirmation = `SEED ${databaseName}`;
   if (process.env.CONFIRM_SEED !== expectedConfirmation) {
@@ -250,6 +252,14 @@ function assertSeedAllowed() {
       `Seed bloqueado para APP_ENV=${environment}. Defina CONFIRM_SEED="${expectedConfirmation}" para confirmar a limpeza das colecoes.`,
     );
   }
+}
+
+function getEnvironment() {
+  return (process.env.APP_ENV || process.env.NODE_ENV || "local").toLowerCase();
+}
+
+function isLocalEnvironment() {
+  return ["local", "development", "dev", "test"].includes(getEnvironment());
 }
 
 function toMongoDocument(document) {

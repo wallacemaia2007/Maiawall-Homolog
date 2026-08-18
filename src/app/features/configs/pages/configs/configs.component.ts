@@ -84,7 +84,7 @@ export class ConfigsComponent {
     },
     {
       label: 'API configurada',
-      value: 'Mock local',
+      value: 'Backend Node/Mongo',
     },
     {
       label: 'Ultima sincronizacao',

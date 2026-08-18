@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 
+import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { ModalLogoutComponent } from '../../shared/components/modal-logout/modal-logout.component';
@@ -18,6 +19,7 @@ import { SidebarComponent, SidebarNavItem } from './components/sidebar/sidebar.c
 })
 export class DashboardLayoutComponent {
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
 
@@ -94,7 +96,10 @@ export class DashboardLayoutComponent {
 
   protected confirmLogout(): void {
     this.closeLogoutModal();
-    this.router.navigateByUrl('/login');
+    this.authService.logout().subscribe({
+      next: () => this.router.navigateByUrl('/login'),
+      error: () => this.router.navigateByUrl('/login'),
+    });
   }
 
   protected getPageTitle(): string {

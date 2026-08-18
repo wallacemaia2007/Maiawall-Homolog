@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 
-import { CURRENT_USER_MOCK } from '../mocks/user.mock';
+import { environment } from '../../../environments/environment';
+import { ApiResponse, unwrapApiData } from '../models/api-response.model';
 import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
+  constructor(private readonly http: HttpClient) {}
+
   getCurrentUser(): Observable<User> {
-    return of(CURRENT_USER_MOCK.user);
+    return this.http
+      .get<ApiResponse<User>>(`${environment.apiUrl}/users/me`, {
+        withCredentials: true,
+      })
+      .pipe(map(unwrapApiData));
   }
 }

@@ -1,27 +1,45 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, delay, of } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 
-import { INSTALLMENT_MOCKS, INVESTMENT_PLAN_MOCKS } from '../mocks/investment.mock';
+import { environment } from '../../../../environments/environment';
+import { ApiResponse, unwrapApiData } from '../../../core/models/api-response.model';
 import { Installment, InvestmentPlan, InvestmentSummary } from '../models/investment.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InvestmentService {
+  private readonly installmentsCache = new Map<string, Installment[]>();
+
+  constructor(private readonly http: HttpClient) {}
+
   getPlans(): Observable<InvestmentPlan[]> {
-    return of(INVESTMENT_PLAN_MOCKS).pipe(delay(160));
+    return this.http
+      .get<ApiResponse<InvestmentPlan[]>>(this.apiUrl('/investments'), { withCredentials: true })
+      .pipe(map(unwrapApiData), map((plans) => plans.map((plan) => this.normalizePlan(plan))));
   }
 
   getPlanById(id: string): Observable<InvestmentPlan | null> {
-    return of(INVESTMENT_PLAN_MOCKS.find((plan) => plan.id === id) ?? null).pipe(delay(160));
+    return this.http
+      .get<ApiResponse<InvestmentPlan>>(this.apiUrl(`/investments/${id}`), { withCredentials: true })
+      .pipe(map(unwrapApiData), map((plan) => this.normalizePlan(plan)));
   }
 
   getInstallments(planId: string): Observable<Installment[]> {
-    return of(this.getInstallmentsByPlanId(planId)).pipe(delay(160));
+    return this.http
+      .get<ApiResponse<Installment[]>>(this.apiUrl(`/investments/${planId}/installments`), {
+        withCredentials: true,
+      })
+      .pipe(
+        map(unwrapApiData),
+        map((installments) => installments.map((installment) => this.normalizeInstallment(installment))),
+        tap((installments) => this.installmentsCache.set(planId, installments)),
+      );
   }
 
   getInstallmentsByPlanId(planId: string): Installment[] {
-    return INSTALLMENT_MOCKS.filter((installment) => installment.planId === planId);
+    return this.installmentsCache.get(planId) ?? [];
   }
 
   getPrimaryPlan(plans: InvestmentPlan[]): InvestmentPlan | null {
@@ -50,5 +68,23 @@ export class InvestmentService {
         activePlans: 0,
       },
     );
+  }
+
+  private normalizePlan(plan: InvestmentPlan): InvestmentPlan {
+    return {
+      ...plan,
+      projectName: plan.projectName ?? 'Projeto Maiawall',
+    };
+  }
+
+  private normalizeInstallment(installment: Installment): Installment {
+    return {
+      ...installment,
+      planId: installment.planId ?? installment.investmentPlanId ?? '',
+    };
+  }
+
+  private apiUrl(path: string): string {
+    return `${environment.apiUrl}${path}`;
   }
 }

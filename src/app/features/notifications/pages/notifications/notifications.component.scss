@@ -1,0 +1,74 @@
+.notifications-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.eyebrow {
+  color: var(--mw-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.notifications-list {
+  display: grid;
+  gap: 0.875rem;
+}
+
+.notification-item {
+  align-items: center;
+  background: var(--mw-surface);
+  border: 1px solid var(--mw-border);
+  border-radius: 8px;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.notification-item.is-read {
+  opacity: 0.68;
+}
+
+.notification-item p {
+  color: var(--mw-muted);
+  margin-top: 0.25rem;
+}
+
+.notification-item span {
+  color: var(--mw-muted);
+  display: block;
+  font-size: 0.8125rem;
+  margin-top: 0.5rem;
+}
+
+.notification-item button {
+  background: var(--mw-primary);
+  border: 0;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.7rem 1rem;
+  white-space: nowrap;
+}
+
+.empty-state {
+  background: var(--mw-surface);
+  border: 1px solid var(--mw-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .notification-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

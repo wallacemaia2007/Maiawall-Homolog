@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, map, of, tap } from 'rxjs';
 
 import { AUTH_ENDPOINTS } from '../constants/api.constants';
+import { ApiResponse, unwrapApiData } from '../models/api-response.model';
 import { User } from '../models/user.model';
 import { environment } from '../../../environments/environment';
-import { CURRENT_USER_MOCK } from '../mocks/user.mock';
 
 export interface LoginCredentials {
   email: string;
@@ -18,6 +18,8 @@ export interface PasswordRecoveryRequest {
 
 export interface AuthSession {
   user: User;
+  accessToken?: string;
+  csrfToken?: string;
 }
 
 @Injectable({
@@ -29,16 +31,14 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {}
 
   login(credentials: LoginCredentials): Observable<AuthSession> {
-    void credentials;
-    /*
     return this.http
-      .post<AuthSession>(this.authUrl(AUTH_ENDPOINTS.login), credentials, {
+      .post<ApiResponse<AuthSession>>(this.authUrl(AUTH_ENDPOINTS.login), credentials, {
         withCredentials: true,
       })
-      .pipe(tap(() => (this.authenticated = true)));
-      */
-    const user = CURRENT_USER_MOCK;
-    return of(user as AuthSession).pipe(tap(() => (this.authenticated = true)));
+      .pipe(
+        map(unwrapApiData),
+        tap(() => (this.authenticated = true)),
+      );
   }
 
   logout(): Observable<void> {
@@ -56,9 +56,11 @@ export class AuthService {
   requestPasswordRecovery(email: string): Observable<void> {
     const request: PasswordRecoveryRequest = { email };
 
-    return this.http.post<void>(this.authUrl(AUTH_ENDPOINTS.forgotPassword), request, {
-      withCredentials: true,
-    });
+    return this.http
+      .post<ApiResponse<{ accepted: boolean }>>(this.authUrl(AUTH_ENDPOINTS.forgotPassword), request, {
+        withCredentials: true,
+      })
+      .pipe(map(() => void 0));
   }
 
   hasValidSession(): Observable<boolean> {
@@ -67,10 +69,11 @@ export class AuthService {
     }
 
     return this.http
-      .get<AuthSession>(this.authUrl(AUTH_ENDPOINTS.me), {
+      .get<ApiResponse<AuthSession>>(this.authUrl(AUTH_ENDPOINTS.me), {
         withCredentials: true,
       })
       .pipe(
+        map(unwrapApiData),
         tap(() => (this.authenticated = true)),
         map(() => true),
         catchError(() => {

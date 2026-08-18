@@ -38,6 +38,7 @@ export class ProjectsComponent {
     { label: 'Alteracoes solicitadas', value: 'CHANGES_REQUESTED' },
     { label: 'Aprovados', value: 'APPROVED' },
     { label: 'Em producao', value: 'PRODUCTION' },
+    { label: 'Concluidos', value: 'COMPLETED' },
   ];
 
   protected readonly summary = computed(() => {
@@ -50,7 +51,7 @@ export class ProjectsComponent {
       ).length,
       homologation: projects.filter((project) => project.status === 'HOMOLOGATION').length,
       completed: projects.filter((project) =>
-        ['APPROVED', 'PRODUCTION'].includes(project.status),
+        ['APPROVED', 'PRODUCTION', 'COMPLETED'].includes(project.status),
       ).length,
     };
   });
@@ -64,7 +65,7 @@ export class ProjectsComponent {
       const matchesSearch =
         search.length === 0 ||
         project.name.toLowerCase().includes(search) ||
-        project.clientName.toLowerCase().includes(search);
+        (project.clientName ?? '').toLowerCase().includes(search);
 
       return matchesFilter && matchesSearch;
     });

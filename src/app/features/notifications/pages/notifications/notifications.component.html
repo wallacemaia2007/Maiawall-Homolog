@@ -1,1 +1,31 @@
-<h1>Notifications works!</h1>
+<section class="notifications-page">
+  <header>
+    <p class="eyebrow">Notificacoes</p>
+    <h2>Atualizacoes recentes</h2>
+  </header>
+
+  @if (notifications$ | async; as notifications) {
+    @if (notifications.length > 0) {
+      <div class="notifications-list">
+        @for (notification of notifications; track notification.id) {
+          <article class="notification-item" [class.is-read]="notification.read">
+            <div>
+              <h3>{{ notification.title }}</h3>
+              <p>{{ notification.message }}</p>
+              <span>{{ formatDate(notification.createdAt) }}</span>
+            </div>
+
+            @if (!notification.read) {
+              <button type="button" (click)="markAsRead(notification.id)">Marcar como lida</button>
+            }
+          </article>
+        }
+      </div>
+    } @else {
+      <section class="empty-state">
+        <p class="eyebrow">Tudo certo</p>
+        <h2>Nenhuma notificacao por enquanto.</h2>
+      </section>
+    }
+  }
+</section>

@@ -5,7 +5,8 @@ export type InstallmentStatus = 'PAID' | 'PENDING' | 'OVERDUE';
 export interface InvestmentPlan {
   id: string;
   projectId: string;
-  projectName: string;
+  clientId?: string;
+  projectName?: string;
   name: string;
   totalAmount: number;
   installments: number;
@@ -20,6 +21,7 @@ export interface InvestmentPlan {
 
 export interface Installment {
   id: string;
+  investmentPlanId?: string;
   planId: string;
   number: number;
   amount: number;

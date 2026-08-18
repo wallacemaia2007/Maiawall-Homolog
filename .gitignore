@@ -16,9 +16,12 @@ yarn-error.log
 # Environment files
 .env
 .env.*
+*credentials*.env
 !.env.example
 backend/.env
 backend/.env.*
+backend/senhas.txt
+backend/*credentials*.env
 !backend/.env.example
 !backend/.env.local.example
 

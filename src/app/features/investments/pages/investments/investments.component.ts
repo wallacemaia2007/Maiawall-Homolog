@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { map, of, shareReplay, switchMap, tap } from 'rxjs';
 
 import {
   Installment,
@@ -35,7 +36,17 @@ export class InvestmentsComponent {
     year: 'numeric',
   });
 
-  protected readonly plans$ = this.investmentService.getPlans();
+  private readonly loadingInstallments = new Set<string>();
+
+  protected readonly plans$ = this.investmentService.getPlans().pipe(
+    tap((plans) => plans.forEach((plan) => this.loadInstallments(plan.id))),
+    shareReplay(1),
+  );
+  protected readonly primaryInstallments$ = this.plans$.pipe(
+    map((plans) => this.getPrimaryPlan(plans)),
+    switchMap((plan) => (plan ? this.investmentService.getInstallments(plan.id) : of([]))),
+    shareReplay(1),
+  );
 
   protected getPrimaryPlan(plans: InvestmentPlan[]): InvestmentPlan | null {
     return this.investmentService.getPrimaryPlan(plans);
@@ -100,5 +111,14 @@ export class InvestmentsComponent {
     };
 
     return labels[status];
+  }
+
+  private loadInstallments(planId: string): void {
+    if (this.loadingInstallments.has(planId)) {
+      return;
+    }
+
+    this.loadingInstallments.add(planId);
+    this.investmentService.getInstallments(planId).subscribe();
   }
 }

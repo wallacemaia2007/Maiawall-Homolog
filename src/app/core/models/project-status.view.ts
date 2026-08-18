@@ -26,6 +26,10 @@ const STATUS_VIEW: Record<ProjectStatus, ProjectStatusView> = {
     label: 'Em producao',
     tone: 'neutral',
   },
+  COMPLETED: {
+    label: 'Concluido',
+    tone: 'success',
+  },
 };
 
 export function getProjectStatusView(status: ProjectStatus): ProjectStatusView {
