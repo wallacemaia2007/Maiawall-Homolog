@@ -61,4 +61,8 @@
       <router-outlet />
     </main>
   </div>
+
+  @if (logoutModalOpen()) {
+    <app-modal-logout (cancelled)="closeLogoutModal()" (confirmed)="confirmLogout()" />
+  }
 </div>

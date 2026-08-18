@@ -1,1 +1,303 @@
-<h1>Project Details works!</h1>
+<section class="project-details-page">
+  @if (loading()) {
+    <section class="state-card" aria-live="polite">
+      <p>Carregando seus projetos...</p>
+    </section>
+  } @else if (error() || !project()) {
+    <section class="state-card state-error">
+      <h2>Nao foi possivel carregar seus projetos.</h2>
+      <a routerLink="/projects">Voltar para projetos</a>
+    </section>
+  } @else {
+    @if (project(); as project) {
+      <a class="back-link" routerLink="/projects">Voltar para projetos</a>
+
+      <section class="project-hero">
+        <div class="hero-image">
+          @if (project.imageUrl) {
+            <img [src]="project.imageUrl" [alt]="project.name" />
+          }
+        </div>
+
+        <div class="hero-content">
+          <div class="hero-heading">
+            <div>
+              <p class="eyebrow">Central do projeto</p>
+              <h2>{{ project.name }}</h2>
+            </div>
+            <span class="status-badge" [class]="'status-badge tone-' + getStatusTone(project.status)">
+              {{ getStatusLabel(project.status) }}
+            </span>
+          </div>
+
+          @if (project.description) {
+            <p class="hero-description">{{ project.description }}</p>
+          }
+
+          <div class="hero-meta">
+            <div>
+              <span>Versao atual</span>
+              <strong>{{ project.version }}</strong>
+            </div>
+            <div>
+              <span>Ultima atualizacao</span>
+              <strong>{{ formatDateTime(project.updatedAt) }}</strong>
+            </div>
+          </div>
+
+          <div class="progress-block">
+            <div class="progress-label">
+              <span>Progresso</span>
+              <strong>{{ project.progress }}%</strong>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <span [style.width.%]="project.progress"></span>
+            </div>
+          </div>
+
+          <div class="hero-actions">
+            @if (project.homologationUrl) {
+              <a [href]="project.homologationUrl" target="_blank" rel="noreferrer">Acessar homologacao</a>
+            }
+            @if (project.productionUrl) {
+              <a class="secondary-action" [href]="project.productionUrl" target="_blank" rel="noreferrer">
+                Acessar producao
+              </a>
+            }
+          </div>
+        </div>
+      </section>
+
+      @if (project.status === 'HOMOLOGATION' || approvalMessage() || changesRequested()) {
+        <section class="approval-card">
+          <div>
+            <p class="eyebrow">Aprovacao</p>
+            @if (approvalMessage()) {
+              <h3>{{ approvalMessage() }}</h3>
+            } @else {
+              <h3>O projeto esta pronto para sua revisao.</h3>
+            }
+          </div>
+
+          @if (!approvalMessage()) {
+            <div class="approval-actions">
+              <button type="button" (click)="openApprovalModal()">Aprovar projeto</button>
+              <button type="button" class="secondary-button" (click)="openChangeModal()">
+                Solicitar alteracoes
+              </button>
+            </div>
+          }
+        </section>
+      }
+
+      <section class="details-grid">
+        <article class="info-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Dados</p>
+              <h3>Informacoes do projeto</h3>
+            </div>
+          </div>
+
+          <dl class="info-list">
+            <div>
+              <dt>Cliente</dt>
+              <dd>{{ project.clientName }}</dd>
+            </div>
+            <div>
+              <dt>Versao</dt>
+              <dd>{{ project.version }}</dd>
+            </div>
+            <div>
+              <dt>Criado em</dt>
+              <dd>{{ formatDate(project.createdAt) }}</dd>
+            </div>
+            <div>
+              <dt>Ultima atualizacao</dt>
+              <dd>{{ formatDateTime(project.updatedAt) }}</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>{{ getStatusLabel(project.status) }}</dd>
+            </div>
+            <div>
+              <dt>Progresso</dt>
+              <dd>{{ project.progress }}%</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="links-card">
+          <p class="eyebrow">Links</p>
+          <h3>Acessos do projeto</h3>
+
+          <div class="link-row">
+            <div>
+              <span>Homologacao</span>
+              <strong>{{ project.homologationUrl || 'Ainda nao disponivel' }}</strong>
+            </div>
+            @if (project.homologationUrl) {
+              <a [href]="project.homologationUrl" target="_blank" rel="noreferrer">Abrir</a>
+            }
+          </div>
+
+          <div class="link-row">
+            <div>
+              <span>Producao</span>
+              <strong>{{ project.productionUrl || 'Ainda nao disponivel' }}</strong>
+            </div>
+            @if (project.productionUrl) {
+              <a [href]="project.productionUrl" target="_blank" rel="noreferrer">Abrir</a>
+            }
+          </div>
+        </article>
+
+        <article class="investment-card">
+          <p class="eyebrow">Investimento</p>
+          <h3>Resumo financeiro</h3>
+
+          @if (relatedInvestment(); as plan) {
+            <dl class="investment-list">
+              <div>
+                <dt>Plano</dt>
+                <dd>{{ plan.name }}</dd>
+              </div>
+              <div>
+                <dt>Valor</dt>
+                <dd>{{ formatCurrency(plan.totalAmount) }}</dd>
+              </div>
+              <div>
+                <dt>Pago</dt>
+                <dd>{{ formatCurrency(plan.paidAmount) }}</dd>
+              </div>
+              <div>
+                <dt>Restante</dt>
+                <dd>{{ formatCurrency(plan.remainingAmount) }}</dd>
+              </div>
+            </dl>
+
+            <p class="payment-count">{{ plan.paidInstallments }} de {{ plan.installments }} parcelas pagas</p>
+            <a class="card-link" [routerLink]="['/investments', plan.id]">Ver detalhes financeiros</a>
+          } @else {
+            <p class="muted">Nenhum plano financeiro associado.</p>
+          }
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <article class="timeline-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Historico</p>
+              <h3>Historico de atualizacoes</h3>
+            </div>
+          </div>
+
+          <div class="timeline">
+            @for (activity of history(); track activity.id) {
+              <article class="timeline-item">
+                <span class="timeline-dot" aria-hidden="true"></span>
+                <div>
+                  <h4>{{ activity.title }}</h4>
+                  <strong>{{ activity.version }}</strong>
+                  <p>{{ activity.description }}</p>
+                  <time>{{ formatDateTime(activity.createdAt) }}</time>
+                </div>
+              </article>
+            }
+          </div>
+        </article>
+
+        <article class="commits-card">
+          <p class="eyebrow">Tecnico</p>
+          <h3>Atualizacoes tecnicas</h3>
+
+          <div class="commit-list">
+            @for (commit of commits(); track commit.id) {
+              <article class="commit-item">
+                <div>
+                  <h4>{{ commit.message }}</h4>
+                  <code>{{ commit.sha }}</code>
+                </div>
+                <p>{{ commit.author }}</p>
+                <time>{{ formatDateTime(commit.createdAt) }}</time>
+                @if (commit.url) {
+                  <a [href]="commit.url" target="_blank" rel="noreferrer">Ver no GitHub</a>
+                }
+              </article>
+            }
+          </div>
+        </article>
+      </section>
+
+      <section class="release-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Changelog</p>
+            <h3>O que mudou</h3>
+          </div>
+        </div>
+
+        <div class="release-list">
+          @for (release of releases(); track release.id) {
+            <article class="release-card">
+              <div>
+                <span>{{ release.version }}</span>
+                <h4>{{ release.title }}</h4>
+                @if (release.description) {
+                  <p>{{ release.description }}</p>
+                }
+              </div>
+
+              @if (getChangesByType(release, 'feature').length > 0) {
+                <div class="change-group">
+                  <strong>Novidades</strong>
+                  @for (change of getChangesByType(release, 'feature'); track change.id) {
+                    <p>{{ change.label }}</p>
+                  }
+                </div>
+              }
+
+              @if (getChangesByType(release, 'improvement').length > 0) {
+                <div class="change-group">
+                  <strong>Melhorias</strong>
+                  @for (change of getChangesByType(release, 'improvement'); track change.id) {
+                    <p>{{ change.label }}</p>
+                  }
+                </div>
+              }
+
+              @if (getChangesByType(release, 'fix').length > 0) {
+                <div class="change-group">
+                  <strong>Correcoes</strong>
+                  @for (change of getChangesByType(release, 'fix'); track change.id) {
+                    <p>{{ change.label }}</p>
+                  }
+                </div>
+              }
+            </article>
+          }
+        </div>
+      </section>
+    }
+  }
+</section>
+
+@if (approvalModalOpen()) {
+  @if (project(); as modalProject) {
+    <app-modal-project-approval
+      [projectName]="modalProject.name"
+      (cancelled)="closeApprovalModal()"
+      (confirmed)="approveProject(modalProject)"
+    />
+  }
+}
+
+@if (changeModalOpen()) {
+  @if (project(); as modalProject) {
+    <app-modal-project-revision
+      (cancelled)="closeChangeModal()"
+      (submitted)="submitChangeRequest(modalProject, $event)"
+    />
+  }
+}

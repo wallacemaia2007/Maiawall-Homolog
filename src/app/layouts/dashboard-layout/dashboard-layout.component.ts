@@ -5,12 +5,13 @@ import { filter } from 'rxjs';
 
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { ModalLogoutComponent } from '../../shared/components/modal-logout/modal-logout.component';
 import { SidebarComponent, SidebarNavItem } from './components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-dashboard-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet, SidebarComponent],
+  imports: [CommonModule, RouterLink, RouterOutlet, SidebarComponent, ModalLogoutComponent],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +23,7 @@ export class DashboardLayoutComponent {
 
   protected readonly drawerOpen = signal(false);
   protected readonly sidebarCollapsed = signal(true);
+  protected readonly logoutModalOpen = signal(false);
   protected readonly darkTheme = this.themeService.darkTheme;
   protected readonly currentUser$ = this.userService.getCurrentUser();
 
@@ -62,6 +64,7 @@ export class DashboardLayoutComponent {
   @HostListener('document:keydown.escape')
   protected closeOnEscape(): void {
     this.closeDrawer();
+    this.closeLogoutModal();
   }
 
   protected openDrawer(): void {
@@ -81,6 +84,16 @@ export class DashboardLayoutComponent {
   }
 
   protected logout(): void {
+    this.logoutModalOpen.set(true);
+    this.closeDrawer();
+  }
+
+  protected closeLogoutModal(): void {
+    this.logoutModalOpen.set(false);
+  }
+
+  protected confirmLogout(): void {
+    this.closeLogoutModal();
     this.router.navigateByUrl('/login');
   }
 

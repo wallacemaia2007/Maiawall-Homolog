@@ -1,0 +1,18 @@
+<app-modal-template
+  eyebrow="Aprovacao"
+  title="Aprovar projeto"
+  description="Confirme somente se a entrega estiver pronta para seguir para a proxima etapa."
+  closeLabel="Fechar aprovacao do projeto"
+  (closed)="cancelled.emit()"
+>
+  <div modal-body class="approval-content">
+    <p>Voce esta aprovando:</p>
+    <strong>{{ projectName() }}</strong>
+    <span>Depois da aprovacao, a equipe sera orientada a preparar os proximos passos do projeto.</span>
+  </div>
+
+  <ng-container modal-actions>
+    <button type="button" class="secondary-button" (click)="cancelled.emit()">Cancelar</button>
+    <button type="button" class="primary-button" (click)="confirmed.emit()">Confirmar aprovacao</button>
+  </ng-container>
+</app-modal-template>

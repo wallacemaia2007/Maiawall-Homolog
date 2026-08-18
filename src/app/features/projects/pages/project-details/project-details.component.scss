@@ -1,0 +1,443 @@
+:host {
+  display: block;
+}
+
+.project-details-page {
+  display: grid;
+  gap: 24px;
+}
+
+.eyebrow,
+h2,
+h3,
+h4,
+p,
+dl,
+dd {
+  margin: 0;
+}
+
+.eyebrow {
+  color: #6b6e76;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h2,
+h3,
+h4 {
+  color: #16171b;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+}
+
+h2 {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 650;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+.back-link,
+.card-link,
+.hero-actions a,
+.link-row a,
+.state-card a,
+.approval-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.back-link {
+  width: max-content;
+  color: #4c3ae3;
+}
+
+.back-link::before {
+  margin-right: 8px;
+  content: '<';
+}
+
+.project-hero,
+.approval-card,
+.info-card,
+.links-card,
+.investment-card,
+.timeline-card,
+.commits-card,
+.release-section,
+.state-card {
+  border: 1px solid #e4e4e1;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.project-hero {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(0, 1.2fr);
+  overflow: hidden;
+}
+
+.hero-image {
+  min-height: 360px;
+  background: #ededeb;
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-content {
+  display: grid;
+  gap: 22px;
+  align-content: center;
+  padding: 32px;
+}
+
+.hero-heading,
+.section-heading,
+.approval-card,
+.link-row,
+.progress-label {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.hero-description,
+.hero-meta span,
+dt,
+.link-row span,
+.muted,
+.payment-count,
+.timeline-item p,
+.timeline-item time,
+.commit-item p,
+.commit-item time,
+.release-card p {
+  color: #6b6e76;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.status-badge::before {
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  content: '';
+}
+
+.tone-info {
+  background: #eaf3ff;
+  color: #2362a8;
+}
+
+.tone-warning {
+  background: #fff5db;
+  color: #9c6812;
+}
+
+.tone-danger {
+  background: #fff0ee;
+  color: #ad3328;
+}
+
+.tone-success {
+  background: #eaf8ef;
+  color: #1c7c3e;
+}
+
+.tone-neutral {
+  background: #f0f0ef;
+  color: #575a62;
+}
+
+.hero-meta,
+.info-list,
+.investment-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.hero-meta div,
+.info-list div,
+.investment-list div {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fafaf9;
+}
+
+dd,
+.hero-meta strong,
+.link-row strong {
+  color: #16171b;
+  font-weight: 750;
+}
+
+.progress-block {
+  display: grid;
+  gap: 10px;
+}
+
+.progress-track {
+  overflow: hidden;
+  height: 10px;
+  border-radius: 999px;
+  background: #ededeb;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #4c3ae3, #1a9b72);
+}
+
+.hero-actions,
+.approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-actions a,
+.approval-actions button,
+.card-link,
+.state-card a {
+  border: 0;
+  background: #16171b;
+  color: #fff;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+.hero-actions .secondary-action,
+.approval-actions .secondary-button {
+  border: 1px solid #e4e4e1;
+  background: #fff;
+  color: #16171b;
+}
+
+.approval-card,
+.info-card,
+.links-card,
+.investment-card,
+.timeline-card,
+.commits-card,
+.release-section {
+  padding: 24px;
+}
+
+.approval-card {
+  align-items: center;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 18px;
+}
+
+.info-card,
+.links-card,
+.investment-card,
+.timeline-card,
+.commits-card,
+.release-section {
+  display: grid;
+  gap: 18px;
+}
+
+.info-card {
+  grid-row: span 2;
+}
+
+.link-row {
+  align-items: center;
+  padding: 16px 0;
+  border-top: 1px solid #ededeb;
+}
+
+.link-row div {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+}
+
+.link-row strong {
+  overflow-wrap: anywhere;
+}
+
+.link-row a {
+  border: 1px solid #e4e4e1;
+  color: #16171b;
+  padding: 0 14px;
+}
+
+.payment-count {
+  padding-top: 2px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: 18px;
+}
+
+.timeline {
+  display: grid;
+  gap: 0;
+}
+
+.timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 12px;
+  padding: 0 0 22px;
+}
+
+.timeline-item + .timeline-item {
+  padding-top: 22px;
+  border-top: 1px solid #ededeb;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 7px;
+  border-radius: 999px;
+  background: #4c3ae3;
+}
+
+.timeline-item div,
+.commit-list,
+.commit-item,
+.release-card,
+.change-group {
+  display: grid;
+  gap: 8px;
+}
+
+.timeline-item strong,
+.release-card span,
+.commit-item code {
+  color: #4c3ae3;
+  font-weight: 800;
+}
+
+.commit-item {
+  padding: 16px;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fafaf9;
+}
+
+.commit-item h4 {
+  font-size: 0.98rem;
+}
+
+.commit-item a {
+  width: max-content;
+  color: #4c3ae3;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.release-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.release-card {
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fafaf9;
+  padding: 18px;
+}
+
+.change-group p::before {
+  margin-right: 8px;
+  color: #1c7c3e;
+  font-weight: 800;
+  content: '✓';
+}
+
+.state-card {
+  display: grid;
+  gap: 12px;
+  min-height: 280px;
+  place-content: center;
+  padding: 32px;
+  text-align: center;
+}
+
+@media (max-width: 1040px) {
+  .project-hero,
+  .details-grid,
+  .content-grid,
+  .release-list {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-image {
+    min-height: 280px;
+  }
+
+  .info-card {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero-content,
+  .approval-card,
+  .info-card,
+  .links-card,
+  .investment-card,
+  .timeline-card,
+  .commits-card,
+  .release-section {
+    padding: 20px;
+  }
+
+  .hero-heading,
+  .approval-card,
+  .link-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .hero-meta,
+  .info-list,
+  .investment-list {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,36 @@
+<div class="modal-layer" role="presentation">
+  <button
+    type="button"
+    class="modal-backdrop"
+    [attr.aria-label]="closeLabel()"
+    (click)="closed.emit()"
+  ></button>
+
+  <section class="modal-shell" role="dialog" aria-modal="true" [attr.aria-labelledby]="'modal-title'">
+    <header class="modal-header">
+      <div>
+        @if (eyebrow()) {
+          <p class="modal-eyebrow">{{ eyebrow() }}</p>
+        }
+        <h3 id="modal-title">{{ title() }}</h3>
+        @if (description()) {
+          <p class="modal-description">{{ description() }}</p>
+        }
+      </div>
+
+      <button type="button" class="modal-close" [attr.aria-label]="closeLabel()" (click)="closed.emit()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="modal-content">
+      <ng-content select="[modal-body]" />
+    </div>
+
+    <footer class="modal-actions">
+      <ng-content select="[modal-actions]" />
+    </footer>
+  </section>
+</div>

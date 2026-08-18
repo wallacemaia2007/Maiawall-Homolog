@@ -1,0 +1,33 @@
+:host {
+  display: contents;
+}
+
+.logout-message {
+  margin: 0;
+  color: #6b6e76;
+}
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.primary-button {
+  border: 0;
+  background: #16171b;
+  color: #fff;
+}
+
+.secondary-button {
+  border: 1px solid #e4e4e1;
+  background: #fff;
+  color: #16171b;
+}

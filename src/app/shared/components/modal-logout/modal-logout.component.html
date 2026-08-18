@@ -1,0 +1,14 @@
+<app-modal-template
+  eyebrow="Sessao"
+  title="Sair da conta"
+  description="Voce sera direcionado para a tela de login."
+  closeLabel="Fechar confirmacao de saida"
+  (closed)="cancelled.emit()"
+>
+  <p modal-body class="logout-message">Deseja encerrar sua sessao agora?</p>
+
+  <ng-container modal-actions>
+    <button type="button" class="secondary-button" (click)="cancelled.emit()">Cancelar</button>
+    <button type="button" class="primary-button" (click)="confirmed.emit()">Sair</button>
+  </ng-container>
+</app-modal-template>

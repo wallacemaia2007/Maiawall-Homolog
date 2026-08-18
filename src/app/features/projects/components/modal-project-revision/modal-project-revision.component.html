@@ -1,0 +1,24 @@
+<app-modal-template
+  eyebrow="Revisao"
+  title="Solicitar alteracoes"
+  description="Descreva com clareza os pontos que precisam de ajuste neste projeto."
+  closeLabel="Fechar solicitacao de alteracoes"
+  (closed)="cancelled.emit()"
+>
+  <label modal-body class="revision-field">
+    <span>O que precisa ser alterado?</span>
+    <textarea
+      rows="6"
+      placeholder="Ex: ajustar o texto da primeira secao, revisar espacamento no mobile..."
+      [value]="message()"
+      (input)="updateMessage($any($event.target).value)"
+    ></textarea>
+  </label>
+
+  <ng-container modal-actions>
+    <button type="button" class="secondary-button" (click)="cancelled.emit()">Cancelar</button>
+    <button type="button" class="primary-button" [disabled]="!message().trim()" (click)="submit()">
+      Enviar solicitacao
+    </button>
+  </ng-container>
+</app-modal-template>

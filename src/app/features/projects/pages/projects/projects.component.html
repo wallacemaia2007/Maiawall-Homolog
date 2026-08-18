@@ -1,1 +1,133 @@
-<h1>Projects works!</h1>
+<section class="projects-page">
+  <header class="projects-hero">
+    <p class="eyebrow">Projetos</p>
+    <h2>Meus projetos</h2>
+    <p>Acompanhe o andamento e as informacoes dos seus projetos.</p>
+  </header>
+
+  @if (loading()) {
+    <section class="state-card" aria-live="polite">
+      <p>Carregando seus projetos...</p>
+    </section>
+  } @else if (error()) {
+    <section class="state-card state-error">
+      <h3>Nao foi possivel carregar seus projetos.</h3>
+      <button type="button" (click)="loadProjects()">Tentar novamente</button>
+    </section>
+  } @else {
+    @if (projects().length > 0) {
+      <section class="summary-grid" aria-label="Resumo dos projetos">
+        <article class="summary-card">
+          <span>Todos</span>
+          <strong>{{ summary().total }}</strong>
+        </article>
+        <article class="summary-card">
+          <span>Em andamento</span>
+          <strong>{{ summary().active }}</strong>
+        </article>
+        <article class="summary-card">
+          <span>Em homologacao</span>
+          <strong>{{ summary().homologation }}</strong>
+        </article>
+        <article class="summary-card">
+          <span>Concluidos</span>
+          <strong>{{ summary().completed }}</strong>
+        </article>
+      </section>
+
+      <section class="project-controls" aria-label="Filtros de projetos">
+        <div class="filter-tabs" role="tablist" aria-label="Status do projeto">
+          @for (option of filterOptions; track option.value) {
+            <button
+              type="button"
+              role="tab"
+              [class.is-active]="selectedFilter() === option.value"
+              [attr.aria-selected]="selectedFilter() === option.value"
+              (click)="setFilter(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+
+        <label class="search-field">
+          <span>Buscar projeto</span>
+          <input
+            type="search"
+            placeholder="Buscar projeto..."
+            [value]="searchTerm()"
+            (input)="updateSearch($event)"
+          />
+        </label>
+      </section>
+
+      @if (filteredProjects().length > 0) {
+        <section class="projects-grid" aria-label="Lista de projetos">
+          @for (project of filteredProjects(); track project.id) {
+            <article class="project-card" [class.is-primary]="project.isPrimary">
+              <div class="project-image">
+                @if (project.imageUrl) {
+                  <img [src]="project.imageUrl" [alt]="project.name" loading="lazy" />
+                }
+              </div>
+
+              <div class="project-card-body">
+                <div class="project-heading">
+                  <div>
+                    <h3>{{ project.name }}</h3>
+                    <p>{{ project.clientName }}</p>
+                  </div>
+
+                  @if (project.isPrimary) {
+                    <span class="primary-badge">Projeto principal</span>
+                  }
+                </div>
+
+                @if (project.description) {
+                  <p class="project-description">{{ project.description }}</p>
+                }
+
+                <span class="status-badge" [class]="'status-badge tone-' + getStatusTone(project.status)">
+                  {{ getStatusLabel(project.status) }}
+                </span>
+
+                <div class="progress-block">
+                  <div class="progress-label">
+                    <span>Progresso</span>
+                    <strong>{{ project.progress }}%</strong>
+                  </div>
+                  <div class="progress-track" aria-hidden="true">
+                    <span [style.width.%]="project.progress"></span>
+                  </div>
+                </div>
+
+                <div class="project-meta">
+                  <div>
+                    <span>Ultima atualizacao</span>
+                    <strong>{{ formatDate(project.updatedAt) }}</strong>
+                  </div>
+                  <div>
+                    <span>Versao atual</span>
+                    <strong>{{ project.version }}</strong>
+                  </div>
+                </div>
+
+                <a class="project-link" [routerLink]="['/projects', project.id]">Ver projeto</a>
+              </div>
+            </article>
+          }
+        </section>
+      } @else {
+        <section class="state-card">
+          <h3>Nenhum projeto encontrado.</h3>
+          <p>Tente buscar por outro nome ou alterar o filtro.</p>
+        </section>
+      }
+    } @else {
+      <section class="state-card">
+        <h3>Voce ainda nao possui projetos.</h3>
+        <p>Quando um projeto for criado para voce, ele aparecera aqui.</p>
+      </section>
+    }
+  }
+</section>
