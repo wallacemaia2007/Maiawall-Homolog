@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "dev:full": "powershell -ExecutionPolicy Bypass -File ./scripts/start-full.ps1",
+    "kill:ports": "powershell -ExecutionPolicy Bypass -File ./scripts/kill-ports.ps1",
     "build": "ng build",
     "lint": "eslint .",
     "format": "prettier --write .",

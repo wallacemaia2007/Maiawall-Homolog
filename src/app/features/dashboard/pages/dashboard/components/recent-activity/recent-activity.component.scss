@@ -42,18 +42,49 @@
 }
 
 .activity-icon {
-  display: grid;
+  position: relative;
+  align-self: start;
+  display: flex;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
   width: 38px;
   height: 38px;
-  place-items: center;
+  line-height: 0;
   border-radius: 8px;
   background: #f3f2ff;
   color: #4c3ae3;
 }
 
-.activity-icon svg {
+.activity-icon--check::before,
+.activity-icon--check::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  transform-origin: left center;
+}
+
+.activity-icon--check::before {
+  top: 20px;
+  left: 13px;
+  width: 6px;
+  transform: rotate(45deg);
+}
+
+.activity-icon--check::after {
+  top: 24px;
+  left: 17px;
+  width: 13px;
+  transform: rotate(-45deg);
+}
+
+.activity-icon-svg {
+  display: block;
   width: 19px;
   height: 19px;
+  overflow: visible;
   fill: none;
   stroke: currentColor;
   stroke-linecap: round;
