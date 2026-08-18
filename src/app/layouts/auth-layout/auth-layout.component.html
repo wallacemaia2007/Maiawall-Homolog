@@ -3,8 +3,8 @@
     data-animate="panel"
     class="auth-panel relative overflow-hidden text-white md:w-[42%] md:min-h-screen flex flex-col justify-between px-6 py-6 md:px-14 md:py-14"
   >
-    <div class="shape-grid" aria-hidden="true">
-      @for (cell of shapeCells; track cell) {
+    <div #shapeGrid class="shape-grid" aria-hidden="true">
+      @for (cell of shapeCells(); track cell) {
         <span class="shape-cell" (pointerenter)="animateShape($event)"></span>
       }
     </div>

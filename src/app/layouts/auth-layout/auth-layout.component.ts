@@ -3,7 +3,9 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  ViewChild,
   inject,
+  signal,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import gsap from 'gsap';
@@ -19,11 +21,25 @@ export class AuthLayoutComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   private readonly shapeHoverColor = '#26282D';
+  private readonly shapeCellSize = 36;
 
-  protected readonly shapeCells = Array.from({ length: 540 }, (_, index) => index);
+  @ViewChild('shapeGrid') private shapeGrid?: ElementRef<HTMLElement>;
+
+  protected readonly shapeCells = signal<number[]>([]);
 
   ngAfterViewInit(): void {
+    const shapeGrid = this.shapeGrid?.nativeElement;
+    const resizeObserver = shapeGrid
+      ? new ResizeObserver(() => this.syncShapeCells(shapeGrid))
+      : null;
+
+    if (shapeGrid) {
+      this.syncShapeCells(shapeGrid);
+      resizeObserver?.observe(shapeGrid);
+    }
+
     if (this.reduceMotion) {
+      this.destroyRef.onDestroy(() => resizeObserver?.disconnect());
       return;
     }
 
@@ -40,7 +56,21 @@ export class AuthLayoutComponent implements AfterViewInit {
         .from('[data-animate="headline"]', { y: 26, opacity: 0 }, '-=0.32');
     }, this.host.nativeElement);
 
-    this.destroyRef.onDestroy(() => context.revert());
+    this.destroyRef.onDestroy(() => {
+      resizeObserver?.disconnect();
+      context.revert();
+    });
+  }
+
+  private syncShapeCells(grid: HTMLElement): void {
+    const { width, height } = grid.getBoundingClientRect();
+    const columns = Math.ceil(width / this.shapeCellSize);
+    const rows = Math.ceil(height / this.shapeCellSize);
+    const totalCells = columns * rows;
+
+    if (totalCells !== this.shapeCells().length) {
+      this.shapeCells.set(Array.from({ length: totalCells }, (_, index) => index));
+    }
   }
 
   protected animateShape(event: MouseEvent): void {
