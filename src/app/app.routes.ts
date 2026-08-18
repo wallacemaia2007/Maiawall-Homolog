@@ -11,23 +11,19 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./layouts/auth-layout/auth-layout.component').then(
-        (m) => m.AuthLayoutComponent,
-      ),
+      import('./layouts/auth-layout/auth-layout.component').then((m) => m.AuthLayoutComponent),
     children: [
       {
         path: 'login',
         loadComponent: () =>
-          import('./features/auth/pages/login/login.component').then(
-            (m) => m.LoginComponent,
-          ),
+          import('./features/auth/pages/login/login.component').then((m) => m.LoginComponent),
       },
       {
         path: 'forgot-password',
         loadComponent: () =>
-          import(
-            './features/auth/pages/forgot-password/forgot-password.component'
-          ).then((m) => m.ForgotPasswordComponent),
+          import('./features/auth/pages/forgot-password/forgot-password.component').then(
+            (m) => m.ForgotPasswordComponent,
+          ),
       },
     ],
   },
@@ -57,9 +53,9 @@ export const routes: Routes = [
       {
         path: 'projects/:id',
         loadComponent: () =>
-          import(
-            './features/projects/pages/project-details/project-details.component'
-          ).then((m) => m.ProjectDetailsComponent),
+          import('./features/projects/pages/project-details/project-details.component').then(
+            (m) => m.ProjectDetailsComponent,
+          ),
       },
       {
         path: 'profile',
@@ -71,9 +67,16 @@ export const routes: Routes = [
       {
         path: 'notifications',
         loadComponent: () =>
-          import(
-            './features/notifications/pages/notifications/notifications.component'
-          ).then((m) => m.NotificationsComponent),
+          import('./features/notifications/pages/notifications/notifications.component').then(
+            (m) => m.NotificationsComponent,
+          ),
+      },
+      {
+        path: 'configs',
+        loadComponent: () =>
+          import('./features/configs/pages/configs/configs.component').then(
+            (m) => m.ConfigsComponent,
+          ),
       },
     ],
   },

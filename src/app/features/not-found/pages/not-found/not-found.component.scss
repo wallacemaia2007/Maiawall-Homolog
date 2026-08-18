@@ -1,0 +1,47 @@
+:host {
+  // Mesmos tokens do login.component.scss. Se o projeto já tiver esses
+  // valores centralizados (tailwind.config, tokens globais, etc.), troque
+  // por eles em vez de duplicar — mantive local só para o componente ser
+  // independente, igual ao login.
+  --mw-canvas: #FAFAF9;
+  --mw-panel: #111214;
+  --mw-accent: #4C3AE3;
+  --mw-accent-hover: #4330D8;
+  --mw-accent-soft: #C9C2FA;
+  --mw-text: #16171B;
+  --mw-text-muted: #6B6E76;
+  --mw-text-faint: #A0A2A8;
+  --mw-border: #E4E4E1;
+  --mw-error: #C4453A;
+
+  display: block;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+}
+
+// Textura de grid igual à do painel institucional do login, só que estática
+// (sem spotlight — aqui é uma página de erro, não faz sentido pedir
+// interação do usuário) e bem mais sutil, sobre o fundo claro.
+.notfound-shell {
+  background-color: var(--mw-canvas);
+  background-image:
+    repeating-linear-gradient(to right,
+      rgba(17, 18, 20, 0.035) 0,
+      rgba(17, 18, 20, 0.035) 1px,
+      transparent 1px,
+      transparent 36px),
+    repeating-linear-gradient(to bottom,
+      rgba(17, 18, 20, 0.035) 0,
+      rgba(17, 18, 20, 0.035) 1px,
+      transparent 1px,
+      transparent 36px);
+}
+
+.notfound-content {
+  // O "404" usa a mesma cor de texto principal do resto do produto — nada
+  // de vermelho/laranja de "erro genérico", mantém o tom neutro e discreto
+  // pedido no briefing original do login.
+}

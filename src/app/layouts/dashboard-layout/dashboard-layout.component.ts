@@ -87,6 +87,10 @@ export class DashboardLayoutComponent {
       return 'Meu perfil';
     }
 
+    if (url.startsWith('/configs')) {
+      return 'Configuracoes';
+    }
+
     return 'Dashboard';
   }
 }
