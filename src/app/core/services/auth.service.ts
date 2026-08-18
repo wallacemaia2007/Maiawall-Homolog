@@ -5,6 +5,7 @@ import { Observable, catchError, map, of, tap } from 'rxjs';
 import { AUTH_ENDPOINTS } from '../constants/api.constants';
 import { User } from '../models/user.model';
 import { environment } from '../../../environments/environment';
+import { CURRENT_USER_MOCK } from '../mocks/user.mock';
 
 export interface LoginCredentials {
   email: string;
@@ -28,11 +29,16 @@ export class AuthService {
   constructor(private readonly http: HttpClient) {}
 
   login(credentials: LoginCredentials): Observable<AuthSession> {
+    void credentials;
+    /*
     return this.http
       .post<AuthSession>(this.authUrl(AUTH_ENDPOINTS.login), credentials, {
         withCredentials: true,
       })
       .pipe(tap(() => (this.authenticated = true)));
+      */
+    const user = CURRENT_USER_MOCK;
+    return of(user as AuthSession).pipe(tap(() => (this.authenticated = true)));
   }
 
   logout(): Observable<void> {
@@ -50,13 +56,9 @@ export class AuthService {
   requestPasswordRecovery(email: string): Observable<void> {
     const request: PasswordRecoveryRequest = { email };
 
-    return this.http.post<void>(
-      this.authUrl(AUTH_ENDPOINTS.forgotPassword),
-      request,
-      {
-        withCredentials: true,
-      },
-    );
+    return this.http.post<void>(this.authUrl(AUTH_ENDPOINTS.forgotPassword), request, {
+      withCredentials: true,
+    });
   }
 
   hasValidSession(): Observable<boolean> {

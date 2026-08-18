@@ -1,0 +1,150 @@
+:host {
+  --mw-canvas: #fafaf9;
+  --mw-accent: #4c3ae3;
+  --mw-text: #16171b;
+  --mw-text-muted: #6b6e76;
+  --mw-border: #e4e4e1;
+
+  display: block;
+  min-height: 100vh;
+  color: var(--mw-text);
+  background: var(--mw-canvas);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.dashboard-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.dashboard-main {
+  width: 100%;
+  min-width: 0;
+  padding-left: 272px;
+  transition: padding-left 220ms ease;
+}
+
+.sidebar-is-collapsed .dashboard-main {
+  padding-left: 72px;
+}
+
+.dashboard-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 74px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--mw-border);
+  background: rgba(250, 250, 249, 0.88);
+  backdrop-filter: blur(16px);
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 650;
+}
+
+.mobile-brand {
+  display: none;
+  margin: 0;
+  color: var(--mw-text-muted);
+  font-size: 0.78rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-icon-button,
+.mobile-menu-button,
+.header-user {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border: 1px solid var(--mw-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--mw-text);
+  text-decoration: none;
+}
+
+.header-icon-button,
+.mobile-menu-button {
+  width: 40px;
+}
+
+.mobile-menu-button {
+  display: none;
+}
+
+.header-user {
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 0.9rem;
+}
+
+.header-icon-button svg,
+.mobile-menu-button svg,
+.header-user svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.dashboard-content {
+  padding: 32px;
+}
+
+.drawer-backdrop {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: block;
+    border: 0;
+    background: rgba(17, 18, 20, 0.44);
+  }
+
+  .dashboard-main,
+  .sidebar-is-collapsed .dashboard-main {
+    padding-left: 0;
+  }
+
+  .dashboard-header {
+    min-height: 68px;
+    padding: 0 16px;
+  }
+
+  .dashboard-header h1 {
+    display: none;
+  }
+
+  .mobile-brand,
+  .mobile-menu-button {
+    display: flex;
+  }
+
+  .header-user {
+    display: none;
+  }
+
+  .dashboard-content {
+    padding: 22px 16px 32px;
+  }
+}

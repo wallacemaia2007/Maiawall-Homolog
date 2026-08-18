@@ -1,0 +1,26 @@
+<article class="progress-card">
+  <div class="card-heading">
+    <p>Progresso do projeto</p>
+    <h3>Mais avancado em andamento</h3>
+  </div>
+
+  @if (project(); as project) {
+    <div class="donut-wrap">
+      <div class="donut" [style.background]="progressBackground()">
+        <div class="donut-core">
+          <strong>{{ project.progress }}%</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-meta">
+      <h4>{{ project.name }}</h4>
+      <span>{{ statusLabel(project) }}</span>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <strong>Nenhum projeto em andamento no momento.</strong>
+      <span>Quando houver uma entrega ativa, o progresso aparece aqui.</span>
+    </div>
+  }
+</article>

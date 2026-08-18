@@ -1,0 +1,55 @@
+import { Project } from '../models/project.model';
+
+export const PROJECT_MOCKS: Project[] = [
+  {
+    id: 'site-institucional',
+    name: 'Site Institucional',
+    description:
+      'Evolucao da presenca digital principal com paginas comerciais, SEO tecnico e jornada de conversao.',
+    clientName: 'Maiawall Tech',
+    isPrimary: true,
+    status: 'HOMOLOGATION',
+    progress: 78,
+    version: 'v1.4.0',
+    updatedAt: 'Hoje as 09:42',
+    homologationUrl: 'https://homolog.maiawall.com',
+    productionUrl: 'https://maiawall.com',
+    imageUrl:
+      'https://images.unsplash.com/photo-1559028012-481c04fa702d?auto=format&fit=crop&w=1400&q=80',
+  },
+  {
+    id: 'landing-page',
+    name: 'Landing Page Comercial',
+    description: 'Pagina de captacao para campanhas e apresentacao de oferta.',
+    clientName: 'Maiawall Tech',
+    isPrimary: false,
+    status: 'CHANGES_REQUESTED',
+    progress: 62,
+    version: 'v0.9.2',
+    updatedAt: 'Ontem as 16:20',
+    homologationUrl: 'https://landing-homolog.maiawall.com',
+  },
+  {
+    id: 'portal-cliente',
+    name: 'Portal do Cliente',
+    description: 'Area autenticada para acompanhamento de entregas e arquivos.',
+    clientName: 'Maiawall Tech',
+    isPrimary: false,
+    status: 'DEVELOPMENT',
+    progress: 35,
+    version: 'v0.3.0',
+    updatedAt: '12 de agosto as 11:08',
+  },
+  {
+    id: 'seo-tecnico',
+    name: 'SEO Tecnico',
+    description: 'Ajustes de indexacao, metadados e performance para producao.',
+    clientName: 'Maiawall Tech',
+    isPrimary: false,
+    status: 'APPROVED',
+    progress: 100,
+    version: 'v1.0.0',
+    updatedAt: '8 de agosto as 15:30',
+    productionUrl: 'https://maiawall.com',
+  },
+];

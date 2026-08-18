@@ -1,7 +1,79 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize, forkJoin } from 'rxjs';
+
+import { Activity } from '../../../../core/models/activity.model';
+import { Project } from '../../../../core/models/project.model';
+import { User } from '../../../../core/models/user.model';
+import { NotificationService } from '../../../../core/services/notification.service';
+import { ProjectService } from '../../../../core/services/project.service';
+import { UserService } from '../../../../core/services/user.service';
+import { PrimaryProjectComponent } from './components/primary-project/primary-project.component';
+import { ProjectProgressComponent } from './components/project-progress/project-progress.component';
+import { RecentActivityComponent } from './components/recent-activity/recent-activity.component';
+import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
+import { WelcomeSectionComponent } from './components/welcome-section/welcome-section.component';
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    PrimaryProjectComponent,
+    ProjectProgressComponent,
+    RecentActivityComponent,
+    SummaryCardsComponent,
+    WelcomeSectionComponent,
+  ],
   templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardComponent {}
+export class DashboardComponent {
+  private readonly projectService = inject(ProjectService);
+  private readonly userService = inject(UserService);
+  private readonly notificationService = inject(NotificationService);
+
+  protected readonly loading = signal(true);
+  protected readonly user = signal<User | null>(null);
+  protected readonly projects = signal<Project[]>([]);
+  protected readonly activities = signal<Activity[]>([]);
+
+  protected readonly primaryProject = computed(() =>
+    this.projectService.getPrimaryProject(this.projects()),
+  );
+
+  protected readonly progressProject = computed(() =>
+    this.projectService.getMostAdvancedActiveProject(this.projects()),
+  );
+
+  protected readonly summary = computed(() => {
+    const projects = this.projects();
+
+    return {
+      total: projects.length,
+      active: projects.filter((project) =>
+        ['DEVELOPMENT', 'HOMOLOGATION', 'CHANGES_REQUESTED'].includes(project.status),
+      ).length,
+      approved: projects.filter((project) => project.status === 'APPROVED').length,
+    };
+  });
+
+  constructor() {
+    forkJoin({
+      user: this.userService.getCurrentUser(),
+      projects: this.projectService.getProjects(),
+      activities: this.notificationService.getRecentActivity(),
+    })
+      .pipe(
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(),
+      )
+      .subscribe(({ user, projects, activities }) => {
+        this.user.set(user);
+        this.projects.set(projects);
+        this.activities.set(activities);
+      });
+  }
+}
