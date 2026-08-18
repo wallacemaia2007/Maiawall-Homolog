@@ -79,6 +79,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'investments',
+        loadComponent: () =>
+          import('./features/investments/pages/investments/investments.component').then(
+            (m) => m.InvestmentsComponent,
+          ),
+      },
+      {
+        path: 'investments/:id',
+        loadComponent: () =>
+          import(
+            './features/investments/pages/investment-details/investment-details.component'
+          ).then((m) => m.InvestmentDetailsComponent),
+      },
+      {
         path: 'configs',
         loadComponent: () =>
           import('./features/configs/pages/configs/configs.component').then(

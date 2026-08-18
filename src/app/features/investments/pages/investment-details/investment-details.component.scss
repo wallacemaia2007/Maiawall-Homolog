@@ -1,0 +1,236 @@
+:host {
+  display: block;
+}
+
+.investment-details-page {
+  display: grid;
+  gap: 24px;
+}
+
+.back-link {
+  width: max-content;
+  color: #4c3ae3;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.details-hero,
+.section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.details-hero p,
+.eyebrow,
+h2,
+h3,
+p,
+dl,
+dd {
+  margin: 0;
+}
+
+.eyebrow {
+  color: #6b6e76;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h2,
+h3 {
+  color: #16171b;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-top: 6px;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 650;
+}
+
+h3 {
+  margin-top: 6px;
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+.details-hero p:not(.eyebrow),
+dt,
+.details-card span,
+.installment-card small,
+.empty-state p:not(.eyebrow) {
+  color: #6b6e76;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.details-card,
+.details-panel,
+.installment-card,
+.empty-state {
+  border: 1px solid #e4e4e1;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 16px 42px rgba(22, 23, 27, 0.04);
+}
+
+.details-card {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+}
+
+.details-card strong {
+  color: #16171b;
+  font-size: 1.15rem;
+}
+
+.details-panel {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.status-badge,
+.installment-badge {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status-active,
+.status-pending {
+  background: #f1efff;
+  color: #4c3ae3;
+}
+
+.status-paid {
+  background: #eaf8ef;
+  color: #1c7c3e;
+}
+
+.status-overdue {
+  background: #fff3e7;
+  color: #b45616;
+}
+
+.status-cancelled {
+  background: #f0f0ef;
+  color: #6b6e76;
+}
+
+.progress-track {
+  overflow: hidden;
+  height: 10px;
+  border-radius: 999px;
+  background: #ededeb;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #4c3ae3, #1a9b72);
+}
+
+.installment-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.installment-stats div {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fafaf9;
+}
+
+dd {
+  color: #16171b;
+  font-weight: 750;
+}
+
+.installments-list {
+  display: grid;
+  gap: 10px;
+}
+
+.installment-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+}
+
+.installment-number {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 8px;
+  background: #fafaf9;
+  color: #16171b;
+  font-weight: 800;
+}
+
+.installment-card div {
+  display: grid;
+  gap: 4px;
+}
+
+.installment-card strong {
+  color: #16171b;
+}
+
+.empty-state {
+  display: grid;
+  gap: 10px;
+  min-height: 260px;
+  place-content: center;
+  padding: 32px;
+  text-align: center;
+}
+
+@media (max-width: 1040px) {
+  .details-grid,
+  .installment-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .details-hero,
+  .section-heading,
+  .details-grid,
+  .installment-stats {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .installment-card {
+    grid-template-columns: 52px minmax(0, 1fr);
+  }
+
+  .installment-badge {
+    grid-column: 1 / -1;
+  }
+}

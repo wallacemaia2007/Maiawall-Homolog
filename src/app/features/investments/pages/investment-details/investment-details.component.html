@@ -1,0 +1,102 @@
+<section class="investment-details-page">
+  <a routerLink="/investments" class="back-link">Voltar para investimentos</a>
+
+  @if (viewModel$ | async; as viewModel) {
+    @if (viewModel.plan; as plan) {
+      <header class="details-hero">
+        <div>
+          <p class="eyebrow">Detalhes do plano</p>
+          <h2>{{ plan.projectName }}</h2>
+          <p>{{ plan.name }}</p>
+        </div>
+        <span class="status-badge" [class]="'status-badge status-' + plan.status.toLowerCase()">
+          {{ getPlanStatusLabel(plan.status) }}
+        </span>
+      </header>
+
+      <section class="details-grid">
+        <article class="details-card">
+          <span>Valor total</span>
+          <strong>{{ formatCurrency(plan.totalAmount) }}</strong>
+        </article>
+        <article class="details-card">
+          <span>Valor pago</span>
+          <strong>{{ formatCurrency(plan.paidAmount) }}</strong>
+        </article>
+        <article class="details-card">
+          <span>Valor restante</span>
+          <strong>{{ formatCurrency(plan.remainingAmount) }}</strong>
+        </article>
+        <article class="details-card">
+          <span>Parcelamento</span>
+          <strong>{{ plan.installments }}x de {{ formatCurrency(plan.installmentAmount) }}</strong>
+        </article>
+      </section>
+
+      <section class="details-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Status financeiro</p>
+            <h3>{{ getProgress(plan) }}% pago</h3>
+          </div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <span [style.width.%]="getProgress(plan)"></span>
+        </div>
+
+        <dl class="installment-stats">
+          <div>
+            <dt>Parcelas pagas</dt>
+            <dd>{{ countInstallments(viewModel.installments, 'PAID') }}</dd>
+          </div>
+          <div>
+            <dt>Parcelas pendentes</dt>
+            <dd>{{ countInstallments(viewModel.installments, 'PENDING') }}</dd>
+          </div>
+          <div>
+            <dt>Parcelas atrasadas</dt>
+            <dd>{{ countInstallments(viewModel.installments, 'OVERDUE') }}</dd>
+          </div>
+          <div>
+            <dt>Criado em</dt>
+            <dd>{{ formatDate(plan.createdAt) }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="details-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Parcelas</p>
+            <h3>Cronograma financeiro</h3>
+          </div>
+        </div>
+
+        <div class="installments-list">
+          @for (installment of viewModel.installments; track installment.id) {
+            <article class="installment-card">
+              <span class="installment-number">{{ installment.number | number: '2.0-0' }}</span>
+              <div>
+                <strong>{{ formatCurrency(installment.amount) }}</strong>
+                <small>Vencimento em {{ formatDate(installment.dueDate) }}</small>
+              </div>
+              <span
+                class="installment-badge"
+                [class]="'installment-badge status-' + installment.status.toLowerCase()"
+              >
+                {{ getInstallmentStatusLabel(installment.status) }}
+              </span>
+            </article>
+          }
+        </div>
+      </section>
+    } @else {
+      <section class="empty-state">
+        <p class="eyebrow">Investimentos</p>
+        <h2>Plano nao encontrado.</h2>
+        <p>Verifique a lista de investimentos disponiveis para este cliente.</p>
+      </section>
+    }
+  }
+</section>

@@ -46,6 +46,11 @@ export class DashboardLayoutComponent {
       route: '/pendencias',
       icon: 'pendencias',
     },
+    {
+      label: 'Investimentos',
+      route: '/investments',
+      icon: 'investments',
+    },
   ];
 
   constructor() {
@@ -92,6 +97,10 @@ export class DashboardLayoutComponent {
 
     if (url.startsWith('/pendencias')) {
       return 'Pendencias';
+    }
+
+    if (url.startsWith('/investments')) {
+      return 'Investimentos';
     }
 
     if (url.startsWith('/profile')) {
