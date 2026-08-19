@@ -7,4 +7,22 @@ export interface User {
   active?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  cpf?: string;
+  phone?: string;
+  birthDate?: string;
+  address?: UserAddress;
+  rg?: string;
+  gender?: string;
+  profession?: string;
+  company?: string;
+}
+
+export interface UserAddress {
+  cep?: string;
+  street?: string;
+  number?: string;
+  complement?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
 }

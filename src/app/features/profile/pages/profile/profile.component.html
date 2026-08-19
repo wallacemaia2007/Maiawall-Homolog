@@ -1,1 +1,195 @@
-<h1>Profile works!</h1>
+<div class="profile-page">
+  <header class="profile-hero">
+    <p class="eyebrow">Perfil</p>
+    <h2>Perfil</h2>
+    <p>Gerencie suas informacoes pessoais e sua conta.</p>
+  </header>
+
+  @if (loading()) {
+    <section class="profile-skeleton" aria-live="polite" aria-label="Carregando perfil">
+      <div class="skeleton-avatar"></div>
+      <div class="skeleton-row skeleton-row--wide"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+      <div class="skeleton-row"></div>
+    </section>
+  } @else if (error()) {
+    <section class="state-card state-error" aria-live="polite">
+      <h3>Nao foi possivel carregar seus dados.</h3>
+      <button type="button" (click)="loadProfile()">Tentar novamente</button>
+    </section>
+  } @else {
+    @if (user(); as currentUser) {
+      <section class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar-wrapper">
+            @if (currentUser.avatarUrl) {
+              <img
+                [src]="currentUser.avatarUrl"
+                [alt]="currentUser.name"
+                class="profile-avatar"
+              />
+            } @else {
+              <div class="profile-avatar profile-avatar--initials">
+                {{ getInitials(currentUser.name) }}
+              </div>
+            }
+          </div>
+          <div class="profile-header-info">
+            <h3>{{ currentUser.name }}</h3>
+            <p class="profile-email">{{ currentUser.email }}</p>
+          </div>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <section class="profile-section">
+          <h4 class="section-title">Informacoes pessoais</h4>
+          <dl class="info-grid">
+            <div class="info-item">
+              <dt>Nome completo</dt>
+              <dd>{{ currentUser.name }}</dd>
+            </div>
+            <div class="info-item">
+              <dt>Email</dt>
+              <dd>{{ currentUser.email }}</dd>
+            </div>
+            <div class="info-item">
+              <dt>CPF</dt>
+              <dd>{{ currentUser.cpf ? formatCpf(currentUser.cpf) : 'Nao informado' }}</dd>
+            </div>
+            <div class="info-item">
+              <dt>Telefone</dt>
+              <dd>{{ currentUser.phone ? formatPhone(currentUser.phone) : 'Nao informado' }}</dd>
+            </div>
+            <div class="info-item">
+              <dt>Data de nascimento</dt>
+              <dd>{{ currentUser.birthDate ? formatDate(currentUser.birthDate) : 'Nao informado' }}</dd>
+            </div>
+            @if (currentUser.rg) {
+              <div class="info-item">
+                <dt>RG</dt>
+                <dd>{{ currentUser.rg }}</dd>
+              </div>
+            }
+            @if (currentUser.gender) {
+              <div class="info-item">
+                <dt>Genero</dt>
+                <dd>{{ currentUser.gender }}</dd>
+              </div>
+            }
+            @if (currentUser.profession) {
+              <div class="info-item">
+                <dt>Profissao</dt>
+                <dd>{{ currentUser.profession }}</dd>
+              </div>
+            }
+            @if (currentUser.company) {
+              <div class="info-item">
+                <dt>Empresa</dt>
+                <dd>{{ currentUser.company }}</dd>
+              </div>
+            }
+            @if (currentUser.createdAt) {
+              <div class="info-item">
+                <dt>Data de cadastro</dt>
+                <dd>{{ formatDate(currentUser.createdAt) }}</dd>
+              </div>
+            }
+          </dl>
+        </section>
+
+        @if (hasAddress(currentUser)) {
+          <div class="profile-divider"></div>
+
+          <section class="profile-section">
+            <h4 class="section-title">Endereco</h4>
+            <dl class="info-grid info-grid--address">
+              @if (currentUser.address?.cep) {
+                <div class="info-item">
+                  <dt>CEP</dt>
+                  <dd>{{ currentUser.address!.cep }}</dd>
+                </div>
+              }
+              @if (currentUser.address?.street) {
+                <div class="info-item">
+                  <dt>Rua</dt>
+                  <dd>{{ currentUser.address!.street }}</dd>
+                </div>
+              }
+              @if (currentUser.address?.number) {
+                <div class="info-item">
+                  <dt>Numero</dt>
+                  <dd>{{ currentUser.address!.number }}</dd>
+                </div>
+              }
+              @if (currentUser.address?.complement) {
+                <div class="info-item">
+                  <dt>Complemento</dt>
+                  <dd>{{ currentUser.address!.complement }}</dd>
+                </div>
+              }
+              @if (currentUser.address?.neighborhood) {
+                <div class="info-item">
+                  <dt>Bairro</dt>
+                  <dd>{{ currentUser.address!.neighborhood }}</dd>
+                </div>
+              }
+              @if (currentUser.address?.city) {
+                <div class="info-item">
+                  <dt>Cidade</dt>
+                  <dd>{{ currentUser.address!.city }}</dd>
+                </div>
+              }
+              @if (currentUser.address?.state) {
+                <div class="info-item">
+                  <dt>Estado</dt>
+                  <dd>{{ currentUser.address!.state }}</dd>
+                </div>
+              }
+            </dl>
+          </section>
+        } @else {
+          <div class="profile-divider"></div>
+
+          <section class="profile-section">
+            <h4 class="section-title">Endereco</h4>
+            <p class="info-empty">Endereco nao informado.</p>
+          </section>
+        }
+
+        <div class="profile-divider"></div>
+
+        <section class="profile-section profile-section--security">
+          <h4 class="section-title">Seguranca</h4>
+          <div class="security-card">
+            <div class="security-info">
+              <h5>Senha</h5>
+              <p>Proteja sua conta mantendo sua senha atualizada.</p>
+              <p class="security-note">Por seguranca, sua senha nao e exibida.</p>
+            </div>
+            <button
+              type="button"
+              class="btn-change-password"
+              (click)="openPasswordModal()"
+            >
+              Alterar senha
+            </button>
+          </div>
+        </section>
+      </section>
+    } @else {
+      <section class="state-card state-error" aria-live="polite">
+        <h3>Nao foi possivel carregar seus dados.</h3>
+        <button type="button" (click)="loadProfile()">Tentar novamente</button>
+      </section>
+    }
+  }
+
+  <app-password-change-modal 
+    [userEmail]="passwordModalEmail()" 
+    [isOpen]="passwordModalOpen()"
+    (closedEvent)="closePasswordModal()" 
+  />
+</div>
