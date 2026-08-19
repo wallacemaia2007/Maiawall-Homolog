@@ -23,6 +23,7 @@ import { InvestmentPlan } from '../../../investments/models/investment.model';
 import { InvestmentService } from '../../../investments/services/investment.service';
 import { ModalProjectApprovalComponent } from '../../components/modal-project-approval/modal-project-approval.component';
 import { ModalProjectRevisionComponent } from '../../components/modal-project-revision/modal-project-revision.component';
+import { MeetingRequestModalComponent } from '../../../../shared/components/meeting-request-modal/meeting-request-modal.component';
 
 @Component({
   selector: 'app-project-details',
@@ -32,6 +33,7 @@ import { ModalProjectRevisionComponent } from '../../components/modal-project-re
     RouterLink,
     ModalProjectApprovalComponent,
     ModalProjectRevisionComponent,
+    MeetingRequestModalComponent,
   ],
   templateUrl: './project-details.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,6 +72,8 @@ export class ProjectDetailsComponent {
   protected readonly changesRequested = signal(false);
   protected readonly approvalModalOpen = signal(false);
   protected readonly changeModalOpen = signal(false);
+  protected readonly meetingModalOpen = signal(false);
+  protected readonly meetingSent = signal(false);
 
   protected readonly relatedInvestment = computed(() => {
     const project = this.project();
@@ -156,6 +160,19 @@ export class ProjectDetailsComponent {
 
   protected closeChangeModal(): void {
     this.changeModalOpen.set(false);
+  }
+
+  protected openMeetingModal(): void {
+    this.meetingSent.set(false);
+    this.meetingModalOpen.set(true);
+  }
+
+  protected closeMeetingModal(): void {
+    this.meetingModalOpen.set(false);
+  }
+
+  protected markMeetingSent(): void {
+    this.meetingSent.set(true);
   }
 
   protected submitChangeRequest(project: Project, message: string): void {

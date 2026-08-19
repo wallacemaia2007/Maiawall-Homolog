@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { getProjectStatusView } from '../../../../core/models/project-status.view';
 import { Project, ProjectStatus } from '../../../../core/models/project.model';
 import { ProjectService } from '../../../../core/services/project.service';
+import { MeetingRequestModalComponent } from '../../../../shared/components/meeting-request-modal/meeting-request-modal.component';
 
 type ProjectFilter = ProjectStatus | 'ALL';
 
@@ -17,7 +18,7 @@ interface ProjectFilterOption {
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, MeetingRequestModalComponent],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +31,9 @@ export class ProjectsComponent {
   protected readonly projects = signal<Project[]>([]);
   protected readonly searchTerm = signal('');
   protected readonly selectedFilter = signal<ProjectFilter>('ALL');
+  protected readonly meetingModalOpen = signal(false);
+  protected readonly meetingProjectId = signal('');
+  protected readonly meetingSent = signal(false);
 
   protected readonly filterOptions: ProjectFilterOption[] = [
     { label: 'Todos', value: 'ALL' },
@@ -98,6 +102,20 @@ export class ProjectsComponent {
   protected updateSearch(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchTerm.set(input.value);
+  }
+
+  protected openMeetingModal(project: Project): void {
+    this.meetingProjectId.set(project.id);
+    this.meetingSent.set(false);
+    this.meetingModalOpen.set(true);
+  }
+
+  protected closeMeetingModal(): void {
+    this.meetingModalOpen.set(false);
+  }
+
+  protected markMeetingSent(): void {
+    this.meetingSent.set(true);
   }
 
   protected getStatusLabel(status: ProjectStatus): string {

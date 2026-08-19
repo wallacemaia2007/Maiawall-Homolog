@@ -1,9 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 
-import { CONTACT_DATA } from '../../../../core/data/contact';
-import { Project } from '../../../../core/models/project.model';
-import { ProjectService } from '../../../../core/services/project.service';
 import { ThemeMode, ThemeService } from '../../../../core/services/theme.service';
 import { UserService } from '../../../../core/services/user.service';
 
@@ -37,21 +34,11 @@ interface LanguageOption {
 })
 export class ConfigsComponent {
   private readonly userService = inject(UserService);
-  private readonly projectService = inject(ProjectService);
   private readonly themeService = inject(ThemeService);
-  private readonly meetingRecipient = CONTACT_DATA.email;
   private saveFeedbackTimeout?: ReturnType<typeof setTimeout>;
 
   protected readonly saved = signal(false);
-  protected readonly meetingModalOpen = signal(false);
-  protected readonly meetingSent = signal(false);
-  protected readonly meetingSubject = signal('');
-  protected readonly meetingMessage = signal('');
-  protected readonly meetingProjectId = signal('');
-  protected readonly meetingError = signal<string | null>(null);
   protected readonly languageMenuOpen = signal(false);
-  protected readonly projectMenuOpen = signal(false);
-  protected readonly projects = signal<Project[]>([]);
   protected readonly languageOptions: LanguageOption[] = [
     {
       label: 'Portugues',
@@ -101,10 +88,6 @@ export class ConfigsComponent {
       }));
     });
 
-    this.projectService.getProjects().subscribe((projects) => {
-      this.projects.set(projects);
-      this.meetingProjectId.set(projects[0]?.id ?? '');
-    });
   }
 
   protected updateField<K extends keyof ConfigsForm>(field: K, value: ConfigsForm[K]): void {
@@ -131,10 +114,8 @@ export class ConfigsComponent {
   }
 
   @HostListener('document:keydown.escape')
-  protected closeMeetingModalOnEscape(): void {
-    this.closeMeetingModal();
+  protected closeMenusOnEscape(): void {
     this.languageMenuOpen.set(false);
-    this.projectMenuOpen.set(false);
   }
 
   protected toggleLanguageMenu(): void {
@@ -153,84 +134,4 @@ export class ConfigsComponent {
     );
   }
 
-  protected toggleProjectMenu(): void {
-    this.projectMenuOpen.update((open) => !open);
-  }
-
-  protected selectMeetingProject(projectId: string): void {
-    this.meetingError.set(null);
-    this.meetingProjectId.set(projectId);
-    this.projectMenuOpen.set(false);
-  }
-
-  protected getSelectedProjectName(): string {
-    return this.projects().find((project) => project.id === this.meetingProjectId())?.name ?? 'Selecione';
-  }
-
-  protected openMeetingModal(): void {
-    this.meetingError.set(null);
-    this.meetingSent.set(false);
-    this.projectMenuOpen.set(false);
-    this.meetingModalOpen.set(true);
-  }
-
-  protected closeMeetingModal(): void {
-    this.meetingModalOpen.set(false);
-  }
-
-  protected updateMeetingSubject(subject: string): void {
-    this.meetingError.set(null);
-    this.meetingSubject.set(subject);
-  }
-
-  protected updateMeetingMessage(message: string): void {
-    this.meetingError.set(null);
-    this.meetingMessage.set(message);
-  }
-
-  protected sendMeetingRequest(): void {
-    const subject = this.meetingSubject().trim();
-    const message = this.meetingMessage().trim();
-    const projectName = this.getSelectedProjectName();
-
-    if (!subject) {
-      this.meetingError.set('Informe o assunto da reuniao.');
-      return;
-    }
-
-    if (!this.meetingProjectId()) {
-      this.meetingError.set('Selecione o projeto da reuniao.');
-      return;
-    }
-
-    if (!message) {
-      this.meetingError.set('Descreva o que voce quer alinhar na reuniao.');
-      return;
-    }
-
-    const { name, email, company } = this.form();
-    const mailSubject = `Solicitacao de reuniao - ${subject}`;
-    const body = [
-      'O cliente solicitou o agendamento de uma reuniao.',
-      '',
-      `Assunto: ${subject}`,
-      `Projeto: ${projectName}`,
-      '',
-      'Mensagem:',
-      message,
-      '',
-      `Nome: ${name}`,
-      `E-mail: ${email}`,
-      `Empresa: ${company}`,
-      '',
-      'Origem: Portal Maiawall Homolog',
-    ].join('\n');
-
-    window.location.href = `mailto:${this.meetingRecipient}?subject=${encodeURIComponent(
-      mailSubject,
-    )}&body=${encodeURIComponent(body)}`;
-
-    this.meetingSent.set(true);
-    this.closeMeetingModal();
-  }
 }

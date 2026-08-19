@@ -69,9 +69,18 @@
                 Acessar producao
               </a>
             }
+            <button type="button" class="secondary-action" (click)="openMeetingModal()">
+              Agendar reuniao
+            </button>
           </div>
         </div>
       </section>
+
+      @if (meetingSent()) {
+        <p class="save-feedback" aria-live="polite">
+          Sua solicitacao de reuniao foi preparada no cliente de e-mail.
+        </p>
+      }
 
       @if (project.status === 'HOMOLOGATION' || approvalMessage() || changesRequested()) {
         <section class="approval-card">
@@ -303,6 +312,18 @@
     <app-modal-project-revision
       (cancelled)="closeChangeModal()"
       (submitted)="submitChangeRequest(modalProject, $event)"
+    />
+  }
+}
+
+@if (meetingModalOpen()) {
+  @if (project(); as meetingProject) {
+    <app-meeting-request-modal
+      [projects]="[meetingProject]"
+      [selectedProjectId]="meetingProject.id"
+      [lockProject]="true"
+      (closed)="closeMeetingModal()"
+      (sent)="markMeetingSent()"
     />
   }
 }

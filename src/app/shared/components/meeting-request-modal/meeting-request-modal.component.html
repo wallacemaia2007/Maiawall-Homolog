@@ -1,0 +1,91 @@
+<div class="modal-layer" role="presentation">
+  <button type="button" class="modal-backdrop" aria-label="Fechar agendamento" (click)="close()"></button>
+
+  <section class="meeting-modal" role="dialog" aria-modal="true" aria-labelledby="meeting-title">
+    <header class="modal-header">
+      <div>
+        <p class="eyebrow">Agendamento</p>
+        <h3 id="meeting-title">Solicitar reuniao</h3>
+        <p class="modal-subtitle">Conte o contexto para direcionarmos a conversa ao projeto certo.</p>
+      </div>
+
+      <button type="button" class="modal-close" aria-label="Fechar" (click)="close()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="meeting-form">
+      <div class="select-row">
+        <span>Projeto</span>
+        <div class="custom-select" [class.is-open]="projectMenuOpen()" [class.is-locked]="lockProject">
+          <button
+            type="button"
+            class="custom-select-trigger"
+            aria-haspopup="listbox"
+            [attr.aria-expanded]="projectMenuOpen()"
+            [attr.aria-disabled]="lockProject"
+            (click)="toggleProjectMenu()"
+          >
+            <span>{{ getSelectedProjectName() }}</span>
+            @if (!lockProject) {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            }
+          </button>
+
+          @if (projectMenuOpen()) {
+            <div class="custom-select-menu" role="listbox" aria-label="Projeto da reuniao">
+              @for (project of projects; track project.id) {
+                <button
+                  type="button"
+                  class="custom-select-option"
+                  [class.is-selected]="projectId() === project.id"
+                  role="option"
+                  [attr.aria-selected]="projectId() === project.id"
+                  (click)="selectProject(project.id)"
+                >
+                  {{ project.name }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <label class="meeting-field">
+        <span>Assunto da reuniao</span>
+        <input
+          type="text"
+          [value]="subject()"
+          placeholder="Ex: Revisar ajustes do site institucional"
+          (input)="updateSubject($any($event.target).value)"
+          [attr.aria-invalid]="error() ? true : null"
+        />
+      </label>
+
+      <label class="meeting-field">
+        <span>Mensagem</span>
+        <textarea
+          [value]="message()"
+          rows="5"
+          placeholder="Descreva os pontos que voce quer alinhar, duvidas ou prioridades para a reuniao."
+          (input)="updateMessage($any($event.target).value)"
+          [attr.aria-invalid]="error() ? true : null"
+        ></textarea>
+      </label>
+    </div>
+
+    @if (error()) {
+      <p class="meeting-error" aria-live="polite">{{ error() }}</p>
+    }
+
+    <div class="modal-actions">
+      <button type="button" class="secondary-button" (click)="close()">Cancelar</button>
+      <button type="button" class="save-button" (click)="sendMeetingRequest()">Enviar por e-mail</button>
+    </div>
+  </section>
+</div>

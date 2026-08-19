@@ -238,6 +238,7 @@ dd,
 }
 
 .hero-actions a,
+.hero-actions button,
 .approval-actions button,
 .card-link,
 .state-card a,
@@ -254,6 +255,15 @@ dd,
   border: 1px solid #e4e4e1;
   background: #fff;
   color: #16171b;
+}
+
+.save-feedback {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #eef8ef;
+  color: #247348;
+  font-size: 0.9rem;
+  font-weight: 650;
 }
 
 .approval-card,

@@ -278,6 +278,12 @@ h2 {
   font-size: 0.9rem;
 }
 
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .project-link,
 .state-card button {
   width: max-content;
@@ -286,6 +292,21 @@ h2 {
   color: #fff;
   padding: 0 16px;
   text-decoration: none;
+}
+
+.secondary-project-link {
+  border: 1px solid #e4e4e1;
+  background: #fff;
+  color: #16171b;
+}
+
+.save-feedback {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #eef8ef;
+  color: #247348;
+  font-size: 0.9rem;
+  font-weight: 650;
 }
 
 .state-card {
@@ -312,9 +333,14 @@ h2 {
 
   .project-controls,
   .project-heading,
-  .project-meta {
+  .project-meta,
+  .project-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .project-actions .project-link {
+    width: 100%;
   }
 
   .search-field {

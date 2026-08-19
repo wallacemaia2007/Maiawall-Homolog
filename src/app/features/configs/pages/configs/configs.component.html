@@ -9,10 +9,6 @@
     </div>
 
     <div class="hero-actions">
-      <button type="button" class="meeting-button" (click)="openMeetingModal()">
-        Agendar reuniao
-      </button>
-
       <button type="button" class="save-button" (click)="saveSettings()">
         Salvar alteracoes
       </button>
@@ -21,12 +17,6 @@
 
   @if (saved()) {
   <p class="save-feedback" aria-live="polite">Configuracoes salvas localmente.</p>
-  }
-
-  @if (meetingSent()) {
-  <p class="save-feedback" aria-live="polite">
-    Sua solicitacao de reuniao foi preparada no cliente de e-mail.
-  </p>
   }
 
   <div class="configs-grid">
@@ -182,98 +172,3 @@
     </div>
   </div>
 </section>
-
-@if (meetingModalOpen()) {
-  <div class="modal-layer" role="presentation">
-    <button type="button" class="modal-backdrop" aria-label="Fechar agendamento" (click)="closeMeetingModal()"></button>
-
-    <section class="meeting-modal" role="dialog" aria-modal="true" aria-labelledby="meeting-title">
-      <header class="modal-header">
-        <div>
-          <p class="eyebrow">Agendamento</p>
-          <h3 id="meeting-title">Solicitar reuniao</h3>
-          <p class="modal-subtitle">Conte o contexto para direcionarmos a conversa ao projeto certo.</p>
-        </div>
-
-        <button type="button" class="modal-close" aria-label="Fechar" (click)="closeMeetingModal()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m6 6 12 12M18 6 6 18" />
-          </svg>
-        </button>
-      </header>
-
-      <div class="meeting-form">
-        <div class="select-row">
-          <span>Projeto</span>
-          <div class="custom-select" [class.is-open]="projectMenuOpen()">
-            <button
-              type="button"
-              class="custom-select-trigger"
-              aria-haspopup="listbox"
-              [attr.aria-expanded]="projectMenuOpen()"
-              (click)="toggleProjectMenu()"
-            >
-              <span>{{ getSelectedProjectName() }}</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
-
-            @if (projectMenuOpen()) {
-              <div class="custom-select-menu" role="listbox" aria-label="Projeto da reuniao">
-                @for (project of projects(); track project.id) {
-                  <button
-                    type="button"
-                    class="custom-select-option"
-                    [class.is-selected]="meetingProjectId() === project.id"
-                    role="option"
-                    [attr.aria-selected]="meetingProjectId() === project.id"
-                    (click)="selectMeetingProject(project.id)"
-                  >
-                    {{ project.name }}
-                  </button>
-                }
-              </div>
-            }
-          </div>
-        </div>
-
-        <label class="meeting-field">
-          <span>Assunto da reuniao</span>
-          <input
-            type="text"
-            [value]="meetingSubject()"
-            placeholder="Ex: Revisar ajustes do site institucional"
-            (input)="updateMeetingSubject($any($event.target).value)"
-            [attr.aria-invalid]="meetingError() ? true : null"
-          />
-        </label>
-
-        <label class="meeting-field">
-          <span>Mensagem</span>
-          <textarea
-            [value]="meetingMessage()"
-            rows="5"
-            placeholder="Descreva os pontos que voce quer alinhar, duvidas ou prioridades para a reuniao."
-            (input)="updateMeetingMessage($any($event.target).value)"
-            [attr.aria-invalid]="meetingError() ? true : null"
-          ></textarea>
-        </label>
-      </div>
-
-      @if (meetingError()) {
-      <p class="meeting-error" aria-live="polite">{{ meetingError() }}</p>
-      }
-
-      <div class="modal-actions">
-        <button type="button" class="secondary-button" (click)="closeMeetingModal()">
-          Cancelar
-        </button>
-        <button type="button" class="save-button" (click)="sendMeetingRequest()">
-          Enviar por e-mail
-        </button>
-      </div>
-    </section>
-  </div>
-}

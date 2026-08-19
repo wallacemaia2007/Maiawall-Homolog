@@ -6,184 +6,181 @@
   </header>
 
   @if (plans$ | async; as plans) {
-    @if (plans.length > 0) {
-      <section class="summary-grid" aria-label="Resumo financeiro">
-        <article class="summary-card">
-          <span>Total contratado</span>
-          <strong>{{ formatCurrency(getSummaryValue(plans, 'totalContracted')) }}</strong>
-        </article>
-        <article class="summary-card">
-          <span>Ja pago</span>
-          <strong>{{ formatCurrency(getSummaryValue(plans, 'totalPaid')) }}</strong>
-        </article>
-        <article class="summary-card">
-          <span>Falta pagar</span>
-          <strong>{{ formatCurrency(getSummaryValue(plans, 'totalRemaining')) }}</strong>
-        </article>
-      </section>
+  @if (plans.length > 0) {
+  <section class="summary-grid" aria-label="Resumo financeiro">
+    <article class="summary-card">
+      <span>Total contratado</span>
+      <strong>{{ formatCurrency(getSummaryValue(plans, 'totalContracted')) }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Ja pago</span>
+      <strong>{{ formatCurrency(getSummaryValue(plans, 'totalPaid')) }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Falta pagar</span>
+      <strong>{{ formatCurrency(getSummaryValue(plans, 'totalRemaining')) }}</strong>
+    </article>
+  </section>
 
-      <p class="active-count">
-        Voce possui {{ getActivePlansCount(plans) }} plano ativo.
-      </p>
+  <p class="active-count">
+    Voce possui {{ getActivePlansCount(plans) }} plano ativo.
+  </p>
 
-      @if (getPrimaryPlan(plans); as primaryPlan) {
-        <section class="main-grid">
-          <article class="featured-plan">
-            <div class="section-heading">
-              <div>
-                <p class="eyebrow">Plano principal</p>
-                <h3>{{ primaryPlan.name }}</h3>
-              </div>
-              <span class="status-badge" [class]="'status-badge status-' + primaryPlan.status.toLowerCase()">
-                {{ getPlanStatusLabel(primaryPlan.status) }}
-              </span>
-            </div>
+  @if (getPrimaryPlan(plans); as primaryPlan) {
+  <section class="main-grid">
+    <article class="featured-plan">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Plano principal</p>
+          <h3>{{ primaryPlan.name }}</h3>
+        </div>
+        <span class="status-badge" [class]="'status-badge status-' + primaryPlan.status.toLowerCase()">
+          {{ getPlanStatusLabel(primaryPlan.status) }}
+        </span>
+      </div>
 
-            <dl class="plan-facts">
-              <div>
-                <dt>Projeto</dt>
-                <dd>{{ primaryPlan.projectName }}</dd>
-              </div>
-              <div>
-                <dt>Valor total</dt>
-                <dd>{{ formatCurrency(primaryPlan.totalAmount) }}</dd>
-              </div>
-              <div>
-                <dt>Parcelamento</dt>
-                <dd>{{ primaryPlan.installments }}x de {{ formatCurrency(primaryPlan.installmentAmount) }}</dd>
-              </div>
-              <div>
-                <dt>Parcelas pagas</dt>
-                <dd>{{ primaryPlan.paidInstallments }} de {{ primaryPlan.installments }}</dd>
-              </div>
-            </dl>
+      <dl class="plan-facts">
+        <div>
+          <dt>Projeto</dt>
+          <dd>{{ primaryPlan.projectName }}</dd>
+        </div>
+        <div>
+          <dt>Valor total</dt>
+          <dd>{{ formatCurrency(primaryPlan.totalAmount) }}</dd>
+        </div>
+        <div>
+          <dt>Parcelamento</dt>
+          <dd>{{ primaryPlan.installments }}x de {{ formatCurrency(primaryPlan.installmentAmount) }}</dd>
+        </div>
+        <div>
+          <dt>Parcelas pagas</dt>
+          <dd>{{ primaryPlan.paidInstallments }} de {{ primaryPlan.installments }}</dd>
+        </div>
+      </dl>
 
-            <div class="progress-block">
-              <div class="progress-label">
-                <span>Progresso financeiro</span>
-                <strong>{{ getProgress(primaryPlan) }}% pago</strong>
-              </div>
-              <div class="progress-track" aria-hidden="true">
-                <span [style.width.%]="getProgress(primaryPlan)"></span>
-              </div>
-            </div>
+      <div class="progress-block">
+        <div class="progress-label">
+          <span>Progresso financeiro</span>
+          <strong>{{ getProgress(primaryPlan) }}% pago</strong>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <span [style.width.%]="getProgress(primaryPlan)"></span>
+        </div>
+      </div>
 
-            <div class="money-split">
-              <div>
-                <span>Pago</span>
-                <strong>{{ formatCurrency(primaryPlan.paidAmount) }}</strong>
-              </div>
-              <div>
-                <span>Restante</span>
-                <strong>{{ formatCurrency(primaryPlan.remainingAmount) }}</strong>
-              </div>
-            </div>
-          </article>
+      <div class="money-split">
+        <div>
+          <span>Pago</span>
+          <strong>{{ formatCurrency(primaryPlan.paidAmount) }}</strong>
+        </div>
+        <div>
+          <span>Restante</span>
+          <strong>{{ formatCurrency(primaryPlan.remainingAmount) }}</strong>
+        </div>
+      </div>
+    </article>
 
-          <aside class="next-payment" aria-label="Proximo pagamento">
-            <p class="eyebrow">Proximo pagamento</p>
-            @if (getNextInstallment(primaryPlan.id); as nextInstallment) {
-              <strong>{{ nextInstallment.number }}a parcela</strong>
-              <span class="next-amount">{{ formatCurrency(nextInstallment.amount) }}</span>
-              <div>
-                <small>Vencimento</small>
-                <span>{{ formatLongDate(nextInstallment.dueDate) }}</span>
-              </div>
-              <button type="button">Pagar parcela</button>
-            } @else {
-              <strong>Plano quitado</strong>
-              <span class="next-amount">{{ formatCurrency(0) }}</span>
-              <p>Nenhuma parcela pendente para este projeto.</p>
-            }
-          </aside>
-        </section>
-
-        <section class="plans-list-section">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Meus planos</p>
-              <h3>Projetos contratados</h3>
-            </div>
-          </div>
-
-          <div class="plans-list">
-            @for (plan of plans; track plan.id) {
-              <article class="plan-card">
-                <div>
-                  <span class="project-name">{{ plan.projectName }}</span>
-                  <h4>{{ plan.name }}</h4>
-                </div>
-
-                <div class="mini-progress">
-                  <span>{{ getProgress(plan) }}% pago</span>
-                  <div class="progress-track" aria-hidden="true">
-                    <span [style.width.%]="getProgress(plan)"></span>
-                  </div>
-                </div>
-
-                <p>{{ formatCurrency(plan.paidAmount) }} / {{ formatCurrency(plan.totalAmount) }}</p>
-                <a [routerLink]="['/investments', plan.id]">Ver detalhes</a>
-              </article>
-            }
-          </div>
-        </section>
-
-        <section class="installments-section">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Parcelas</p>
-              <h3>Parcelas por projeto</h3>
-            </div>
-          </div>
-
-          <div class="groups">
-            @for (plan of plans; track plan.id) {
-              <article class="group">
-                <div class="section-heading">
-                  <div>
-                    <span class="project-name">{{ plan.projectName }}</span>
-                    <h4>{{ plan.name }}</h4>
-                  </div>
-                  <span class="status-badge" [class]="'status-badge status-' + plan.status.toLowerCase()">
-                    {{ getPlanStatusLabel(plan.status) }}
-                  </span>
-                </div>
-
-                <div class="installments-table" role="table" [attr.aria-label]="'Parcelas de ' + plan.projectName">
-                  <div class="installments-row installments-head" role="row">
-                    <span role="columnheader">No.</span>
-                    <span role="columnheader">Valor</span>
-                    <span role="columnheader">Vencimento</span>
-                    <span role="columnheader">Status</span>
-                  </div>
-
-            @for (installment of getInstallments(plan.id); track installment.id) {
-              <div class="installments-row" role="row">
-                <span role="cell">{{ installment.number | number: '2.0-0' }}</span>
-                <span role="cell">{{ formatCurrency(installment.amount) }}</span>
-                <span role="cell">{{ formatDate(installment.dueDate) }}</span>
-                <span role="cell">
-                  <span
-                    class="installment-badge"
-                    [class]="'installment-badge status-' + installment.status.toLowerCase()"
-                  >
-                    {{ getInstallmentStatusLabel(installment.status) }}
-                  </span>
-                </span>
-              </div>
-            }
-                </div>
-              </article>
-            }
-          </div>
-        </section>
+    <aside class="next-payment" aria-label="Proximo pagamento">
+      <p class="eyebrow">Proximo pagamento</p>
+      @if (getNextInstallment(primaryPlan.id); as nextInstallment) {
+      <strong>{{ nextInstallment.number }}ª parcela</strong>
+      <span class="next-amount">{{ formatCurrency(nextInstallment.amount) }}</span>
+      <div>
+        <small>Vencimento</small>
+        <span>{{ formatLongDate(nextInstallment.dueDate) }}</span>
+      </div>
+      <button type="button">Pagar parcela</button>
+      } @else {
+      <strong>Plano quitado</strong>
+      <span class="next-amount">{{ formatCurrency(0) }}</span>
+      <p>Nenhuma parcela pendente para este projeto.</p>
       }
-    } @else {
-      <section class="empty-state">
-        <p class="eyebrow">Investimentos</p>
-        <h2>Voce ainda nao possui nenhum plano financeiro cadastrado.</h2>
-        <p>Quando um plano for associado aos seus projetos, ele aparecera aqui.</p>
-      </section>
-    }
+    </aside>
+  </section>
+
+  <section class="plans-list-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Meus planos</p>
+        <h3>Projetos contratados</h3>
+      </div>
+    </div>
+
+    <div class="plans-list">
+      @for (plan of plans; track plan.id) {
+      <article class="plan-card">
+        <div>
+          <span class="project-name">{{ plan.projectName }}</span>
+          <h4>{{ plan.name }}</h4>
+        </div>
+
+        <div class="mini-progress">
+          <span>{{ getProgress(plan) }}% pago</span>
+          <div class="progress-track" aria-hidden="true">
+            <span [style.width.%]="getProgress(plan)"></span>
+          </div>
+        </div>
+
+        <p>{{ formatCurrency(plan.paidAmount) }} / {{ formatCurrency(plan.totalAmount) }}</p>
+        <a [routerLink]="['/investments', plan.id]">Ver detalhes</a>
+      </article>
+      }
+    </div>
+  </section>
+
+  <section class="installments-section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Parcelas</p>
+        <h3>Parcelas por projeto</h3>
+      </div>
+    </div>
+
+    <div class="groups">
+      @for (plan of plans; track plan.id) {
+      <article class="group">
+        <div class="section-heading">
+          <div>
+            <span class="project-name">{{ plan.projectName }}</span>
+            <h4>{{ plan.name }}</h4>
+          </div>
+          <span class="status-badge" [class]="'status-badge status-' + plan.status.toLowerCase()">
+            {{ getPlanStatusLabel(plan.status) }}
+          </span>
+        </div>
+
+        <div class="installments-table" role="table" [attr.aria-label]="'Parcelas de ' + plan.projectName">
+          <div class="installments-row installments-head" role="row">
+            <span role="columnheader">No.</span>
+            <span role="columnheader">Valor</span>
+            <span role="columnheader">Vencimento</span>
+            <span role="columnheader">Status</span>
+          </div>
+
+          @for (installment of getInstallments(plan.id); track installment.id) {
+          <div class="installments-row" role="row">
+            <span role="cell">{{ installment.number | number: '2.0-0' }}</span>
+            <span role="cell">{{ formatCurrency(installment.amount) }}</span>
+            <span role="cell">{{ formatDate(installment.dueDate) }}</span>
+            <span role="cell">
+              <span class="installment-badge" [class]="'installment-badge status-' + installment.status.toLowerCase()">
+                {{ getInstallmentStatusLabel(installment.status) }}
+              </span>
+            </span>
+          </div>
+          }
+        </div>
+      </article>
+      }
+    </div>
+  </section>
+  }
+  } @else {
+  <section class="empty-state">
+    <p class="eyebrow">Investimentos</p>
+    <h2>Voce ainda nao possui nenhum plano financeiro cadastrado.</h2>
+    <p>Quando um plano for associado aos seus projetos, ele aparecera aqui.</p>
+  </section>
+  }
   }
 </section>

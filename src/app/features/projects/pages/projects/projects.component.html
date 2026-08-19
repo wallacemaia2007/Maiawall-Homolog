@@ -62,6 +62,12 @@
       </section>
 
       @if (filteredProjects().length > 0) {
+        @if (meetingSent()) {
+          <p class="save-feedback" aria-live="polite">
+            Sua solicitacao de reuniao foi preparada no cliente de e-mail.
+          </p>
+        }
+
         <section class="projects-grid" aria-label="Lista de projetos">
           @for (project of filteredProjects(); track project.id) {
             <article class="project-card" [class.is-primary]="project.isPrimary">
@@ -112,7 +118,12 @@
                   </div>
                 </div>
 
-                <a class="project-link" [routerLink]="['/projects', project.id]">Ver projeto</a>
+                <div class="project-actions">
+                  <a class="project-link" [routerLink]="['/projects', project.id]">Ver projeto</a>
+                  <button type="button" class="project-link secondary-project-link" (click)="openMeetingModal(project)">
+                    Agendar reuniao
+                  </button>
+                </div>
               </div>
             </article>
           }
@@ -131,3 +142,13 @@
     }
   }
 </section>
+
+@if (meetingModalOpen()) {
+  <app-meeting-request-modal
+    [projects]="projects()"
+    [selectedProjectId]="meetingProjectId()"
+    [lockProject]="true"
+    (closed)="closeMeetingModal()"
+    (sent)="markMeetingSent()"
+  />
+}
