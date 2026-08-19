@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, HostListener, input, output } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  input,
+  output,
+  viewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-modal-template',
@@ -7,16 +15,25 @@ import { ChangeDetectionStrategy, Component, HostListener, input, output } from 
   styleUrl: './modal-template.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ModalTemplateComponent {
+export class ModalTemplateComponent implements AfterViewInit {
   readonly eyebrow = input('');
   readonly title = input.required<string>();
   readonly description = input('');
   readonly closeLabel = input('Fechar modal');
 
   readonly closed = output<void>();
+  protected readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
-  @HostListener('document:keydown.escape')
-  protected closeOnEscape(): void {
-    this.closed.emit();
+  ngAfterViewInit(): void {
+    const dialog = this.dialog().nativeElement;
+
+    if (!dialog.open) {
+      dialog.showModal();
+    }
   }
+
+  protected close(): void {
+    this.dialog().nativeElement.close();
+  }
+
 }

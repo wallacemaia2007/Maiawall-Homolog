@@ -7,7 +7,8 @@
     "start": "node server.js",
     "start:local": "node scripts/start-local.js",
     "dev": "nodemon scripts/start-local.js",
-    "seed": "node scripts/seed-maiawall.js"
+    "seed": "node scripts/seed-maiawall.js",
+    "seed:local": "node scripts/seed-maiawall.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

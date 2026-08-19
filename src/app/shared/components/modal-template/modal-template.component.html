@@ -1,12 +1,10 @@
-<div class="modal-layer" role="presentation">
-  <button
-    type="button"
-    class="modal-backdrop"
-    [attr.aria-label]="closeLabel()"
-    (click)="closed.emit()"
-  ></button>
-
-  <section class="modal-shell" role="dialog" aria-modal="true" [attr.aria-labelledby]="'modal-title'">
+<dialog
+  #dialog
+  class="modal-dialog"
+  [attr.aria-labelledby]="'modal-title'"
+  (close)="closed.emit()"
+>
+  <section class="modal-shell">
     <header class="modal-header">
       <div>
         @if (eyebrow()) {
@@ -18,7 +16,7 @@
         }
       </div>
 
-      <button type="button" class="modal-close" [attr.aria-label]="closeLabel()" (click)="closed.emit()">
+      <button type="button" class="modal-close" [attr.aria-label]="closeLabel()" (click)="close()">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="m6 6 12 12M18 6 6 18" />
         </svg>
@@ -33,4 +31,4 @@
       <ng-content select="[modal-actions]" />
     </footer>
   </section>
-</div>
+</dialog>

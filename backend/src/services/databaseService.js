@@ -10,6 +10,7 @@ const COLLECTIONS = [
   "investmentPlans",
   "installments",
   "notifications",
+  "pending",
   "passwordRecoveryTokens",
 ];
 

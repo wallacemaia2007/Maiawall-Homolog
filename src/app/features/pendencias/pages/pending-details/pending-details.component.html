@@ -1,0 +1,247 @@
+<section class="pending-details-page">
+  <a class="back-link" routerLink="/pending">Voltar para pendencias</a>
+
+  @if (loading()) {
+    <section class="state-card" aria-live="polite">
+      <span class="loader"></span>
+      <p>Carregando pendencia...</p>
+    </section>
+  } @else if (errorMessage() && !pending()) {
+    <section class="state-card state-error">
+      <h2>{{ errorMessage() }}</h2>
+      <button type="button" (click)="reload()">Tentar novamente</button>
+    </section>
+  } @else {
+    @if (pending(); as item) {
+      <header class="details-hero">
+        <div>
+          <p class="eyebrow">Pendencia</p>
+          <h2>{{ item.title }}</h2>
+          @if (item.project) {
+            <p>{{ item.project.name }}</p>
+          }
+        </div>
+
+        <span class="status-badge" [class]="'status-badge tone-' + getStatusTone(item)">
+          {{ getStatusLabel(item) }}
+        </span>
+      </header>
+
+      @if (submitMessage()) {
+        <section class="success-message" aria-live="polite">
+          <strong>{{ submitMessage() }}</strong>
+          @if (item.respondedAt) {
+            <span>Enviado em {{ formatDate(item.respondedAt) }}</span>
+          }
+        </section>
+      }
+
+      <div class="details-grid">
+      <section class="info-column">
+        <article class="content-panel">
+          <span class="panel-label">O que precisamos de voce</span>
+          @if (item.description) {
+            <p>{{ item.description }}</p>
+          } @else {
+            <p>Esta pendencia nao possui descricao detalhada.</p>
+          }
+        </article>
+
+        <article class="content-panel meta-panel">
+          <span class="panel-label">Projeto relacionado</span>
+          @if (item.project) {
+            <h3>{{ item.project.name }}</h3>
+            @if (item.project.status) {
+              <p>Status: {{ getProjectStatusLabel(item.project.status) }}</p>
+            }
+            <a class="project-action" [routerLink]="['/projects', item.project.id]">Ver projeto</a>
+          } @else {
+            <p>Nenhum projeto relacionado foi informado pela API.</p>
+          }
+        </article>
+
+        <article class="content-panel meta-panel">
+          <span class="panel-label">Informacoes</span>
+          <dl>
+            <div>
+              <dt>Criada em</dt>
+              <dd>{{ formatDate(item.createdAt) }}</dd>
+            </div>
+            @if (item.updatedAt) {
+              <div>
+                <dt>Atualizada em</dt>
+                <dd>{{ formatDate(item.updatedAt) }}</dd>
+              </div>
+            }
+            @if (item.dueDate) {
+              <div>
+                <dt>Prazo</dt>
+                <dd>{{ formatDate(item.dueDate) }}</dd>
+              </div>
+            }
+            @if (item.priority) {
+              <div>
+                <dt>Prioridade</dt>
+                <dd>{{ getPriorityLabel(item.priority) }}</dd>
+              </div>
+            }
+          </dl>
+        </article>
+      </section>
+
+      <section class="response-column">
+        @if (canRespond()) {
+          <form class="response-form" [formGroup]="form()" (ngSubmit)="submit()">
+            <header>
+              <div>
+                <span class="panel-label">Responder</span>
+                <h3>Informacoes solicitadas</h3>
+              </div>
+              <small>{{ requiredCount(item.fields) }} obrigatorios</small>
+            </header>
+
+            @if (item.fields.length > 0) {
+              @for (field of item.fields; track field.id) {
+                <div class="field-block">
+                  <label [attr.for]="field.id">
+                    <span>
+                      {{ field.label }}
+                      @if (field.required) {
+                        <strong>*</strong>
+                      }
+                    </span>
+                    @if (field.description) {
+                      <small>{{ field.description }}</small>
+                    }
+                  </label>
+
+                  @if (isFileField(field)) {
+                    <div class="upload-box">
+                      <input
+                        [id]="field.id"
+                        type="file"
+                        [attr.accept]="acceptFor(field)"
+                        [attr.multiple]="field.multiple ? true : null"
+                        (change)="onFilesSelected(field, $event)"
+                      />
+                      <span>Selecionar arquivo</span>
+                      @if (fileHint(field)) {
+                        <small>{{ fileHint(field) }}</small>
+                      }
+                    </div>
+
+                    @if (field.required && selectedFilesFor(field.id).length === 0 && (field.files ?? []).length === 0) {
+                      <p class="field-error">Arquivo obrigatorio.</p>
+                    }
+
+                    @if (selectedFilesFor(field.id).length > 0) {
+                      <ul class="file-list">
+                        @for (file of selectedFilesFor(field.id); track file.name; let index = $index) {
+                          <li>
+                            <span>
+                              <strong>{{ file.name }}</strong>
+                              <small>{{ fileSize(file.size) }}</small>
+                            </span>
+                            <button type="button" (click)="removeFile(field.id, index)">Remover</button>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  } @else if (isTextareaField(field)) {
+                    <textarea
+                      [id]="field.id"
+                      rows="5"
+                      [formControl]="controlFor(field)"
+                      [attr.aria-invalid]="controlFor(field).invalid && controlFor(field).touched"
+                    ></textarea>
+                  } @else {
+                    <input
+                      [id]="field.id"
+                      [type]="inputType(field)"
+                      [formControl]="controlFor(field)"
+                      [attr.aria-invalid]="controlFor(field).invalid && controlFor(field).touched"
+                    />
+                  }
+
+                  @if (!isFileField(field) && controlFor(field).invalid && controlFor(field).touched) {
+                    <p class="field-error">Campo obrigatorio.</p>
+                  }
+                </div>
+              }
+
+              @if (errorMessage()) {
+                <p class="submit-error">{{ errorMessage() }}</p>
+              }
+
+              <button type="submit" class="submit-button" [disabled]="submitting()">
+                {{ submitting() ? 'Enviando...' : 'Enviar resposta' }}
+              </button>
+            } @else {
+              <section class="state-card">
+                <h3>Nenhum campo foi informado pela API.</h3>
+                <p>Esta pendencia nao possui campos dinamicos para resposta.</p>
+              </section>
+            }
+          </form>
+        } @else {
+          <article class="content-panel response-readonly">
+            <span class="panel-label">Sua resposta</span>
+            @if (item.responses?.length) {
+              @for (response of item.responses; track response.fieldId) {
+                <div class="response-item">
+                  <strong>{{ response.label ?? response.fieldId }}</strong>
+                  @if (response.value) {
+                    <p>{{ response.value }}</p>
+                  }
+                  @if (response.files?.length) {
+                    <ul class="file-list">
+                      @for (file of response.files; track file.name) {
+                        <li>
+                          <span>
+                            <strong>{{ file.name }}</strong>
+                            @if (file.size) {
+                              <small>{{ fileSize(file.size) }}</small>
+                            }
+                          </span>
+                          @if (file.url) {
+                            <a [href]="file.url" target="_blank" rel="noreferrer">Abrir</a>
+                          }
+                        </li>
+                      }
+                    </ul>
+                  }
+                </div>
+              }
+            } @else {
+              <p>Nenhuma resposta foi retornada pela API.</p>
+            }
+          </article>
+        }
+      </section>
+      </div>
+    }
+  }
+
+  @if (confirmationOpen()) {
+    <app-modal-template
+      eyebrow="Confirmacao"
+      title="Enviar resposta?"
+      description="Depois do envio, o administrador recebera estas informacoes para continuar a pendencia."
+      closeLabel="Cancelar envio"
+      (closed)="closeConfirmation()"
+    >
+      <div modal-body class="confirm-body">
+        <p>Revise os campos e arquivos selecionados antes de confirmar.</p>
+      </div>
+
+      <div modal-actions>
+        <button type="button" class="secondary-button" [disabled]="submitting()" (click)="closeConfirmation()">
+          Cancelar
+        </button>
+        <button type="button" class="submit-button" [disabled]="submitting()" (click)="confirmSubmit()">
+          {{ submitting() ? 'Enviando...' : 'Enviar resposta' }}
+        </button>
+      </div>
+    </app-modal-template>
+  }
+</section>

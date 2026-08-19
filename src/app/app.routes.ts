@@ -72,11 +72,23 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'pendencias',
+        path: 'pending',
         loadComponent: () =>
           import('./features/pendencias/pages/pendencias/pendencias.component').then(
             (m) => m.PendenciasComponent,
           ),
+      },
+      {
+        path: 'pending/:id',
+        loadComponent: () =>
+          import('./features/pendencias/pages/pending-details/pending-details.component').then(
+            (m) => m.PendingDetailsComponent,
+          ),
+      },
+      {
+        path: 'pendencias',
+        redirectTo: 'pending',
+        pathMatch: 'full',
       },
       {
         path: 'investments',

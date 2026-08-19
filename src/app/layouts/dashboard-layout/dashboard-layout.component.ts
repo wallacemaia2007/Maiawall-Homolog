@@ -47,7 +47,7 @@ export class DashboardLayoutComponent {
     },
     {
       label: 'Pendencias',
-      route: '/pendencias',
+      route: '/pending',
       icon: 'pendencias',
     },
     {
@@ -113,7 +113,7 @@ export class DashboardLayoutComponent {
       return 'Notificacoes';
     }
 
-    if (url.startsWith('/pendencias')) {
+    if (url.startsWith('/pending') || url.startsWith('/pendencias')) {
       return 'Pendencias';
     }
 

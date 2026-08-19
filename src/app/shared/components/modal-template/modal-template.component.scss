@@ -1,34 +1,21 @@
 :host {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: block;
-  animation: none;
-  transform: none;
+  display: contents;
 }
 
-.modal-layer {
-  position: fixed;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 20px;
-}
-
-.modal-backdrop {
-  position: absolute;
-  inset: 0;
+.modal-dialog {
+  width: min(calc(100vw - 40px), 580px);
+  max-height: calc(100dvh - 40px);
   border: 0;
-  background: rgba(0, 0, 0, 0.68);
-  cursor: pointer;
+  padding: 0;
+  background: transparent;
+}
+
+.modal-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.82);
 }
 
 .modal-shell {
-  position: relative;
-  z-index: 1;
   display: grid;
-  width: min(100%, 580px);
-  max-height: calc(100dvh - 40px);
   gap: 20px;
   overflow: auto;
   box-sizing: border-box;
@@ -103,18 +90,22 @@ h3 {
 .modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 16px;
+}
+
+.modal-actions ::ng-deep [modal-actions] {
+  display: flex;
+  gap: 16px;
 }
 
 @media (max-width: 680px) {
-  .modal-layer {
-    align-items: end;
-    padding: 12px;
+  .modal-dialog {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    margin-block-end: 12px;
   }
 
   .modal-shell {
-    width: 100%;
-    max-height: calc(100dvh - 24px);
     padding: 20px;
   }
 
@@ -124,6 +115,10 @@ h3 {
   }
 
   .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions ::ng-deep [modal-actions] {
     flex-direction: column-reverse;
   }
 

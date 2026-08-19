@@ -13,6 +13,7 @@ const COLLECTIONS = [
   "investmentPlans",
   "installments",
   "notifications",
+  "pending",
   "passwordRecoveryTokens",
 ];
 
@@ -201,7 +202,148 @@ async function main() {
       read: false,
       createdAt: daysAgo(3),
     },
+    {
+      id: id(),
+      userId: clientId,
+      title: "Pendencia criada",
+      message: "Precisamos dos arquivos de identidade visual para seguir com o portal.",
+      type: "PENDING",
+      relatedEntityId: null,
+      read: false,
+      createdAt: daysAgo(2),
+    },
+    {
+      id: id(),
+      userId: clientId,
+      title: "Pendencia criada",
+      message: "Confirme os textos finais da pagina inicial.",
+      type: "PENDING",
+      relatedEntityId: null,
+      read: false,
+      createdAt: daysAgo(1),
+    },
   ];
+
+  const pending = [
+    {
+      id: id(),
+      clientId,
+      projectId: primaryProjectId,
+      project: {
+        id: primaryProjectId,
+        name: "Portal Institucional Maiawall",
+        status: "HOMOLOGATION",
+      },
+      title: "Enviar identidade visual",
+      description: "Precisamos dos arquivos de logo, paleta de cores e referencias visuais para seguir com a interface.",
+      status: "PENDING",
+      isRead: false,
+      priority: "HIGH",
+      dueDate: daysAgo(-7),
+      fields: [
+        {
+          id: id(),
+          type: "FILE",
+          label: "Logo da empresa",
+          description: "Envie a logo oficial em PNG, SVG ou PDF.",
+          required: true,
+          allowedExtensions: [".png", ".svg", ".pdf"],
+          maxSizeMb: 10,
+          multiple: false,
+          files: [],
+        },
+        {
+          id: id(),
+          type: "TEXTAREA",
+          label: "Referencias visuais",
+          description: "Cole links ou descreva estilos que deseja seguir.",
+          required: false,
+          value: null,
+        },
+      ],
+      responses: [],
+      createdAt: daysAgo(2),
+      updatedAt: daysAgo(2),
+    },
+    {
+      id: id(),
+      clientId,
+      projectId: primaryProjectId,
+      project: {
+        id: primaryProjectId,
+        name: "Portal Institucional Maiawall",
+        status: "HOMOLOGATION",
+      },
+      title: "Confirmar textos da pagina inicial",
+      description: "Revise e envie os textos finais que devem aparecer na primeira dobra do site.",
+      status: "PENDING",
+      isRead: false,
+      priority: "MEDIUM",
+      fields: [
+        {
+          id: id(),
+          type: "TEXT",
+          label: "Titulo principal",
+          description: "Texto principal da home.",
+          required: true,
+          value: null,
+        },
+        {
+          id: id(),
+          type: "TEXTAREA",
+          label: "Descricao curta",
+          description: "Resumo abaixo do titulo principal.",
+          required: true,
+          value: null,
+        },
+      ],
+      responses: [],
+      createdAt: daysAgo(1),
+      updatedAt: daysAgo(1),
+    },
+    {
+      id: id(),
+      clientId,
+      projectId: homologProjectId,
+      project: {
+        id: homologProjectId,
+        name: "Dashboard Operacional",
+        status: "DEVELOPMENT",
+      },
+      title: "Enviar dados de contato",
+      description: "Informe os canais oficiais que devem aparecer no projeto.",
+      status: "PENDING",
+      isRead: true,
+      priority: "LOW",
+      fields: [
+        {
+          id: id(),
+          type: "EMAIL",
+          label: "E-mail comercial",
+          description: "E-mail publico para contato.",
+          required: true,
+          value: null,
+        },
+        {
+          id: id(),
+          type: "TEXT",
+          label: "WhatsApp",
+          description: "Numero com DDD.",
+          required: true,
+          value: null,
+        },
+      ],
+      responses: [],
+      createdAt: daysAgo(4),
+      updatedAt: daysAgo(3),
+    },
+  ];
+
+  notifications
+    .filter((notification) => notification.type === "PENDING")
+    .forEach((notification, index) => {
+      notification.relatedEntityId = pending[index]?.id || null;
+    });
 
   const data = {
     users,
@@ -212,6 +354,7 @@ async function main() {
     investmentPlans,
     installments,
     notifications,
+    pending,
     passwordRecoveryTokens: [],
   };
 
@@ -231,6 +374,9 @@ async function main() {
     db.collection("investmentPlans").createIndex({ projectId: 1 }),
     db.collection("installments").createIndex({ investmentPlanId: 1 }),
     db.collection("notifications").createIndex({ userId: 1 }),
+    db.collection("pending").createIndex({ clientId: 1 }),
+    db.collection("pending").createIndex({ projectId: 1 }),
+    db.collection("pending").createIndex({ clientId: 1, status: 1 }),
     db.collection("passwordRecoveryTokens").createIndex({ email: 1 }),
     db.collection("passwordRecoveryTokens").createIndex({ tokenHash: 1 }, { unique: true }),
   ]);
@@ -238,6 +384,7 @@ async function main() {
   console.log("Seed Maiawall Homolog concluido.");
   console.log("ADMIN  admin@maiawall.com   Admin@123");
   console.log("CLIENT cliente@maiawall.com Cliente@123");
+  console.log(`PENDENCIAS ${pending.length} registros criados para o cliente.`);
 }
 
 function assertSeedAllowed() {

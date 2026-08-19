@@ -55,6 +55,7 @@ const ACTIVITY_TYPES = [
 
 const INVESTMENT_STATUSES = ["ACTIVE", "PAID", "PENDING", "OVERDUE", "CANCELLED"];
 const INSTALLMENT_STATUSES = ["PAID", "PENDING", "OVERDUE"];
+const PENDING_STATUSES = ["PENDING", "RESPONDED", "COMPLETED", "CANCELLED"];
 const loginSchema = z.object({
   email: z.string().email("E-mail invalido"),
   password: z.string().min(1, "Senha obrigatoria"),
@@ -105,6 +106,17 @@ const installmentPatchSchema = installmentSchema.partial();
 
 const notificationReadSchema = z.object({
   read: z.boolean().optional().default(true),
+});
+
+const pendingReadSchema = z.object({
+  read: z.boolean().optional().default(true),
+});
+
+const pendingResponseSchema = z.object({
+  responses: z.array(z.object({
+    fieldId: z.string().min(1),
+    value: z.union([z.string(), z.number(), z.boolean(), z.null()]).optional().nullable(),
+  })).optional().default([]),
 });
 
 const allowedCorsOrigins = [
@@ -182,6 +194,7 @@ app.get("/api/health/storage", (_req, res) => {
       investmentPlans: db.investmentPlans.length,
       installments: db.installments.length,
       notifications: db.notifications.length,
+      pending: db.pending.length,
     },
   }));
 });
@@ -462,6 +475,64 @@ app.delete("/api/installments/:id", requireAuth, requireRole("ADMIN"), async (re
   res.status(204).send();
 });
 
+app.get("/api/pending", requireAuth, (req, res) => {
+  const items = getVisiblePending(req.user).sort(sortNewest);
+  res.json(successResponse(items));
+});
+
+app.get("/api/pending/:id", requireAuth, (req, res) => {
+  const pending = findPendingForUser(req.params.id, req.user);
+  if (!pending) return res.status(404).json(errorResponse("Pendencia nao encontrada"));
+  res.json(successResponse(pending));
+});
+
+app.patch("/api/pending/:id/read", requireAuth, validateBody(pendingReadSchema), async (req, res) => {
+  const pending = findPendingForUser(req.params.id, req.user);
+  if (!pending) return res.status(404).json(errorResponse("Pendencia nao encontrada"));
+
+  pending.isRead = req.body.read;
+  pending.read = req.body.read;
+  pending.updatedAt = new Date().toISOString();
+  await databaseService.replaceDocument("pending", pending);
+  res.json(successResponse(pending));
+});
+
+app.post("/api/pending/:id/responses", requireAuth, validateBody(pendingResponseSchema), async (req, res) => {
+  const pending = findPendingForUser(req.params.id, req.user);
+  if (!pending) return res.status(404).json(errorResponse("Pendencia nao encontrada"));
+  if (String(pending.status).toUpperCase() !== "PENDING") {
+    return res.status(409).json(errorResponse("Pendencia nao aceita novas respostas neste status"));
+  }
+
+  const validationError = validatePendingRequiredFields(pending, req.body.responses);
+  if (validationError) {
+    return res.status(400).json(errorResponse(validationError));
+  }
+
+  const now = new Date().toISOString();
+  pending.responses = req.body.responses.map((response) => {
+    const field = pending.fields.find((item) => item.id === response.fieldId);
+    return {
+      fieldId: response.fieldId,
+      label: field?.label || response.fieldId,
+      value: response.value ?? null,
+      files: [],
+    };
+  });
+  pending.fields = pending.fields.map((field) => {
+    const response = req.body.responses.find((item) => item.fieldId === field.id);
+    return response ? { ...field, value: response.value ?? null } : field;
+  });
+  pending.status = "RESPONDED";
+  pending.isRead = true;
+  pending.read = true;
+  pending.respondedAt = now;
+  pending.updatedAt = now;
+
+  await databaseService.replaceDocument("pending", pending);
+  res.status(201).json(successResponse(pending));
+});
+
 app.get("/api/notifications", requireAuth, (req, res) => {
   const db = databaseService.getState();
   const items = db.notifications
@@ -660,6 +731,38 @@ function getVisibleInvestmentPlans(user) {
   const plans = databaseService.getState().investmentPlans || [];
   if (user.role === "ADMIN") return plans;
   return plans.filter((plan) => plan.clientId === user.id);
+}
+
+function getVisiblePending(user) {
+  const pending = databaseService.getState().pending || [];
+  if (user.role === "ADMIN") return pending;
+  return pending.filter((item) => item.clientId === user.id);
+}
+
+function findPendingForUser(pendingId, user) {
+  return getVisiblePending(user).find((item) => item.id === pendingId);
+}
+
+function validatePendingRequiredFields(pending, responses) {
+  const responseByField = new Map(responses.map((response) => [response.fieldId, response]));
+  const missingField = (pending.fields || [])
+    .filter((field) => String(field.type).toUpperCase() !== "FILE")
+    .filter((field) => field.required)
+    .find((field) => {
+      const response = responseByField.get(field.id);
+      return response?.value === undefined || response.value === null || String(response.value).trim().length === 0;
+    });
+
+  if (missingField) {
+    return `Campo obrigatorio nao preenchido: ${missingField.label}`;
+  }
+
+  const pendingStatus = String(pending.status).toUpperCase();
+  if (!PENDING_STATUSES.includes(pendingStatus)) {
+    return "Status da pendencia invalido";
+  }
+
+  return "";
 }
 
 async function updateProject(req, res) {
