@@ -2,7 +2,14 @@
   display: block;
 }
 
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
 .activity-card {
+  position: relative;
   padding: 24px;
   border: 1px solid #e4e4e1;
   border-radius: 8px;
@@ -26,6 +33,10 @@
   font-weight: 650;
 }
 
+.card-heading-with-action {
+  padding-right: 0;
+}
+
 .activity-list {
   display: grid;
   gap: 16px;
@@ -39,6 +50,21 @@
   grid-template-columns: 38px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
+}
+
+.notification-list li {
+  display: block;
+}
+
+.notification-activity-item {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 0;
+  color: inherit;
+  text-align: left;
 }
 
 .activity-icon {
@@ -64,6 +90,11 @@
   border-radius: 999px;
   background: currentColor;
   transform-origin: left center;
+}
+
+.activity-icon.is-unread {
+  background: #fff5db;
+  color: #9c6812;
 }
 
 .activity-icon--check::before {
@@ -98,6 +129,29 @@
   display: block;
 }
 
+.activity-row-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.activity-row-heading strong {
+  min-width: 0;
+}
+
+.notification-activity-item div {
+  min-width: 0;
+}
+
+.notification-activity-item span,
+.notification-activity-item time {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .activity-list strong {
   color: #16171b;
   font-size: 0.95rem;
@@ -111,6 +165,73 @@
   margin-top: 2px;
 }
 
+.activity-action {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #16171b;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.activity-row-heading .activity-action {
+  flex: 0 0 auto;
+}
+
+.all-notifications-link {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  color: #4c3ae3;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.all-notifications-link:hover {
+  text-decoration: underline;
+}
+
+.card-heading-with-action .activity-action {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  margin-top: 0;
+}
+
 .empty-message {
   margin-top: 20px;
+}
+
+@media (max-width: 1120px) {
+  .activity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .card-heading-with-action {
+    padding-right: 0;
+  }
+
+  .all-notifications-link,
+  .card-heading-with-action .activity-action {
+    position: static;
+    margin-top: 12px;
+  }
+
+  .activity-row-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }

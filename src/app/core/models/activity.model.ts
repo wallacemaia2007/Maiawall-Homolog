@@ -1,5 +1,6 @@
 export interface Activity {
   id: string;
+  projectId: string;
   title: string;
   projectName: string;
   happenedAt: string;

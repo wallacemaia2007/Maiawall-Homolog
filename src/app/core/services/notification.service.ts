@@ -256,6 +256,7 @@ export class NotificationService {
   private toDashboardActivity(activity: ProjectActivity, projectName: string): Activity {
     return {
       id: activity.id,
+      projectId: activity.projectId,
       title: activity.title,
       projectName,
       happenedAt: activity.createdAt,

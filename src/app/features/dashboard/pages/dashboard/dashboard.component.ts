@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, forkJoin } from 'rxjs';
 
 import { Activity } from '../../../../core/models/activity.model';
+import { Notification } from '../../../../core/models/notification.model';
 import { Project } from '../../../../core/models/project.model';
 import { User } from '../../../../core/models/user.model';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -39,6 +40,7 @@ export class DashboardComponent {
   protected readonly user = signal<User | null>(null);
   protected readonly projects = signal<Project[]>([]);
   protected readonly activities = signal<Activity[]>([]);
+  protected readonly notifications = signal<Notification[]>([]);
 
   protected readonly primaryProject = computed(() =>
     this.projectService.getPrimaryProject(this.projects()),
@@ -65,15 +67,17 @@ export class DashboardComponent {
       user: this.userService.getCurrentUser(),
       projects: this.projectService.getProjects(),
       activities: this.notificationService.getRecentActivity(),
+      notifications: this.notificationService.getNotifications(),
     })
       .pipe(
         finalize(() => this.loading.set(false)),
         takeUntilDestroyed(),
       )
-      .subscribe(({ user, projects, activities }) => {
+      .subscribe(({ user, projects, activities, notifications }) => {
         this.user.set(user);
         this.projects.set(projects);
         this.activities.set(activities);
+        this.notifications.set(notifications);
       });
   }
 }
