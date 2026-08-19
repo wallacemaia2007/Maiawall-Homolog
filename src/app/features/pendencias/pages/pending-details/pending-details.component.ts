@@ -1,7 +1,7 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of, switchMap } from 'rxjs';
 
 import { ProjectStatus } from '../../../../core/models/project.model';
@@ -29,6 +29,8 @@ type PendingForm = FormGroup<Record<string, FormControl<string | null>>>;
 })
 export class PendingDetailsComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly pendingService = inject(PendingService);
 
   protected readonly loading = signal(true);
@@ -99,6 +101,15 @@ export class PendingDetailsComponent {
         },
         error: (error) => this.errorMessage.set(this.toLoadErrorMessage(error?.status)),
       });
+  }
+
+  protected goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+
+    this.router.navigateByUrl('/pending');
   }
 
   protected submit(): void {

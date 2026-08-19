@@ -1,5 +1,10 @@
 <section class="pending-details-page">
-  <a class="back-link" routerLink="/pending">Voltar para pendencias</a>
+  <button type="button" class="back-link" (click)="goBack()">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+    <span>Voltar</span>
+  </button>
 
   @if (loading()) {
     <section class="state-card" aria-live="polite">

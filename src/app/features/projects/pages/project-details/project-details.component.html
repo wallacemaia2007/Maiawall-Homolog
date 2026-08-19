@@ -6,11 +6,16 @@
   } @else if (error() || !project()) {
     <section class="state-card state-error">
       <h2>Nao foi possivel carregar seus projetos.</h2>
-      <a routerLink="/projects">Voltar para projetos</a>
+      <button type="button" (click)="goBack()">Voltar</button>
     </section>
   } @else {
     @if (project(); as project) {
-      <a class="back-link" routerLink="/projects">Voltar para projetos</a>
+      <button type="button" class="back-link" (click)="goBack()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+        <span>Voltar</span>
+      </button>
 
       <section class="project-hero">
         <div class="hero-image">

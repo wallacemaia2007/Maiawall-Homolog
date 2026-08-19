@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,7 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize, forkJoin } from 'rxjs';
 
 import { getProjectStatusView } from '../../../../core/models/project-status.view';
@@ -38,6 +38,8 @@ import { ModalProjectRevisionComponent } from '../../components/modal-project-re
 })
 export class ProjectDetailsComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly projectService = inject(ProjectService);
   private readonly investmentService = inject(InvestmentService);
   private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
@@ -118,6 +120,15 @@ export class ProjectDetailsComponent {
         },
         error: () => this.error.set(true),
       });
+  }
+
+  protected goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+
+    this.router.navigateByUrl('/projects');
   }
 
   protected approveProject(project: Project): void {

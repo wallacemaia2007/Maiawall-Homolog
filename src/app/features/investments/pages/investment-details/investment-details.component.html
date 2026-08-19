@@ -1,5 +1,10 @@
 <section class="investment-details-page">
-  <a routerLink="/investments" class="back-link">Voltar para investimentos</a>
+  <button type="button" class="back-link" (click)="goBack()">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+    <span>Voltar</span>
+  </button>
 
   @if (viewModel$ | async; as viewModel) {
     @if (viewModel.plan; as plan) {

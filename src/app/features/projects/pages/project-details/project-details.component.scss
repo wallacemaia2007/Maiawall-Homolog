@@ -46,6 +46,7 @@ h3 {
 .hero-actions a,
 .link-row a,
 .state-card a,
+.state-card button,
 .approval-actions button {
   display: inline-flex;
   align-items: center;
@@ -59,12 +60,22 @@ h3 {
 
 .back-link {
   width: max-content;
+  gap: 8px;
+  border: 0;
+  background: transparent;
   color: #4c3ae3;
+  cursor: pointer;
+  padding: 0;
 }
 
-.back-link::before {
-  margin-right: 8px;
-  content: '<';
+.back-link svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.4;
 }
 
 .project-hero,
@@ -229,7 +240,8 @@ dd,
 .hero-actions a,
 .approval-actions button,
 .card-link,
-.state-card a {
+.state-card a,
+.state-card button {
   border: 0;
   background: #16171b;
   color: #fff;

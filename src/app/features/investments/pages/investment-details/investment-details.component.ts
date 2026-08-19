@@ -1,6 +1,6 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, switchMap } from 'rxjs';
 
 import {
@@ -14,13 +14,15 @@ import { InvestmentService } from '../../services/investment.service';
 @Component({
   selector: 'app-investment-details',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './investment-details.component.html',
   styleUrl: './investment-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvestmentDetailsComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly investmentService = inject(InvestmentService);
   private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -49,6 +51,15 @@ export class InvestmentDetailsComponent {
     }
 
     return Math.round((plan.paidAmount / plan.totalAmount) * 100);
+  }
+
+  protected goBack(): void {
+    if (window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+
+    this.router.navigateByUrl('/investments');
   }
 
   protected countInstallments(installments: Installment[], status: InstallmentStatus): number {
