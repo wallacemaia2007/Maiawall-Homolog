@@ -1,74 +1,66 @@
 .notifications-page {
   display: grid;
-  gap: 1.5rem;
+  gap: 24px;
 }
 
-.eyebrow {
-  color: var(--mw-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
+.notifications-hero {
+  display: grid;
+  gap: 8px;
 }
 
-h2,
-h3,
-p {
+.notifications-hero .eyebrow,
+.notifications-hero h2,
+.notifications-hero p {
   margin: 0;
 }
 
-.notifications-list {
-  display: grid;
-  gap: 0.875rem;
-}
-
-.notification-item {
-  align-items: center;
-  background: var(--mw-surface);
-  border: 1px solid var(--mw-border);
-  border-radius: 8px;
-  display: flex;
-  gap: 1rem;
-  justify-content: space-between;
-  padding: 1rem;
-}
-
-.notification-item.is-read {
-  opacity: 0.68;
-}
-
-.notification-item p {
-  color: var(--mw-muted);
-  margin-top: 0.25rem;
-}
-
-.notification-item span {
-  color: var(--mw-muted);
-  display: block;
-  font-size: 0.8125rem;
-  margin-top: 0.5rem;
-}
-
-.notification-item button {
-  background: var(--mw-primary);
-  border: 0;
-  border-radius: 8px;
-  color: #fff;
-  cursor: pointer;
+.notifications-hero .eyebrow {
+  color: #6b6e76;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 0.7rem 1rem;
-  white-space: nowrap;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.empty-state {
-  background: var(--mw-surface);
-  border: 1px solid var(--mw-border);
-  border-radius: 8px;
-  padding: 1.5rem;
+.notifications-hero h2 {
+  color: #16171b;
+  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 650;
 }
 
-@media (max-width: 640px) {
-  .notification-item {
-    align-items: flex-start;
+.notifications-hero p:not(.eyebrow) {
+  color: #6b6e76;
+}
+
+.notification-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.secondary-link {
+  border: 1px solid #dededb;
+  background: #fff;
+  color: #16171b;
+}
+
+.mark-all-link:disabled,
+.notification-card-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+@media (max-width: 760px) {
+  .pending-controls {
+    align-items: stretch;
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .mark-all-link,
+  .notification-card-actions,
+  .notification-card-actions button {
+    width: 100%;
   }
 }

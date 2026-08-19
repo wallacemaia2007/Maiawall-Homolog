@@ -68,6 +68,9 @@
         }
       </span>
       <span class="link-label">{{ item.label }}</span>
+      @if (item.icon === 'notifications' && unreadNotifications() > 0) {
+        <span class="sidebar-badge" aria-label="Notificacoes nao lidas">{{ unreadNotifications() }}</span>
+      }
     </a>
     }
 

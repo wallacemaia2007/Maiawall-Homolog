@@ -19,6 +19,7 @@ export class SidebarComponent {
   readonly collapsed = input(false);
   readonly drawerOpen = input(false);
   readonly darkTheme = input(true);
+  readonly unreadNotifications = input(0);
   readonly navItems = input.required<SidebarNavItem[]>();
 
   readonly toggleCollapsed = output<void>();

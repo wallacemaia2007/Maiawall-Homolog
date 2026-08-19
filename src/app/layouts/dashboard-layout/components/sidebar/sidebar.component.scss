@@ -227,6 +227,20 @@
   transition: opacity 140ms ease;
 }
 
+.sidebar-badge {
+  display: inline-grid;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  margin-left: auto;
+  place-items: center;
+  border-radius: 999px;
+  background: #4c3ae3;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .logout-button {
   width: 100%;
   cursor: pointer;
@@ -254,7 +268,8 @@
 }
 
 .is-collapsed .brand-copy,
-.is-collapsed .link-label {
+.is-collapsed .link-label,
+.is-collapsed .sidebar-badge {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -343,7 +358,8 @@
   }
 
   .is-collapsed .brand-copy,
-  .is-collapsed .link-label {
+  .is-collapsed .link-label,
+  .is-collapsed .sidebar-badge {
     position: static;
     width: auto;
     height: auto;

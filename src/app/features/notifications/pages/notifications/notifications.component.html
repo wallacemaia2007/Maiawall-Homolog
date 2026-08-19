@@ -1,30 +1,135 @@
 <section class="notifications-page">
-  <header>
+  <header class="notifications-hero">
     <p class="eyebrow">Notificacoes</p>
-    <h2>Atualizacoes recentes</h2>
+    <h2>Notificacoes</h2>
+    <p>Acompanhe as novidades, atualizacoes e avisos dos seus projetos.</p>
   </header>
 
-  @if (notifications$ | async; as notifications) {
-    @if (notifications.length > 0) {
-      <div class="notifications-list">
-        @for (notification of notifications; track notification.id) {
-          <article class="notification-item" [class.is-read]="notification.read">
-            <div>
-              <h3>{{ notification.title }}</h3>
-              <p>{{ notification.message }}</p>
-              <span>{{ formatDate(notification.createdAt) }}</span>
-            </div>
+  @if (loading()) {
+    <section class="state-card" aria-live="polite">
+      <span class="loader"></span>
+      <p>Carregando notificacoes...</p>
+    </section>
+  } @else if (error()) {
+    <section class="state-card state-error">
+      <h3>{{ error() }}</h3>
+      <button type="button" (click)="loadNotifications()">Tentar novamente</button>
+    </section>
+  } @else {
+    @if (notifications().length > 0) {
+      <section class="summary-grid" aria-label="Resumo das notificacoes">
+        <article>
+          <span>Todas</span>
+          <strong>{{ summary().total }}</strong>
+        </article>
+        <article>
+          <span>Nao lidas</span>
+          <strong>{{ summary().unread }}</strong>
+        </article>
+        <article>
+          <span>Projetos</span>
+          <strong>{{ summary().projects }}</strong>
+        </article>
+        <article>
+          <span>Financeiro</span>
+          <strong>{{ summary().financial }}</strong>
+        </article>
+      </section>
 
-            @if (!notification.read) {
-              <button type="button" (click)="markAsRead(notification.id)">Marcar como lida</button>
-            }
-          </article>
-        }
-      </div>
+      <section class="pending-controls" aria-label="Filtros de notificacoes">
+        <div class="filter-tabs" role="tablist" aria-label="Categorias de notificacao">
+          @for (item of filters; track item.value) {
+            <button
+              type="button"
+              role="tab"
+              [class.is-active]="filter() === item.value"
+              [attr.aria-selected]="filter() === item.value"
+              (click)="setFilter(item.value)"
+            >
+              {{ item.label }}
+            </button>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="pending-link mark-all-link"
+          [disabled]="unreadCount() === 0 || actionLoading()"
+          (click)="markAllAsRead()"
+        >
+          Marcar todas como lidas
+        </button>
+      </section>
+
+      @if (filteredNotifications().length > 0) {
+        <section class="pending-list" aria-label="Lista de notificacoes">
+          @for (notification of filteredNotifications(); track notification.id) {
+            <article
+              class="pending-card"
+              [class.is-unread]="!notification.read"
+              [ngClass]="'priority-' + getCardTone(notification)"
+            >
+              <div class="card-top">
+                <div>
+                  @if (!notification.read) {
+                    <span class="unread-dot">Nova notificacao</span>
+                  }
+                  <h3>{{ notification.title }}</h3>
+                </div>
+
+                <span class="status-badge" [class]="'status-badge tone-' + getStatusTone(notification)">
+                  {{ getStatusLabel(notification) }}
+                </span>
+              </div>
+
+              <p class="project-name">{{ notificationSummary(notification) }}</p>
+              <p class="description">{{ notification.message }}</p>
+
+              <div class="pending-meta">
+                <span>{{ getVisual(notification).label }}</span>
+                <span>Criada {{ formatDate(notification.createdAt) }}</span>
+                @if (priorityLabel(notification.priority)) {
+                  <span [class]="'priority-badge priority-badge-' + getCardTone(notification)">
+                    Prioridade {{ priorityLabel(notification.priority) }}
+                  </span>
+                }
+              </div>
+
+              <div class="notification-card-actions">
+                <button
+                  type="button"
+                  class="pending-link"
+                  [disabled]="actionLoading()"
+                  (click)="openNotification(notification)"
+                >
+                  {{ destinationLabel(notification) }}
+                </button>
+
+                @if (!notification.read) {
+                  <button
+                    type="button"
+                    class="pending-link secondary-link"
+                    [disabled]="actionLoading()"
+                    (click)="markAsRead(notification, $event)"
+                  >
+                    Marcar como lida
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </section>
+      } @else {
+        <section class="state-card">
+          <h3>Nenhuma notificacao encontrada para este filtro.</h3>
+          <p>Altere o filtro para visualizar outros avisos.</p>
+        </section>
+      }
     } @else {
       <section class="empty-state">
-        <p class="eyebrow">Tudo certo</p>
-        <h2>Nenhuma notificacao por enquanto.</h2>
+        <span aria-hidden="true">OK</span>
+        <h3>Voce esta em dia!</h3>
+        <p>Nao ha novas notificacoes para voce.</p>
       </section>
     }
   }

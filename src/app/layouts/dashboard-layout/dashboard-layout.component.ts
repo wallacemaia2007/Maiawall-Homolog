@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { filter } from 'rxjs';
+import { catchError, filter, of } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { ModalLogoutComponent } from '../../shared/components/modal-logout/modal-logout.component';
@@ -22,12 +23,14 @@ export class DashboardLayoutComponent {
   private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
+  private readonly notificationService = inject(NotificationService);
 
   protected readonly drawerOpen = signal(false);
   protected readonly sidebarCollapsed = signal(true);
   protected readonly logoutModalOpen = signal(false);
   protected readonly darkTheme = this.themeService.darkTheme;
   protected readonly currentUser$ = this.userService.getCurrentUser();
+  protected readonly unreadNotifications$ = this.notificationService.unreadCount$;
 
   protected readonly navItems: SidebarNavItem[] = [
     {
@@ -61,6 +64,11 @@ export class DashboardLayoutComponent {
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(() => this.drawerOpen.set(false));
+
+    this.notificationService
+      .getNotifications()
+      .pipe(catchError(() => of([])))
+      .subscribe();
   }
 
   @HostListener('document:keydown.escape')
