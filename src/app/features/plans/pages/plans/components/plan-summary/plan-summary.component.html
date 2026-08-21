@@ -1,0 +1,31 @@
+<section class="plan-summary" aria-label="Resumo do plano">
+  <div class="summary-grid">
+    <article class="summary-card">
+      <span>Valor mensal</span>
+      <strong>{{ formatCurrency(monthlyAmount) }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Valor anual</span>
+      <strong>{{ formatCurrency(yearlyAmount) }}</strong>
+    </article>
+    <article class="summary-card">
+      <span>Extras mensais</span>
+      <strong>{{ formatCurrency(extrasMonthly) }}</strong>
+    </article>
+    <article class="summary-card highlight">
+      <span>Extras anuais</span>
+      <strong>{{ formatCurrency(extrasYearly) }}</strong>
+    </article>
+  </div>
+
+  <div class="benefits-count">
+    <div class="benefit-item">
+      <span class="count">{{ totalIncludedItems }}</span>
+      <span class="label">Benefícios inclusos</span>
+    </div>
+    <div class="benefit-item">
+      <span class="count">{{ activeExtrasCount }}</span>
+      <span class="label">Custos extras ativos</span>
+    </div>
+  </div>
+</section>

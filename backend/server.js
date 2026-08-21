@@ -609,6 +609,10 @@ app.post("/api/plans", requireAuth, requireRole("ADMIN"), validateBody(planSchem
   const db = databaseService.getState();
   const project = db.projects.find((item) => item.id === req.body.projectId);
   if (!project) return res.status(404).json(errorResponse("Projeto nao encontrado"));
+  const existingPlan = db.plans.find((item) => item.projectId === project.id);
+  if (existingPlan) {
+    return res.status(409).json(errorResponse("Projeto ja possui um plano cadastrado"));
+  }
   if (req.body.clientId && req.body.clientId !== project.clientId) {
     return res.status(400).json(errorResponse("Cliente do plano deve ser o mesmo cliente do projeto"));
   }

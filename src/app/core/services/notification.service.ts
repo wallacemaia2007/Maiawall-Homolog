@@ -207,12 +207,12 @@ export class NotificationService {
     const metadata = notification.metadata || {};
     const relatedEntityId =
       notification.relatedEntityId ||
+      this.readMetadataString(metadata, 'investmentId') ||
+      this.readMetadataString(metadata, 'planId') ||
       this.readMetadataString(metadata, 'relatedEntityId') ||
       this.readMetadataString(metadata, 'projectId') ||
       this.readMetadataString(metadata, 'relatedProjectId') ||
       this.readMetadataString(metadata, 'pendingId') ||
-      this.readMetadataString(metadata, 'investmentId') ||
-      this.readMetadataString(metadata, 'planId') ||
       this.readNestedMetadataId(metadata, 'project');
 
     if (entityType && relatedEntityId) {
@@ -224,7 +224,16 @@ export class NotificationService {
     const category = this.getVisual(notification).category;
 
     if (relatedEntityId) {
-      if (type.includes('PAYMENT')) return ['/investments', relatedEntityId];
+      if (type.includes('PLAN_PAYMENT') || type.includes('PLAN_RENEWAL') || type.includes('PLAN_EXPIRING')) {
+        return ['/plans', relatedEntityId];
+      }
+      if (type.includes('INVESTMENT_PAYMENT') || type.includes('INVESTMENT_DUE') || type.includes('INVESTMENT_OVERDUE')) {
+        return ['/investments', relatedEntityId];
+      }
+      if (type.includes('PAYMENT')) {
+        // Legacy: default to investments for backward compatibility
+        return ['/investments', relatedEntityId];
+      }
       if (type.includes('PENDING')) return ['/pending', relatedEntityId];
       if (type.includes('PROJECT') || category === 'PROJECTS') {
         return ['/projects', relatedEntityId];
@@ -358,8 +367,9 @@ export class NotificationService {
         return ['/pending', id];
       case 'INVESTMENT':
       case 'INVESTMENT_PLAN':
-      case 'PLAN':
         return ['/investments', id];
+      case 'PLAN':
+        return ['/plans', id];
       default:
         return null;
     }

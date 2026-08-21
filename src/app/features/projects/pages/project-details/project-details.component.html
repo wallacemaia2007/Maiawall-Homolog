@@ -168,32 +168,56 @@
 
         <article class="investment-card">
           <p class="eyebrow">Investimento</p>
-          <h3>Resumo financeiro</h3>
+          <h3>Investimento do projeto</h3>
 
-          @if (relatedInvestment(); as plan) {
+          @if (relatedInvestment(); as investment) {
             <dl class="investment-list">
               <div>
-                <dt>Plano</dt>
-                <dd>{{ plan.name }}</dd>
+                <dt>Projeto</dt>
+                <dd>{{ investment.name }}</dd>
               </div>
               <div>
-                <dt>Valor</dt>
-                <dd>{{ formatCurrency(plan.totalAmount) }}</dd>
+                <dt>Valor total</dt>
+                <dd>{{ formatCurrency(investment.totalAmount) }}</dd>
               </div>
               <div>
                 <dt>Pago</dt>
-                <dd>{{ formatCurrency(plan.paidAmount) }}</dd>
+                <dd>{{ formatCurrency(investment.paidAmount) }}</dd>
               </div>
               <div>
                 <dt>Restante</dt>
-                <dd>{{ formatCurrency(plan.remainingAmount) }}</dd>
+                <dd>{{ formatCurrency(investment.remainingAmount) }}</dd>
               </div>
             </dl>
 
-            <p class="payment-count">{{ plan.paidInstallments }} de {{ plan.installments }} parcelas pagas</p>
-            <a class="card-link" [routerLink]="['/investments', plan.id]">Ver detalhes financeiros</a>
+            <p class="payment-count">{{ investment.paidInstallments }} de {{ investment.installments }} parcelas pagas</p>
+            <a class="card-link" [routerLink]="['/investments', investment.id]">Ver detalhes do investimento</a>
           } @else {
-            <p class="muted">Nenhum plano financeiro associado.</p>
+            <p class="muted">Nenhum investimento associado.</p>
+          }
+        </article>
+
+        <article class="plans-card">
+          <p class="eyebrow">Planos</p>
+          <h3>Planos de serviços recorrentes</h3>
+
+          @if (relatedPlans().length > 0) {
+            <div class="plans-list">
+              @for (plan of relatedPlans(); track plan.id) {
+                <div class="plan-item">
+                  <div>
+                    <span class="plan-name">{{ plan.name }}</span>
+                    <small>{{ formatCurrency(plan.amount) }} / {{ getBillingCycleLabel(plan.billingCycle) }}</small>
+                  </div>
+                  <span class="status-badge" [class]="'status-badge tone-' + getPlanStatusTone(plan.status)">
+                    {{ getPlanStatusLabel(plan.status) }}
+                  </span>
+                  <a class="card-link" [routerLink]="['/plans', plan.id]">Ver plano</a>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="muted">Nenhum plano de serviços associado.</p>
           }
         </article>
       </section>

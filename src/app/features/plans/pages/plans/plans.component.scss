@@ -8,67 +8,305 @@
 }
 
 .plans-hero {
-  display: grid;
-  gap: 8px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #e4e4e1;
 }
 
 .eyebrow {
   margin: 0;
   color: #6b6e76;
-  font-size: .78rem;
+  font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-h2,
-p {
-  margin: 0;
-}
-
 h2 {
+  margin: 0;
   color: #16171b;
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-size: clamp(1.75rem, 3vw, 2.45rem);
   font-weight: 650;
+  line-height: 1.2;
 }
 
 .plans-hero p:not(.eyebrow) {
+  max-width: 680px;
+  margin: 0;
+  color: #6b6e76;
+  line-height: 1.6;
+}
+
+.plans-overview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(110px, max-content));
+  gap: 10px;
+  margin: 0;
+}
+
+.plans-overview div {
+  min-width: 110px;
+  padding: 12px 14px;
+  border: 1px solid #e4e4e1;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.plans-overview dt {
+  margin: 0 0 4px;
+  color: #6b6e76;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.plans-overview dd {
+  margin: 0;
+  color: #16171b;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.projects-plans {
+  display: grid;
+  gap: 24px;
+}
+
+.project-plan-section {
+  display: grid;
+  border: 1px solid #e4e4e1;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.project-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 92px;
+  padding: 22px;
+  border: 0;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.project-toggle:hover,
+.project-toggle:focus-visible {
+  background: #fafaf9;
+}
+
+.project-toggle-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.project-info .eyebrow {
+  margin: 0 0 4px;
+}
+
+.project-info h3 {
+  margin: 0;
+  color: #16171b;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.toggle-icon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  fill: none;
+  stroke: #6b6e76;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.2;
+  transition: transform var(--motion-fast) ease;
+}
+
+.project-plan-section.is-expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.plan-due-alert {
+  padding: 12px 22px;
+  border-top: 1px solid;
+  font-weight: 700;
+}
+
+.project-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.status-development {
+  background: #f1efff;
+  color: #4c3ae3;
+}
+
+.status-homologation {
+  background: #fff3e7;
+  color: #b45616;
+}
+
+.status-changes_requested {
+  background: #ffecec;
+  color: #c0392b;
+}
+
+.status-approved {
+  background: #eaf8ef;
+  color: #1c7c3e;
+}
+
+.status-production {
+  background: #e8f4fd;
+  color: #1a73b8;
+}
+
+.status-completed {
+  background: #f0f0ef;
   color: #6b6e76;
 }
 
-.plans-grid {
+.status-unlinked {
+  background: #f8f0ff;
+  color: #6b3a9f;
+}
+
+.plans-list {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, .5fr);
   gap: 18px;
-  align-items: start;
+  padding: 0 22px 22px;
+  border-top: 1px solid #ededeb;
 }
 
-app-current-plan,
-app-plan-options,
-app-billing-history {
-  min-width: 0;
+.plan-detail-card {
+  display: grid;
+  gap: 18px;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fafafa;
+  padding: 18px;
 }
 
-app-current-plan {
-  grid-column: 1;
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 24px;
+  text-align: center;
+  border: 1px dashed #e4e4e1;
+  border-radius: 8px;
+  background: #fafafa;
+  color: #8a8d94;
 }
 
-app-plan-options {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e4e4e1;
+  border-top-color: #16171b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
-app-billing-history {
-  grid-column: 1;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-@media (max-width: 1040px) {
-  .plans-grid,
-  app-current-plan,
-  app-plan-options,
-  app-billing-history {
-    grid-column: 1;
-    grid-row: auto;
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 24px;
+  text-align: center;
+  border: 1px dashed #e4e4e1;
+  border-radius: 8px;
+  background: #fafafa;
+  color: #8a8d94;
+}
+
+.empty-state .eyebrow {
+  margin: 0;
+}
+
+.empty-state h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #16171b;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 1rem;
+  max-width: 400px;
+  color: #6b6e76;
+}
+
+@media (max-width: 1180px) {
+  .plans-hero {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .plans-hero {
+    gap: 18px;
+  }
+
+  .plans-overview {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .project-toggle {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .project-toggle-meta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .project-plan-section,
+  .plan-detail-card {
+    padding: 16px;
+  }
+
+  .project-plan-section {
+    padding: 0;
+  }
+
+  .project-toggle {
+    padding: 16px;
+  }
+
+  .plans-list {
+    padding: 0 16px 16px;
   }
 }

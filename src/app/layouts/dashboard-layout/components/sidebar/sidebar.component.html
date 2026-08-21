@@ -59,6 +59,11 @@
           <path d="M15 7h4v4" />
         </svg>
         }
+        @case ('plans') {
+        <svg class="stroke-icon" viewBox="0 0 24 24">
+          <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z" />
+        </svg>
+        }
         @default {
         <svg class="stroke-icon" viewBox="0 0 24 24">
           <circle cx="12" cy="8" r="4" />
@@ -73,16 +78,6 @@
       }
     </a>
     }
-
-    <a routerLink="/plans" routerLinkActive="is-active" class="sidebar-link"
-      [attr.title]="collapsed() ? 'Planos' : null" aria-label="Planos">
-      <span class="sidebar-icon" aria-hidden="true">
-        <svg class="plan-icon" viewBox="0 0 24 24">
-          <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z" />
-        </svg>
-      </span>
-      <span class="link-label">Planos</span>
-    </a>
   </nav>
 
   <div class="sidebar-footer">

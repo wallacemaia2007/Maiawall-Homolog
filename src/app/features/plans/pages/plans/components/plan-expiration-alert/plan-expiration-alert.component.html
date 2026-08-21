@@ -1,0 +1,30 @@
+@if (isExpiring()) {
+<section class="expiration-alert" role="alert" aria-live="polite">
+  <div class="alert-icon">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  </div>
+  <div class="alert-content">
+    @if (message()) {
+    <p class="alert-message">{{ message() }}</p>
+    } @else if (daysUntilExpiration() !== null && daysUntilExpiration() !== undefined && planName()) {
+    <p class="alert-message">
+      Seu plano <strong>{{ planName() }}</strong> termina em {{ daysUntilExpiration() }} dia{{
+      daysUntilExpiration() !== 1 ? 's' : '' }}.
+    </p>
+    } @else if (daysUntilExpiration() !== null && daysUntilExpiration() !== undefined) {
+    <p class="alert-message">
+      Seu plano termina em {{ daysUntilExpiration() }} dia{{ daysUntilExpiration() !== 1 ? 's' : '' }}.
+    </p>
+    } @else {
+    <p class="alert-message">Seu plano está próximo do vencimento.</p>
+    }
+  </div>
+  <div class="alert-action">
+    <a class="btn-primary" [routerLink]="planId() ? ['/plans', planId()] : null">Ver detalhes</a>
+  </div>
+</section>
+}

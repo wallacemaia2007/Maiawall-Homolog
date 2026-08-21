@@ -55,9 +55,8 @@ async function main() {
   const mobileProjectId = id();
 
   const maintenancePlanId = id();
-  const hostingPlanId = id();
-  const domainPlanId = id();
   const supportPlanId = id();
+  const mobileSupportPlanId = id();
 
   const investmentPortalId = id();
   const investmentDashboardId = id();
@@ -308,49 +307,6 @@ async function main() {
       updatedAt: now,
     },
     {
-      id: hostingPlanId,
-      projectId: primaryProjectId,
-      projectName: "Portal Institucional Maiawall",
-      name: "Hospedagem Premium + SSL",
-      description: "Hospedagem em servidor dedicado com SSL, backups e CDN.",
-      amount: 200,
-      billingCycle: "MONTHLY",
-      startDate: daysAgo(30),
-      endDate: daysFromNow(335),
-      status: "ACTIVE",
-      includedItems: [
-        { id: id(), name: "Servidor VPS 4GB RAM", description: "Recursos dedicados para o portal", status: "INCLUDED" },
-        { id: id(), name: "Certificado SSL", description: "SSL Let's Encrypt renovado automaticamente", status: "INCLUDED" },
-        { id: id(), name: "Backup diário", description: "Retenção de 30 dias", status: "INCLUDED" },
-        { id: id(), name: "Painel de controle", description: "Acesso ao cPanel/WHM", status: "INCLUDED" },
-      ],
-      extraCosts: [],
-      payments: [],
-      createdAt: daysAgo(30),
-      updatedAt: now,
-    },
-    {
-      id: domainPlanId,
-      projectId: primaryProjectId,
-      projectName: "Portal Institucional Maiawall",
-      name: "Registro de Domínio .com.br",
-      description: "Renovação anual do domínio maiawall.com.br",
-      amount: 50,
-      billingCycle: "ANNUAL",
-      startDate: daysAgo(10),
-      endDate: daysFromNow(355),
-      status: "ACTIVE",
-      includedItems: [
-        { id: id(), name: "Registro .com.br", description: "Domínio principal por 1 ano", status: "INCLUDED" },
-        { id: id(), name: "Proteção de privacidade", description: "WHOIS privacy incluído", status: "INCLUDED" },
-        { id: id(), name: "DNS gerenciado", description: "Gerenciamento de zona DNS", status: "INCLUDED" },
-      ],
-      extraCosts: [],
-      payments: [],
-      createdAt: daysAgo(10),
-      updatedAt: now,
-    },
-    {
       id: supportPlanId,
       projectId: homologProjectId,
       projectName: "Dashboard Operacional",
@@ -372,6 +328,30 @@ async function main() {
       ],
       payments: [],
       createdAt: daysAgo(15),
+      updatedAt: now,
+    },
+    {
+      id: mobileSupportPlanId,
+      projectId: mobileProjectId,
+      projectName: "App Mobile Cliente",
+      name: "Plano de Suporte Mobile",
+      description: "Suporte e monitoramento do aplicativo mobile aprovado, incluindo atualizações, estabilidade e acompanhamento das publicações.",
+      amount: 350,
+      billingCycle: "MONTHLY",
+      startDate: daysAgo(20),
+      endDate: daysFromNow(345),
+      status: "ACTIVE",
+      includedItems: [
+        { id: id(), name: "Monitoramento do aplicativo", description: "Acompanhamento de estabilidade, erros e disponibilidade", status: "INCLUDED" },
+        { id: id(), name: "Atualizações corretivas", description: "Correções de bugs e ajustes de compatibilidade", status: "INCLUDED" },
+        { id: id(), name: "Suporte de publicação", description: "Apoio em ajustes para lojas e versões", status: "INCLUDED" },
+        { id: id(), name: "Relatório mensal", description: "Resumo mensal de incidentes, uso e melhorias sugeridas", status: "INCLUDED" },
+      ],
+      extraCosts: [
+        { id: id(), name: "Publicação emergencial", description: "Build e submissão fora da janela mensal", amount: 220, periodicity: "ONE_TIME", nextDueDate: null, status: "ACTIVE" },
+      ],
+      payments: [],
+      createdAt: daysAgo(20),
       updatedAt: now,
     },
   ];
@@ -464,33 +444,6 @@ async function main() {
       paidAt: null,
       status: "PENDING",
     },
-    ...Array.from({ length: 2 }, (_, index) => ({
-      id: id(),
-      planId: hostingPlanId,
-      number: index + 1,
-      amount: 200,
-      dueDate: daysAgo(15 - index * 30),
-      paidAt: daysAgo(13 - index * 30),
-      status: "PAID",
-    })),
-    {
-      id: id(),
-      planId: hostingPlanId,
-      number: 3,
-      amount: 200,
-      dueDate: daysFromNow(15),
-      paidAt: null,
-      status: "PENDING",
-    },
-    {
-      id: id(),
-      planId: domainPlanId,
-      number: 1,
-      amount: 50,
-      dueDate: daysAgo(10),
-      paidAt: daysAgo(8),
-      status: "PAID",
-    },
     ...Array.from({ length: 3 }, (_, index) => ({
       id: id(),
       planId: supportPlanId,
@@ -500,6 +453,24 @@ async function main() {
       paidAt: daysAgo(8 - index * 30),
       status: "PAID",
     })),
+    ...Array.from({ length: 2 }, (_, index) => ({
+      id: id(),
+      planId: mobileSupportPlanId,
+      number: index + 1,
+      amount: 350,
+      dueDate: daysAgo(20 - index * 30),
+      paidAt: daysAgo(18 - index * 30),
+      status: "PAID",
+    })),
+    {
+      id: id(),
+      planId: mobileSupportPlanId,
+      number: 3,
+      amount: 350,
+      dueDate: daysFromNow(10),
+      paidAt: null,
+      status: "PENDING",
+    },
   ];
 
   const installments = [
@@ -770,6 +741,12 @@ async function main() {
     }
   }
 
+  await db.collection("plans").dropIndex("projectId_1").catch((error) => {
+    if (error.codeName !== "IndexNotFound" && error.code !== 27) {
+      throw error;
+    }
+  });
+
   await Promise.all([
     db.collection("users").createIndex({ email: 1 }, { unique: true }),
     db.collection("projects").createIndex({ clientId: 1 }),
@@ -777,7 +754,7 @@ async function main() {
     db.collection("investmentPlans").createIndex({ clientId: 1 }),
     db.collection("investmentPlans").createIndex({ projectId: 1 }),
     db.collection("plans").createIndex({ clientId: 1 }),
-    db.collection("plans").createIndex({ projectId: 1 }),
+    db.collection("plans").createIndex({ projectId: 1 }, { unique: true }),
     db.collection("plans").createIndex({ status: 1 }),
     db.collection("planPayments").createIndex({ planId: 1 }),
     db.collection("installments").createIndex({ investmentPlanId: 1 }),

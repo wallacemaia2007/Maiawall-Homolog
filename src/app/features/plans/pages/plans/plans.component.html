@@ -1,13 +1,111 @@
 <section class="plans-page">
   <header class="plans-hero">
-    <p class="eyebrow">Planos</p>
-    <h2>Gerencie seu plano</h2>
-    <p>Estrutura inicial para assinatura, limites e historico financeiro.</p>
+    <div>
+      <p class="eyebrow">Planos</p>
+      <h2>Serviços recorrentes por projeto</h2>
+      <p>Cada plano reúne valores, vencimentos, itens inclusos e custos adicionais em um único acompanhamento.</p>
+    </div>
+
+    @if (viewModel$ | async; as vm) {
+      <dl class="plans-overview" aria-label="Resumo dos planos">
+        <div>
+          <dt>Planos</dt>
+          <dd>{{ vm.totalPlans }}</dd>
+        </div>
+        <div>
+          <dt>Ativos</dt>
+          <dd>{{ vm.activePlans }}</dd>
+        </div>
+        <div>
+          <dt>Mensalidade ativa</dt>
+          <dd>{{ formatCurrency(vm.totalMonthly) }}</dd>
+        </div>
+      </dl>
+    }
   </header>
 
-  <div class="plans-grid">
-    <app-current-plan />
-    <app-plan-options />
-    <app-billing-history />
-  </div>
+  @if (viewModel$ | async; as vm) {
+    @if (vm.hasPlans) {
+      <div class="projects-plans">
+        @for (group of vm.groups; track group.id) {
+          <section
+            class="project-plan-section"
+            [class.is-expanded]="isGroupExpanded(group.id)"
+            [style.border-color]="getGroupDueBorderColor(group)"
+          >
+            <button
+              type="button"
+              class="project-toggle"
+              [attr.aria-expanded]="isGroupExpanded(group.id)"
+              [attr.aria-controls]="getGroupPanelId(group.id)"
+              (click)="toggleGroup(group.id)"
+            >
+              <div class="project-info">
+                <p class="eyebrow">Projeto</p>
+                <h3>Plano de {{ group.projectName }}</h3>
+              </div>
+
+              <span class="project-toggle-meta">
+                <span class="project-status" [ngClass]="getProjectStatusClass(group.projectStatus)">
+                  {{ getProjectStatusLabel(group.projectStatus) }}
+                </span>
+                <svg class="toggle-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </span>
+            </button>
+
+            @if (getGroupDueAlert(group); as dueAlert) {
+              <div
+                class="plan-due-alert"
+                [style.background]="dueAlert.tone === 'warning' ? '#fff8e6' : '#fff0ee'"
+                [style.color]="dueAlert.tone === 'warning' ? '#8a5a00' : '#ad3328'"
+              >
+                {{ dueAlert.message }}
+              </div>
+            }
+
+            @if (isGroupExpanded(group.id)) {
+              <div class="plans-list" [id]="getGroupPanelId(group.id)">
+                @for (plan of group.plans; track plan.id) {
+                  <article class="plan-detail-card">
+                    <app-plan-card
+                      [plan]="plan"
+                      [payments]="plan.payments"
+                      [isPrimary]="group.plans.length === 1"
+                      [progressPercent]="plan.progressPercent"
+                      [daysRemaining]="plan.daysRemaining ?? null"
+                      [nextPaymentDate]="plan.nextPaymentDate ?? null"
+                      [nextPaymentAmount]="plan.nextPaymentAmount ?? null"
+                    />
+
+                    <app-plan-included-items [items]="plan.includedItems" />
+
+                    <app-plan-extra-costs
+                      [extras]="plan.extraCosts"
+                      title="Serviços extras"
+                      subtitle="Mais adicionais disponíveis para consultar"
+                    />
+
+                    <app-plan-payments [payments]="plan.payments" />
+                  </article>
+                }
+              </div>
+            }
+          </section>
+        }
+      </div>
+    } @else {
+      <section class="empty-state">
+        <p class="eyebrow">Planos</p>
+        <h2>Nenhum plano cadastrado</h2>
+        <p>Quando houver serviços recorrentes vinculados aos projetos, eles aparecerão aqui.</p>
+      </section>
+    }
+  } @else {
+    <section class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Carregando planos...</p>
+    </section>
+  }
 </section>

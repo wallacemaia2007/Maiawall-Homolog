@@ -21,6 +21,13 @@ import {
 import { ProjectService } from '../../../../core/services/project.service';
 import { InvestmentPlan } from '../../../investments/models/investment.model';
 import { InvestmentService } from '../../../investments/services/investment.service';
+import { Plan, PlanStatus } from '../../../plans/models/plan.model';
+import { PlanService } from '../../../plans/services/plan.service';
+import {
+  getPlanStatusLabel,
+  getPlanStatusTone,
+  getPlanBillingCycleLabel,
+} from '../../../plans/models/plan.model';
 import { ModalProjectApprovalComponent } from '../../components/modal-project-approval/modal-project-approval.component';
 import { ModalProjectRevisionComponent } from '../../components/modal-project-revision/modal-project-revision.component';
 import { MeetingRequestModalComponent } from '../../../../shared/components/meeting-request-modal/meeting-request-modal.component';
@@ -44,6 +51,7 @@ export class ProjectDetailsComponent {
   private readonly location = inject(Location);
   private readonly projectService = inject(ProjectService);
   private readonly investmentService = inject(InvestmentService);
+  private readonly planService = inject(PlanService);
   private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -68,6 +76,7 @@ export class ProjectDetailsComponent {
   protected readonly commits = signal<ProjectCommit[]>([]);
   protected readonly releases = signal<ProjectRelease[]>([]);
   protected readonly investments = signal<InvestmentPlan[]>([]);
+  protected readonly plans = signal<Plan[]>([]);
   protected readonly approvalMessage = signal('');
   protected readonly changesRequested = signal(false);
   protected readonly approvalModalOpen = signal(false);
@@ -83,10 +92,16 @@ export class ProjectDetailsComponent {
     }
 
     return (
-      this.investments().find((plan) => plan.id === project.investmentPlanId) ??
-      this.investments().find((plan) => plan.projectId === project.id) ??
+      this.investments().find((inv) => inv.id === project.investmentPlanId) ??
+      this.investments().find((inv) => inv.projectId === project.id) ??
       null
     );
+  });
+
+  protected readonly relatedPlans = computed(() => {
+    const project = this.project();
+    if (!project) return [];
+    return this.plans().filter((plan) => plan.projectId === project.id);
   });
 
   constructor() {
@@ -110,16 +125,18 @@ export class ProjectDetailsComponent {
       history: this.projectService.getProjectHistory(id),
       commits: this.projectService.getProjectCommits(id),
       releases: this.projectService.getProjectReleases(id),
-      investments: this.investmentService.getPlans(),
+      investments: this.investmentService.getInvestments(),
+      plans: this.planService.getPlans(),
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: ({ project, history, commits, releases, investments }) => {
+        next: ({ project, history, commits, releases, investments, plans }) => {
           this.project.set(project);
           this.history.set(history);
           this.commits.set(commits);
           this.releases.set(releases);
           this.investments.set(investments);
+          this.plans.set(plans);
           this.error.set(!project);
         },
         error: () => this.error.set(true),
@@ -212,5 +229,17 @@ export class ProjectDetailsComponent {
     type: ProjectChange['type'],
   ): ProjectChange[] {
     return release.changes.filter((change) => change.type === type);
+  }
+
+  protected getPlanStatusLabel(status: PlanStatus): string {
+    return getPlanStatusLabel(status);
+  }
+
+  protected getPlanStatusTone(status: PlanStatus): string {
+    return getPlanStatusTone(status);
+  }
+
+  protected getBillingCycleLabel(cycle: Plan['billingCycle']): string {
+    return getPlanBillingCycleLabel(cycle);
   }
 }

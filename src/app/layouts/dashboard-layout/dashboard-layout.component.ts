@@ -58,6 +58,11 @@ export class DashboardLayoutComponent {
       route: '/investments',
       icon: 'investments',
     },
+    {
+      label: 'Planos',
+      route: '/plans',
+      icon: 'plans',
+    },
   ];
 
   constructor() {

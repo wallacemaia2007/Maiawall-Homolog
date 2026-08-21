@@ -1,0 +1,91 @@
+<article class="plan-card" [class.primary]="isPrimary()">
+  <div class="card-header">
+    <div class="plan-info">
+      <span class="plan-name">{{ plan().name }}</span>
+      <span class="project-name">{{ plan().projectName }}</span>
+    </div>
+    <span class="status-badge" [class]="'status-badge tone-' + getStatusTone(plan().status)">
+      {{ getStatusLabel(plan().status) }}
+    </span>
+  </div>
+
+  <div class="card-divider"></div>
+
+  <dl class="plan-facts">
+    <div class="fact">
+      <dt>Valor do plano</dt>
+      <dd>{{ formatCurrency(plan().amount) }} <span class="period">/ {{ getBillingCycleLabel(plan().billingCycle).toLowerCase() }}</span></dd>
+    </div>
+    <div class="fact">
+      <dt>Ciclo de cobrança</dt>
+      <dd>{{ getBillingCycleLabel(plan().billingCycle) }}</dd>
+    </div>
+    <div class="fact">
+      <dt>Início</dt>
+      <dd>{{ formatDate(plan().startDate) }}</dd>
+    </div>
+    @if (plan().endDate; as endDate) {
+    <div class="fact">
+      <dt>Término</dt>
+      <dd>{{ formatDate(endDate) }}</dd>
+    </div>
+    }
+  </dl>
+
+  @if (progressPercent() > 0) {
+  <div class="progress-block">
+    <div class="progress-label">
+      <span>Progresso dos pagamentos</span>
+      <strong>{{ progressPercent() }}%</strong>
+    </div>
+    <div class="progress-track" aria-hidden="true">
+      <span [style.width.%]="progressPercent()"></span>
+    </div>
+  </div>
+  }
+
+  <div class="money-split">
+    <div>
+      <span>Pago</span>
+      <strong>{{ formatCurrency(plan().totalPaid) }}</strong>
+    </div>
+    <div>
+      <span>Restante</span>
+      <strong>{{ formatCurrency(plan().totalRemaining) }}</strong>
+    </div>
+  </div>
+
+  @if (daysRemaining() !== null && daysRemaining() !== undefined) {
+  <div class="days-remaining" [ngClass]="'tone-' + getDaysRemainingTone(daysRemaining()!)">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+    <span>
+      @if (daysRemaining()! < 0) {
+      {{ daysRemaining()! * -1 }} {{ daysRemaining() === -1 ? 'dia atrasado' : 'dias atrasados' }}
+      } @else if (daysRemaining() === 0) {
+      Hoje
+      } @else if (daysRemaining() === 1) {
+      1 dia restante
+      } @else {
+      {{ daysRemaining() }} dias restantes
+      }
+    </span>
+  </div>
+  }
+
+  @if (nextPaymentDate() && nextPaymentAmount()) {
+  <div class="next-payment">
+    <span class="label">Próximo pagamento</span>
+    <div class="payment-info">
+      <strong>{{ formatCurrency(nextPaymentAmount()!) }}</strong>
+      <span>{{ formatLongDate(nextPaymentDate()!) }}</span>
+    </div>
+  </div>
+  }
+
+  <div class="card-actions">
+    <a class="btn-outline" [routerLink]="['/plans', plan().id]">Ver detalhes</a>
+  </div>
+</article>

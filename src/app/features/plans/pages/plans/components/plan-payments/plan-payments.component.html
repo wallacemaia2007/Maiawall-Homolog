@@ -1,0 +1,59 @@
+<section class="plan-payments" aria-labelledby="payments-title">
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">{{ title() }}</p>
+      <h3 id="payments-title">{{ subtitle() }}</h3>
+    </div>
+  </header>
+
+  @if (payments().length > 0) {
+  <div class="payments-table" role="table" aria-label="Lista de pagamentos">
+    <div class="payments-header" role="row">
+      <span role="columnheader" class="col-number">Parcela</span>
+      <span role="columnheader" class="col-amount">Valor</span>
+      <span role="columnheader" class="col-due">Vencimento</span>
+      <span role="columnheader" class="col-status">Status</span>
+    </div>
+
+    @for (payment of getVisiblePayments(); track payment.id) {
+    <div class="payments-row" role="row">
+      <span role="cell" class="col-number">
+        <strong>{{ payment.number }}</strong>
+        <small>{{ payment.number }} de {{ payments().length }}</small>
+      </span>
+      <span role="cell" class="col-amount">{{ formatCurrency(payment.amount) }}</span>
+      <span role="cell" class="col-due">
+        <span>{{ formatDate(payment.dueDate) }}</span>
+        <small>{{ formatLongDate(payment.dueDate) }}</small>
+      </span>
+      <span role="cell" class="col-status">
+        <span class="installment-badge" [class]="'installment-badge tone-' + getStatusTone(payment.status)">
+          {{ getStatusLabel(payment.status) }}
+        </span>
+        @if (payment.paidAt) {
+        <small class="paid-at">Pago em {{ formatDate(payment.paidAt) }}</small>
+        }
+      </span>
+    </div>
+    }
+  </div>
+  @if (hasHiddenPayments()) {
+  <button
+    type="button"
+    class="payments-toggle"
+    [attr.aria-expanded]="isExpanded()"
+    (click)="togglePayments()"
+  >
+    {{ isExpanded() ? 'Ver menos parcelas' : 'Ver mais parcelas' }}
+  </button>
+  }
+  } @else {
+  <div class="empty-state">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z" />
+      <path d="M12 6v6l4 2" />
+    </svg>
+    <p>Nenhum pagamento registrado para este plano.</p>
+  </div>
+  }
+</section>

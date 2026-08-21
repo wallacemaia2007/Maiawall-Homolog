@@ -1,0 +1,267 @@
+<section class="plan-details-page">
+  <button type="button" class="back-link" (click)="goBack()">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+    <span>Voltar</span>
+  </button>
+
+  @if (viewModel$ | async; as plan) {
+    @if (plan) {
+      <header class="details-hero">
+        <div>
+          <p class="eyebrow">Detalhes do plano</p>
+          <h2>{{ plan.projectName }}</h2>
+          <p>{{ plan.name }}</p>
+        </div>
+        <span class="status-badge" [ngClass]="'tone-' + getPlanStatusTone(plan.status)">
+          {{ getPlanStatusLabel(plan.status) }}
+        </span>
+      </header>
+
+      <section class="details-grid">
+        <article class="details-card">
+          <span class="details-card-icon tone-neutral" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <ellipse cx="12" cy="17" rx="7" ry="2.6" />
+              <ellipse cx="12" cy="12" rx="7" ry="2.6" />
+              <ellipse cx="12" cy="7" rx="7" ry="2.6" />
+            </svg>
+          </span>
+          <div>
+            <span>Valor do plano</span>
+            <strong>{{ formatCurrency(plan.amount) }} <small>/ {{ getBillingCycleLabel(plan.billingCycle).toLowerCase() }}</small></strong>
+          </div>
+        </article>
+
+        <article class="details-card">
+          <span class="details-card-icon tone-info" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <rect x="4" y="5" width="16" height="15" rx="2" />
+              <path d="M4 10h16" />
+              <path d="M8 3v4" />
+              <path d="M16 3v4" />
+            </svg>
+          </span>
+          <div>
+            <span>Ciclo de cobrança</span>
+            <strong>{{ getBillingCycleLabel(plan.billingCycle) }}</strong>
+          </div>
+        </article>
+
+        <article class="details-card">
+          <span class="details-card-icon tone-success" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="8" />
+              <path d="m8.5 12.5 2.5 2.5 5-5" />
+            </svg>
+          </span>
+          <div>
+            <span>Total pago</span>
+            <strong>{{ formatCurrency(plan.totalPaid) }}</strong>
+          </div>
+        </article>
+
+        <article class="details-card">
+          <span class="details-card-icon tone-warning" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+          </span>
+          <div>
+            <span>Total restante</span>
+            <strong>{{ formatCurrency(plan.totalRemaining) }}</strong>
+          </div>
+        </article>
+
+        <article class="details-card">
+          <span class="details-card-icon tone-neutral" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+          </span>
+          <div>
+            <span>Período</span>
+            <strong>{{ formatDate(plan.startDate) }}{{ plan.endDate ? ' - ' + formatDate(plan.endDate) : '' }}</strong>
+          </div>
+        </article>
+      </section>
+
+      <section class="details-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Status financeiro</p>
+            <h3>{{ plan.progressPercent }}% pago</h3>
+          </div>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <span [style.width.%]="plan.progressPercent"></span>
+        </div>
+        <p class="progress-caption">
+          {{ formatCurrency(plan.totalPaid) }} de {{ formatCurrency(plan.totalPaid + plan.totalRemaining) }}
+        </p>
+
+        <dl class="payment-stats">
+          <div>
+            <span class="stat-icon tone-success" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="m8.5 12.5 2.5 2.5 5-5" />
+              </svg>
+            </span>
+            <div>
+              <dt>Pagamentos realizados</dt>
+              <dd>{{ countPayments(plan.payments, 'PAID') }}</dd>
+            </div>
+          </div>
+          <div>
+            <span class="stat-icon tone-warning" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+            </span>
+            <div>
+              <dt>Pagamentos pendentes</dt>
+              <dd>{{ countPayments(plan.payments, 'PENDING') }}</dd>
+            </div>
+          </div>
+          <div>
+            <span class="stat-icon tone-danger" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 8v5" />
+                <path d="M12 16.5v.01" />
+              </svg>
+            </span>
+            <div>
+              <dt>Pagamentos em atraso</dt>
+              <dd>{{ countPayments(plan.payments, 'OVERDUE') }}</dd>
+            </div>
+          </div>
+          <div>
+            <span class="stat-icon tone-neutral" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="5" width="16" height="15" rx="2" />
+                <path d="M4 10h16" />
+                <path d="M8 3v4" />
+                <path d="M16 3v4" />
+              </svg>
+            </span>
+            <div>
+              <dt>Criado em</dt>
+              <dd>{{ formatDate(plan.createdAt) }}</dd>
+            </div>
+          </div>
+        </dl>
+      </section>
+
+      @if (getNextPayment(plan.payments); as nextPayment) {
+        <section class="details-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Próximo pagamento</p>
+              <h3>Parcela {{ nextPayment.number }}</h3>
+            </div>
+          </div>
+
+          <div class="next-payment-card">
+            <div>
+              <span>Valor</span>
+              <strong>{{ formatCurrency(nextPayment.amount) }}</strong>
+            </div>
+            <div>
+              <span>Vencimento</span>
+              <strong>{{ formatLongDate(nextPayment.dueDate) }}</strong>
+            </div>
+            <div>
+              <span>Status</span>
+              <span class="status-badge" [ngClass]="'tone-' + getInstallmentStatusTone(nextPayment.status)">
+                {{ getInstallmentStatusLabel(nextPayment.status) }}
+              </span>
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (plan.description) {
+        <section class="details-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Descrição</p>
+              <h3>Resumo do plano</h3>
+            </div>
+          </div>
+          <p class="description-text">{{ plan.description }}</p>
+        </section>
+      }
+
+      @if (plan.includedItems.length > 0) {
+        <section class="details-panel">
+          <app-plan-included-items [items]="plan.includedItems" />
+        </section>
+      }
+
+      @if (plan.extraCosts.length > 0) {
+        <section class="details-panel">
+          <app-plan-extra-costs
+            [extras]="plan.extraCosts"
+            title="Serviços extras"
+            subtitle="Mais adicionais disponíveis para consultar"
+          />
+        </section>
+      }
+
+      <section class="details-panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Histórico de pagamentos</p>
+            <h3>Todos os pagamentos registrados</h3>
+          </div>
+        </div>
+
+        @if (plan.payments.length > 0) {
+          <div class="payment-history-list">
+            @for (payment of plan.payments; track payment.id) {
+              <article class="payment-history-card">
+                <div class="payment-type">
+                  <span class="type-label">Parcela {{ payment.number }}</span>
+                  <span class="payment-amount">{{ formatCurrency(payment.amount) }}</span>
+                </div>
+                <div class="payment-meta">
+                  <span class="payment-status" [ngClass]="'status-' + payment.status.toLowerCase()">
+                    {{ getInstallmentStatusLabel(payment.status) }}
+                  </span>
+                  <span class="payment-date">
+                    {{ payment.status === 'PAID' && payment.paidAt ? 'Pago em: ' + formatDate(payment.paidAt) : 'Vence em: ' + formatDate(payment.dueDate) }}
+                  </span>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z" />
+              <path d="M12 6v6l4 2" />
+            </svg>
+            <p>Nenhum pagamento registrado para este plano.</p>
+          </div>
+        }
+      </section>
+
+      <div class="details-actions">
+        <button type="button" class="btn-primary" (click)="goToProject(plan.projectId)">Ver projeto</button>
+      </div>
+    } @else {
+      <section class="empty-state">
+        <p class="eyebrow">Planos</p>
+        <h2>Plano não encontrado.</h2>
+        <p>Verifique a lista de planos disponíveis.</p>
+      </section>
+    }
+  }
+</section>

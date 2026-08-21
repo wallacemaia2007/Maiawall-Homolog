@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export interface SidebarNavItem {
   label: string;
   route: string;
-  icon: 'dashboard' | 'projects' | 'notifications' | 'pendencias' | 'investments' | 'profile';
+  icon: 'dashboard' | 'projects' | 'notifications' | 'pendencias' | 'investments' | 'plans' | 'profile';
 }
 
 @Component({

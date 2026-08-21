@@ -1,0 +1,37 @@
+<section class="included-items" aria-labelledby="included-title">
+  <header class="section-header">
+    <div>
+      <p class="eyebrow">{{ title() }}</p>
+      <h3 id="included-title">{{ subtitle() }}</h3>
+    </div>
+  </header>
+
+  <ul class="items-list" [class.is-single]="items().length === 1">
+    @for (item of items(); track item.name) {
+    <li class="item">
+      <svg class="check-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12" />
+      </svg>
+      <div class="item-content">
+        <span class="item-name">{{ item.name }}</span>
+        @if (item.description) {
+        <span class="item-description">{{ item.description }}</span>
+        }
+        @if (item.quantity !== undefined && item.quantity !== null) {
+        <span class="item-quantity">Qtd: {{ item.quantity }}</span>
+        }
+        @if (item.limit) {
+        <span class="item-limit">Limite: {{ item.limit }}</span>
+        }
+        @if (item.status) {
+        <span class="item-status">{{ item.status }}</span>
+        }
+      </div>
+    </li>
+    }
+  </ul>
+
+  @if (items().length === 0) {
+  <p class="empty-message">Nenhum item incluso informado.</p>
+  }
+</section>

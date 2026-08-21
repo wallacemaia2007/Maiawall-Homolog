@@ -1,0 +1,296 @@
+.plan-payments {
+  display: grid;
+  gap: 16px;
+}
+
+.section-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #6b6e76;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #16171b;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.payments-table {
+  overflow: hidden;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.payments-header {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(140px, 0.85fr) minmax(210px, 1.2fr) 132px;
+  gap: 16px;
+  align-items: center;
+  min-height: 52px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #ededeb;
+  background: #fafaf9;
+  color: #6b6e76;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.payments-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(140px, 0.85fr) minmax(210px, 1.2fr) 132px;
+  gap: 16px;
+  align-items: center;
+  min-height: 62px;
+  padding: 16px 18px;
+  color: #16171b;
+  transition: background-color var(--motion-fast) ease;
+}
+
+.payments-row + .payments-row {
+  border-top: 1px solid #ededeb;
+}
+
+.payments-row:hover {
+  background: #fafafa;
+}
+
+.col-number {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-size: 0.96rem;
+    color: #16171b;
+    font-weight: 700;
+  }
+
+  small {
+    font-size: 0.7rem;
+    color: #8a8d94;
+  }
+}
+
+.col-amount {
+  color: #16171b;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.col-due {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  span {
+    font-size: 0.9rem;
+    color: #16171b;
+  }
+
+  small {
+    font-size: 0.7rem;
+    color: #8a8d94;
+  }
+}
+
+.col-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.installment-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+
+  &.tone-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &.tone-warning {
+    background: #fff8ed;
+    color: #b86b00;
+  }
+
+  &.tone-danger {
+    background: #fef0f0;
+    color: #c0392b;
+  }
+
+  &.tone-neutral {
+    background: #f2f2f0;
+    color: #6b6e76;
+  }
+}
+
+.paid-at {
+  font-size: 0.7rem;
+  color: #2e7d32;
+}
+
+.payments-toggle {
+  display: inline-flex;
+  width: max-content;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: 1px solid #d8d8d4;
+  border-radius: 8px;
+  background: #fff;
+  color: #16171b;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  &:hover {
+    border-color: #4c3ae3;
+    color: #4c3ae3;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  border: 1px dashed #e4e4e1;
+  border-radius: 12px;
+  background: #fafafa;
+  color: #8a8d94;
+
+  svg {
+    width: 48px;
+    height: 48px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .payments-table {
+    display: grid;
+    gap: 10px;
+    border: 0;
+    background: transparent;
+  }
+
+  .payments-header {
+    display: none;
+  }
+
+  .payments-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 8px;
+    margin: 0 12px 12px;
+    background: #fff;
+    border: 1px solid #e4e4e1;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .payments-row + .payments-row {
+    border-top: 1px solid #e4e4e1;
+  }
+
+  .col-number,
+  .col-amount,
+  .col-due,
+  .col-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  .col-number::before {
+    content: 'Parcela';
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b6e76;
+  }
+
+  .col-amount::before {
+    content: 'Valor';
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b6e76;
+  }
+
+  .col-due::before {
+    content: 'Vencimento';
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b6e76;
+  }
+
+  .col-status::before {
+    content: 'Status';
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #6b6e76;
+  }
+
+  .col-status {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .col-status .installment-badge {
+    margin-left: auto;
+  }
+
+  .payments-toggle {
+    width: 100%;
+  }
+}
