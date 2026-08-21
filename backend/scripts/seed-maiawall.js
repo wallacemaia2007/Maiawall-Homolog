@@ -53,10 +53,12 @@ async function main() {
   const primaryProjectId = id();
   const homologProjectId = id();
   const mobileProjectId = id();
+  const renewalProjectId = id();
 
   const maintenancePlanId = id();
   const supportPlanId = id();
   const mobileSupportPlanId = id();
+  const renewalPlanId = id();
 
   const investmentPortalId = id();
   const investmentDashboardId = id();
@@ -168,6 +170,22 @@ async function main() {
       createdAt: daysAgo(120),
       updatedAt: daysAgo(30),
     },
+    {
+      id: renewalProjectId,
+      name: "Landing Page Assinatura Mensal",
+      description: "Landing page mantida em contrato mensal renovável, com suporte, ajustes leves e acompanhamento contínuo.",
+      imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80",
+      clientId,
+      isPrimary: false,
+      status: "PRODUCTION",
+      progress: 100,
+      version: "v1.0.0",
+      productionUrl: "https://campanha.maiawall.com",
+      homologationUrl: "",
+      repositoryUrl: "https://github.com/maiawall/landing-assinatura",
+      createdAt: daysAgo(75),
+      updatedAt: daysAgo(2),
+    },
   ];
 
   const projectActivities = [
@@ -202,6 +220,14 @@ async function main() {
       title: "Projeto aprovado",
       description: "Cliente aprovou versão 2.1.0 para produção.",
       createdAt: daysAgo(30),
+    },
+    {
+      id: id(),
+      projectId: renewalProjectId,
+      type: "STATUS_CHANGED",
+      title: "Plano no último mês",
+      description: "Contrato mensal entrou no período de renovação.",
+      createdAt: daysAgo(2),
     },
   ];
 
@@ -354,6 +380,29 @@ async function main() {
       createdAt: daysAgo(20),
       updatedAt: now,
     },
+    {
+      id: renewalPlanId,
+      projectId: renewalProjectId,
+      projectName: "Landing Page Assinatura Mensal",
+      name: "Plano Mensal Renovável",
+      description: "Plano mensal de acompanhamento contínuo para uma landing page em produção, renovado conforme necessidade do cliente.",
+      amount: 220,
+      billingCycle: "MONTHLY",
+      startDate: daysAgo(55),
+      endDate: daysFromNow(12),
+      status: "ACTIVE",
+      includedItems: [
+        { id: id(), name: "Suporte mensal", description: "Atendimento para dúvidas e pequenos ajustes", status: "INCLUDED" },
+        { id: id(), name: "Monitoramento básico", description: "Acompanhamento de disponibilidade e formulário", status: "INCLUDED" },
+      ],
+      extraCosts: [
+        { id: id(), name: "Nova seção promocional", description: "Criação de uma seção adicional para campanha", amount: 260, periodicity: "ONE_TIME", nextDueDate: null, status: "ACTIVE" },
+        { id: id(), name: "Integração com ferramenta externa", description: "Configuração de CRM, automação ou pixel adicional", amount: 180, periodicity: "ONE_TIME", nextDueDate: null, status: "ACTIVE" },
+      ],
+      payments: [],
+      createdAt: daysAgo(55),
+      updatedAt: now,
+    },
   ];
 
   const investmentPlans = [
@@ -471,6 +520,33 @@ async function main() {
       paidAt: null,
       status: "PENDING",
     },
+    {
+      id: id(),
+      planId: renewalPlanId,
+      number: 1,
+      amount: 220,
+      dueDate: daysAgo(55),
+      paidAt: daysAgo(54),
+      status: "PAID",
+    },
+    {
+      id: id(),
+      planId: renewalPlanId,
+      number: 2,
+      amount: 220,
+      dueDate: daysAgo(25),
+      paidAt: daysAgo(24),
+      status: "PAID",
+    },
+    {
+      id: id(),
+      planId: renewalPlanId,
+      number: 3,
+      amount: 220,
+      dueDate: daysFromNow(5),
+      paidAt: null,
+      status: "PENDING",
+    },
   ];
 
   const installments = [
@@ -543,6 +619,24 @@ async function main() {
       message: "O pagamento do Plano de Manutenção Mensal vence em 5 dias.",
       type: "PLAN_PAYMENT",
       relatedEntityId: maintenancePlanId,
+      read: false,
+      createdAt: daysAgo(0),
+    },
+    {
+      id: id(),
+      userId: clientId,
+      title: "Renovação de plano necessária",
+      message: "Este é o último mês do Plano Mensal Renovável. Ele termina em 12 dias. Entre em contato com o suporte e renove para continuar com os serviços.",
+      type: "PLAN_RENEWAL_DUE",
+      relatedEntityType: "PLAN",
+      relatedEntityId: renewalPlanId,
+      priority: "HIGH",
+      metadata: {
+        planId: renewalPlanId,
+        projectId: renewalProjectId,
+        projectName: "Landing Page Assinatura Mensal",
+        daysUntilEnd: 12,
+      },
       read: false,
       createdAt: daysAgo(0),
     },

@@ -745,7 +745,8 @@ app.post("/api/pending/:id/responses", requireAuth, validateBody(pendingResponse
   res.status(201).json(successResponse(pending));
 });
 
-app.get("/api/notifications", requireAuth, (req, res) => {
+app.get("/api/notifications", requireAuth, async (req, res) => {
+  await ensurePlanRenewalNotifications(req.user);
   const db = databaseService.getState();
   const items = db.notifications
     .filter((item) => req.user.role === "ADMIN" || item.userId === req.user.id)
@@ -1055,6 +1056,80 @@ function sortNewest(a, b) {
 
 function sortReleasedNewest(a, b) {
   return new Date(b.releasedAt || b.createdAt || 0) - new Date(a.releasedAt || a.createdAt || 0);
+}
+
+async function ensurePlanRenewalNotifications(user) {
+  const db = databaseService.getState();
+  const visiblePlans = getVisiblePlans(user);
+  db.notifications = db.notifications || [];
+  const notifications = db.notifications;
+  const now = new Date().toISOString();
+
+  for (const plan of visiblePlans) {
+    const daysUntilEnd = getDaysUntilPlanEnd(plan);
+    const clientId = plan.clientId || db.projects?.find((project) => project.id === plan.projectId)?.clientId;
+
+    if (!clientId || !isPlanInFinalMonth(daysUntilEnd) || !["ACTIVE", "PAUSED"].includes(plan.status)) {
+      continue;
+    }
+
+    const alreadyExists = notifications.some((notification) =>
+      notification.type === "PLAN_RENEWAL_DUE" &&
+      notification.userId === clientId &&
+      notification.relatedEntityId === plan.id
+    );
+
+    if (alreadyExists) {
+      continue;
+    }
+
+    const notification = {
+      id: databaseService.createObjectId(),
+      userId: clientId,
+      title: "Renovação de plano necessária",
+      message: buildPlanRenewalMessage(plan, daysUntilEnd),
+      type: "PLAN_RENEWAL_DUE",
+      relatedEntityType: "PLAN",
+      relatedEntityId: plan.id,
+      priority: "HIGH",
+      metadata: {
+        planId: plan.id,
+        projectId: plan.projectId,
+        projectName: plan.projectName,
+        daysUntilEnd,
+      },
+      read: false,
+      createdAt: now,
+    };
+
+    notifications.push(notification);
+    await databaseService.insertDocument("notifications", notification);
+  }
+}
+
+function getDaysUntilPlanEnd(plan) {
+  if (!plan.endDate) return null;
+  const endDate = new Date(plan.endDate);
+  if (Number.isNaN(endDate.getTime())) return null;
+
+  const now = new Date();
+  return Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function isPlanInFinalMonth(daysUntilEnd) {
+  return daysUntilEnd !== null && daysUntilEnd >= 0 && daysUntilEnd <= 31;
+}
+
+function buildPlanRenewalMessage(plan, daysUntilEnd) {
+  if (daysUntilEnd === 0) {
+    return `Este é o último dia do ${plan.name}. Entre em contato com o suporte e renove para continuar com os serviços.`;
+  }
+
+  if (daysUntilEnd === 1) {
+    return `Este é o último mês do ${plan.name}. Ele termina em 1 dia. Entre em contato com o suporte e renove para continuar com os serviços.`;
+  }
+
+  return `Este é o último mês do ${plan.name}. Ele termina em ${daysUntilEnd} dias. Entre em contato com o suporte e renove para continuar com os serviços.`;
 }
 
 if (require.main === module) {

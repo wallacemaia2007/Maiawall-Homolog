@@ -1,0 +1,95 @@
+.renewal-body {
+  display: grid;
+  gap: 16px;
+}
+
+.renewal-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.renewal-summary > div {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid #e4e4e1;
+  border-radius: 8px;
+  background: #fafaf9;
+}
+
+.renewal-summary span {
+  color: #6b6e76;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.renewal-summary strong {
+  color: #16171b;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.renewal-message,
+.renewal-note p {
+  margin: 0;
+  color: #6b6e76;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.renewal-message {
+  padding: 14px;
+  border: 1px solid #f0d796;
+  border-radius: 8px;
+  background: #fff8ed;
+  color: #8a5a00;
+  font-weight: 650;
+}
+
+.renewal-note {
+  display: grid;
+  gap: 8px;
+}
+
+.primary-button,
+.secondary-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.primary-button {
+  border: 0;
+  background: #16171b;
+  color: #fff;
+}
+
+.primary-button:hover {
+  background: #2d2f36;
+}
+
+.secondary-button {
+  border: 1px solid #e4e4e1;
+  background: #fff;
+  color: #16171b;
+}
+
+.secondary-button:hover {
+  border-color: #cfcfca;
+}
+
+@media (max-width: 680px) {
+  .renewal-summary {
+    grid-template-columns: 1fr;
+  }
+}

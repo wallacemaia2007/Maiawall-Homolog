@@ -1,0 +1,40 @@
+<app-modal-template
+  eyebrow="Renovação"
+  title="Renovar plano"
+  description="Antes de abrir o WhatsApp, confira o que será solicitado ao suporte."
+  closeLabel="Fechar renovação"
+  (closed)="close()"
+>
+  <div modal-body class="renewal-body">
+    <div class="renewal-summary">
+      <div>
+        <span>Plano</span>
+        <strong>{{ plan().name }}</strong>
+      </div>
+      <div>
+        <span>Projeto</span>
+        <strong>{{ plan().projectName }}</strong>
+      </div>
+      <div>
+        <span>Término atual</span>
+        <strong>{{ getCurrentEndDate() }}</strong>
+      </div>
+    </div>
+
+    <p class="renewal-message">{{ getFinalMonthMessage() }}</p>
+
+    <div class="renewal-note">
+      <p>
+        Ao continuar, o pedido ficará preparado para envio ao e-mail {{ renewalRecipient }} quando a integração estiver disponível.
+      </p>
+      <p>
+        Em seguida, o WhatsApp será aberto com uma mensagem padrão para solicitar a renovação.
+      </p>
+    </div>
+  </div>
+
+  <div modal-actions>
+    <button type="button" class="secondary-button" (click)="close()">Cancelar</button>
+    <button type="button" class="primary-button" (click)="confirmRenewal()">Continuar no WhatsApp</button>
+  </div>
+</app-modal-template>

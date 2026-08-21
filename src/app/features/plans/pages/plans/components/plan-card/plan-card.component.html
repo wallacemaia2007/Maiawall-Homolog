@@ -85,7 +85,21 @@
   </div>
   }
 
+  @if (plan().isInFinalMonth) {
+  <div class="renewal-alert">
+    <div>
+      <strong>Renovação do plano</strong>
+      <p>{{ getFinalMonthMessage(plan()) }}</p>
+    </div>
+    <button type="button" (click)="openRenewalModal()">Renovar plano</button>
+  </div>
+  }
+
   <div class="card-actions">
     <a class="btn-outline" [routerLink]="['/plans', plan().id]">Ver detalhes</a>
   </div>
+
+  @if (renewalModalOpen()) {
+    <app-plan-renewal-modal [plan]="plan()" (closed)="closeRenewalModal()" />
+  }
 </article>

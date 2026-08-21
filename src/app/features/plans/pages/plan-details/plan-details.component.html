@@ -19,6 +19,17 @@
         </span>
       </header>
 
+      @if (plan.isInFinalMonth) {
+        <section class="renewal-panel">
+          <div>
+            <p class="eyebrow">Renovação</p>
+            <h3>Este é o último mês do seu plano</h3>
+            <p>{{ getFinalMonthMessage(plan) }}</p>
+          </div>
+          <button type="button" (click)="openRenewalModal()">Renovar plano</button>
+        </section>
+      }
+
       <section class="details-grid">
         <article class="details-card">
           <span class="details-card-icon tone-neutral" aria-hidden="true">
@@ -256,6 +267,10 @@
       <div class="details-actions">
         <button type="button" class="btn-primary" (click)="goToProject(plan.projectId)">Ver projeto</button>
       </div>
+
+      @if (renewalModalOpen()) {
+        <app-plan-renewal-modal [plan]="plan" (closed)="closeRenewalModal()" />
+      }
     } @else {
       <section class="empty-state">
         <p class="eyebrow">Planos</p>

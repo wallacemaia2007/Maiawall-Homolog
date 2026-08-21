@@ -51,6 +51,8 @@ export interface Plan {
 
 export interface PlanWithDetails extends Plan {
   daysRemaining?: number;
+  daysUntilEnd?: number;
+  isInFinalMonth: boolean;
   nextPaymentDate?: string;
   nextPaymentAmount?: number;
   progressPercent: number;

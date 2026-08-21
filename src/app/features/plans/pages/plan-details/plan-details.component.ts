@@ -1,14 +1,16 @@
 import { CommonModule, Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, switchMap } from 'rxjs';
 
 import {
   Plan,
   PlanPayment,
+  PlanWithDetails,
   PlanStatus,
 } from '../../models/plan.model';
 import { PlanService } from '../../services/plan.service';
+import { PlanRenewalModalComponent } from '../../components/plan-renewal-modal/plan-renewal-modal.component';
 import { PlanIncludedItemsComponent } from '../plans/components/plan-included-items/plan-included-items.component';
 import { PlanExtraCostsComponent } from '../plans/components/plan-extra-costs/plan-extra-costs.component';
 import {
@@ -23,7 +25,7 @@ import { formatDate, formatLongDate } from '../../../../shared/utils/date.utils'
 @Component({
   selector: 'app-plan-details',
   standalone: true,
-  imports: [CommonModule, PlanIncludedItemsComponent, PlanExtraCostsComponent],
+  imports: [CommonModule, PlanRenewalModalComponent, PlanIncludedItemsComponent, PlanExtraCostsComponent],
   templateUrl: './plan-details.component.html',
   styleUrl: './plan-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,6 +39,7 @@ export class PlanDetailsComponent {
     style: 'currency',
     currency: 'BRL',
   });
+  protected readonly renewalModalOpen = signal(false);
 
   protected readonly viewModel$ = this.route.paramMap.pipe(
     switchMap((params) => {
@@ -57,6 +60,26 @@ export class PlanDetailsComponent {
 
   protected goToProject(projectId: string): void {
     this.router.navigate(['/projects', projectId]);
+  }
+
+  protected getFinalMonthMessage(plan: PlanWithDetails): string {
+    if (plan.daysUntilEnd === 0) {
+      return 'Este é o último dia do seu plano. Entre em contato com o suporte e renove para continuar com os serviços.';
+    }
+
+    if (plan.daysUntilEnd === 1) {
+      return 'Este é o último mês do seu plano. Ele termina em 1 dia. Entre em contato com o suporte e renove para continuar com os serviços.';
+    }
+
+    return `Este é o último mês do seu plano. Ele termina em ${plan.daysUntilEnd} dias. Entre em contato com o suporte e renove para continuar com os serviços.`;
+  }
+
+  protected openRenewalModal(): void {
+    this.renewalModalOpen.set(true);
+  }
+
+  protected closeRenewalModal(): void {
+    this.renewalModalOpen.set(false);
   }
 
   protected countPayments(payments: PlanPayment[], status: PlanPayment['status']): number {

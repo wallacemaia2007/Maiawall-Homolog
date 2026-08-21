@@ -132,12 +132,14 @@ export class NotificationService {
           actionLabel: 'Ver projeto',
         };
       case 'PAYMENT_DUE_SOON':
+      case 'PLAN_RENEWAL_DUE':
+      case 'PLAN_EXPIRING':
         return {
           icon: 'wallet',
           label: 'Financeiro',
           variant: 'warning',
           category: 'FINANCIAL',
-          actionLabel: 'Ver plano',
+          actionLabel: notification.type === 'PLAN_RENEWAL_DUE' ? 'Renovar plano' : 'Ver plano',
         };
       case 'PAYMENT_CONFIRMED':
         return {

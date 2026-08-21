@@ -147,6 +147,22 @@ export class PlanService {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 
+  getDaysUntilEnd(plan: Plan): number | null {
+    if (!plan.endDate) {
+      return null;
+    }
+
+    const now = new Date();
+    const endDate = new Date(plan.endDate);
+    const diffTime = endDate.getTime() - now.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  isInFinalMonth(plan: Plan): boolean {
+    const daysUntilEnd = this.getDaysUntilEnd(plan);
+    return daysUntilEnd !== null && daysUntilEnd >= 0 && daysUntilEnd <= 31;
+  }
+
   getProgressPercent(plan: Plan, payments: PlanPayment[]): number {
     if (plan.amount <= 0 && payments.length === 0) {
       return 0;
@@ -166,6 +182,7 @@ export class PlanService {
   private buildPlanWithDetails(plan: Plan, payments: PlanPayment[]): PlanWithDetails {
     const nextPayment = this.getNextPayment(plan, payments);
     const daysRemaining = this.getDaysRemaining(plan, payments);
+    const daysUntilEnd = this.getDaysUntilEnd(plan);
     const progressPercent = this.getProgressPercent(plan, payments);
     const totalPaid = payments.filter((p) => p.status === 'PAID').reduce((sum, p) => sum + p.amount, 0);
     const totalExpected = payments.length > 0
@@ -177,6 +194,8 @@ export class PlanService {
       projectName: plan.projectName ?? 'Projeto Maiawall',
       payments,
       daysRemaining: daysRemaining ?? undefined,
+      daysUntilEnd: daysUntilEnd ?? undefined,
+      isInFinalMonth: this.isInFinalMonth(plan),
       nextPaymentDate: nextPayment?.dueDate,
       nextPaymentAmount: nextPayment?.amount,
       progressPercent,
