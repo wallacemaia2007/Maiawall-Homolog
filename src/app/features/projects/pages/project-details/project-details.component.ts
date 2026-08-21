@@ -7,19 +7,25 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize, forkJoin } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 
 import { getProjectStatusView } from '../../../../core/models/project-status.view';
 import {
   Project,
   ProjectActivity,
-  ProjectChange,
   ProjectRelease,
   ProjectStatus,
 } from '../../../../core/models/project.model';
 import { ProjectService } from '../../../../core/services/project.service';
 import { InvestmentPlan } from '../../../investments/models/investment.model';
 import { InvestmentService } from '../../../investments/services/investment.service';
+import {
+  Pending,
+  PendingStatus,
+  getPendingPriorityLabel,
+  getPendingStatusView,
+} from '../../../pendencias/models/pending.model';
+import { PendingService } from '../../../pendencias/services/pending.service';
 import { Plan, PlanStatus } from '../../../plans/models/plan.model';
 import { PlanService } from '../../../plans/services/plan.service';
 import {
@@ -52,6 +58,7 @@ export class ProjectDetailsComponent {
   private readonly projectService = inject(ProjectService);
   private readonly investmentService = inject(InvestmentService);
   private readonly planService = inject(PlanService);
+  private readonly pendingService = inject(PendingService);
   private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
@@ -76,6 +83,7 @@ export class ProjectDetailsComponent {
   protected readonly releases = signal<ProjectRelease[]>([]);
   protected readonly investments = signal<InvestmentPlan[]>([]);
   protected readonly plans = signal<Plan[]>([]);
+  protected readonly pendings = signal<Pending[]>([]);
   protected readonly approvalMessage = signal('');
   protected readonly changesRequested = signal(false);
   protected readonly approvalModalOpen = signal(false);
@@ -101,6 +109,34 @@ export class ProjectDetailsComponent {
     const project = this.project();
     if (!project) return [];
     return this.plans().filter((plan) => plan.projectId === project.id);
+  });
+
+  protected readonly relatedPendings = computed(() => {
+    const project = this.project();
+
+    if (!project) {
+      return [];
+    }
+
+    return this.pendings()
+      .filter((pending) => pending.projectId === project.id || pending.project?.id === project.id)
+      .sort((first, second) => {
+        const priorityDiff =
+          this.getPendingPriorityWeight(second.priority) - this.getPendingPriorityWeight(first.priority);
+
+        if (priorityDiff !== 0) {
+          return priorityDiff;
+        }
+
+        const firstPending = this.isPendingStatus(first.status) ? 1 : 0;
+        const secondPending = this.isPendingStatus(second.status) ? 1 : 0;
+
+        if (firstPending !== secondPending) {
+          return secondPending - firstPending;
+        }
+
+        return new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime();
+      });
   });
 
   protected readonly latestDelivery = computed(() => {
@@ -153,15 +189,17 @@ export class ProjectDetailsComponent {
       releases: this.projectService.getProjectReleases(id),
       investments: this.investmentService.getInvestments(),
       plans: this.planService.getPlans(),
+      pendings: this.pendingService.getPendings().pipe(catchError(() => of([] as Pending[]))),
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: ({ project, history, releases, investments, plans }) => {
+        next: ({ project, history, releases, investments, plans, pendings }) => {
           this.project.set(project);
           this.history.set(history);
           this.releases.set(releases);
           this.investments.set(investments);
           this.plans.set(plans);
+          this.pendings.set(pendings);
           this.error.set(!project);
         },
         error: () => this.error.set(true),
@@ -284,13 +322,6 @@ export class ProjectDetailsComponent {
     return this.currencyFormatter.format(value);
   }
 
-  protected getChangesByType(
-    release: ProjectRelease,
-    type: ProjectChange['type'],
-  ): ProjectChange[] {
-    return release.changes.filter((change) => change.type === type);
-  }
-
   protected getPlanStatusLabel(status: PlanStatus): string {
     return getPlanStatusLabel(status);
   }
@@ -301,5 +332,47 @@ export class ProjectDetailsComponent {
 
   protected getBillingCycleLabel(cycle: Plan['billingCycle']): string {
     return getPlanBillingCycleLabel(cycle);
+  }
+
+  protected getPendingStatusLabel(status: PendingStatus): string {
+    return getPendingStatusView(status).label;
+  }
+
+  protected getPendingStatusTone(status: PendingStatus): string {
+    return getPendingStatusView(status).tone;
+  }
+
+  protected getPendingPriorityLabel(priority?: string): string {
+    return getPendingPriorityLabel(priority);
+  }
+
+  protected getPendingPriorityTone(priority?: string): string {
+    const priorityTones: Record<string, string> = {
+      URGENT: 'high',
+      HIGH: 'high',
+      MEDIUM: 'medium',
+      LOW: 'low',
+    };
+
+    return priority ? (priorityTones[priority.toUpperCase()] ?? 'neutral') : 'neutral';
+  }
+
+  protected requiredPendingFields(pending: Pending): number {
+    return pending.fields.filter((field) => field.required).length;
+  }
+
+  private getPendingPriorityWeight(priority?: string): number {
+    const weights: Record<string, number> = {
+      URGENT: 4,
+      HIGH: 4,
+      MEDIUM: 3,
+      LOW: 2,
+    };
+
+    return priority ? (weights[priority.toUpperCase()] ?? 1) : 1;
+  }
+
+  private isPendingStatus(status: PendingStatus): boolean {
+    return String(status).toUpperCase() === 'PENDING';
   }
 }

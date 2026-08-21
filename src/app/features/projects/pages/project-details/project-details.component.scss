@@ -56,6 +56,7 @@ h4 {
 
 .back-link,
 .card-link,
+.pending-link,
 .hero-actions a,
 .hero-actions button,
 .link-row a,
@@ -104,8 +105,8 @@ h4 {
 .links-card,
 .investment-card,
 .plans-card,
+.project-pending-card,
 .timeline-card,
-.release-section,
 .state-card {
   border: 1px solid #e4e4e1;
   border-radius: 8px;
@@ -136,8 +137,8 @@ h4 {
 .links-card,
 .investment-card,
 .plans-card,
-.timeline-card,
-.release-section {
+.project-pending-card,
+.timeline-card {
   padding: 24px;
 }
 
@@ -167,8 +168,8 @@ dt,
 .muted,
 .payment-count,
 .timeline-item p,
-.timeline-item time,
-.release-card p {
+.pending-description,
+.timeline-item time {
   color: #6b6e76;
 }
 
@@ -344,8 +345,8 @@ dd,
 .links-card,
 .investment-card,
 .plans-card,
+.project-pending-card,
 .timeline-card,
-.release-section,
 .main-stack,
 .side-stack {
   display: grid;
@@ -434,15 +435,22 @@ dd,
   gap: 12px;
 }
 
+.plan-entry {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fff;
+}
+
 .plan-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
   align-items: center;
-  padding: 14px;
-  border: 1px solid #ededeb;
-  border-radius: 8px;
-  background: #fafaf9;
+  padding: 0 0 12px;
+  border-bottom: 1px solid #ededeb;
 }
 
 .plan-item > div {
@@ -462,9 +470,117 @@ dd,
   font-size: 0.82rem;
 }
 
-.plan-item .card-link {
-  grid-column: 1 / -1;
+.plan-entry .card-link {
   width: 100%;
+}
+
+.project-pending-list {
+  display: grid;
+  gap: 14px;
+}
+
+.project-pending-item {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.project-pending-item.is-unread {
+  border-color: rgba(76, 58, 227, 0.28);
+}
+
+.project-pending-item.priority-high {
+  border-color: rgba(212, 67, 51, 0.72);
+  border-width: 2px;
+  box-shadow: inset 6px 0 0 #d44333;
+}
+
+.project-pending-item.priority-medium {
+  border-color: rgba(214, 157, 32, 0.76);
+  border-width: 2px;
+  box-shadow: inset 6px 0 0 #d69d20;
+}
+
+.project-pending-item.priority-low {
+  border-color: rgba(36, 118, 72, 0.34);
+  box-shadow: inset 3px 0 0 #247648;
+}
+
+.pending-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pending-item-top > div {
+  display: grid;
+  gap: 6px;
+}
+
+.unread-dot {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 6px;
+  color: #4c3ae3;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.unread-dot::before {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+  content: '';
+}
+
+.pending-description {
+  max-width: 780px;
+  line-height: 1.6;
+}
+
+.pending-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pending-meta span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #f2f2f0;
+  color: #6b6e76;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.pending-meta .priority-badge-high {
+  background: #ffe9e5;
+  color: #a73527;
+}
+
+.pending-meta .priority-badge-medium {
+  background: #fff4d7;
+  color: #8a6200;
+}
+
+.pending-meta .priority-badge-low {
+  background: #e4f7ed;
+  color: #247648;
+}
+
+.pending-link {
+  width: 100%;
+  padding: 0 16px;
+  border: 1px solid #d8d8d4;
+  background: #fff;
+  color: #16171b;
 }
 
 .content-grid {
@@ -496,47 +612,14 @@ dd,
   background: #4c3ae3;
 }
 
-.timeline-item div,
-.release-card,
-.change-group {
+.timeline-item div {
   display: grid;
   gap: 8px;
 }
 
-.timeline-item strong,
-.release-card span {
+.timeline-item strong {
   color: #4c3ae3;
   font-weight: 800;
-}
-
-.release-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.release-card {
-  padding: 18px;
-  border: 1px solid #ededeb;
-  border-radius: 8px;
-  background: #fafaf9;
-}
-
-.change-group {
-  padding-top: 10px;
-  border-top: 1px solid #ededeb;
-}
-
-.change-group strong {
-  color: #16171b;
-  font-size: 0.86rem;
-}
-
-.change-group p::before {
-  margin-right: 8px;
-  color: #1c7c3e;
-  font-weight: 800;
-  content: '✓';
 }
 
 .state-card {
@@ -550,8 +633,7 @@ dd,
 
 @media (max-width: 1040px) {
   .project-hero,
-  .details-grid,
-  .release-list {
+  .details-grid {
     grid-template-columns: 1fr;
   }
 
@@ -571,13 +653,14 @@ dd,
   .links-card,
   .investment-card,
   .plans-card,
-  .timeline-card,
-  .release-section {
+  .project-pending-card,
+  .timeline-card {
     padding: 20px;
   }
 
   .hero-heading,
   .approval-card,
+  .pending-item-top,
   .link-row {
     align-items: stretch;
     flex-direction: column;

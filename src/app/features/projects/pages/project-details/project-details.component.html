@@ -238,14 +238,16 @@
             @if (relatedPlans().length > 0) {
               <div class="plans-list">
                 @for (plan of relatedPlans(); track plan.id) {
-                  <div class="plan-item">
-                    <div>
-                      <span class="plan-name">{{ plan.name }}</span>
-                      <small>{{ formatCurrency(plan.amount) }} / {{ getBillingCycleLabel(plan.billingCycle) }}</small>
+                  <div class="plan-entry">
+                    <div class="plan-item">
+                      <div>
+                        <span class="plan-name">{{ plan.name }}</span>
+                        <small>{{ formatCurrency(plan.amount) }} / {{ getBillingCycleLabel(plan.billingCycle) }}</small>
+                      </div>
+                      <span class="status-badge" [class]="'status-badge tone-' + getPlanStatusTone(plan.status)">
+                        {{ getPlanStatusLabel(plan.status) }}
+                      </span>
                     </div>
-                    <span class="status-badge" [class]="'status-badge tone-' + getPlanStatusTone(plan.status)">
-                      {{ getPlanStatusLabel(plan.status) }}
-                    </span>
                     <a class="card-link" [routerLink]="['/plans', plan.id]">Ver plano</a>
                   </div>
                 }
@@ -256,6 +258,62 @@
           </article>
         </div>
       </section>
+
+      @if (relatedPendings().length > 0) {
+        <section class="project-pending-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Pendências</p>
+              <h3>Pendências do projeto</h3>
+            </div>
+          </div>
+
+          <div class="project-pending-list">
+            @for (pending of relatedPendings(); track pending.id) {
+              <article
+                class="project-pending-item"
+                [class.is-unread]="(pending.isRead ?? pending.read) === false"
+                [ngClass]="'priority-' + getPendingPriorityTone(pending.priority)"
+              >
+                <div class="pending-item-top">
+                  <div>
+                    @if ((pending.isRead ?? pending.read) === false) {
+                      <span class="unread-dot">Nova pendência</span>
+                    }
+                    <h4>{{ pending.title }}</h4>
+                  </div>
+
+                  <span class="status-badge" [class]="'status-badge tone-' + getPendingStatusTone(pending.status)">
+                    {{ getPendingStatusLabel(pending.status) }}
+                  </span>
+                </div>
+
+                @if (pending.description) {
+                  <p class="pending-description">{{ pending.description }}</p>
+                }
+
+                <div class="pending-meta">
+                  <span>{{ requiredPendingFields(pending) }} campos obrigatórios</span>
+                  <span>Criada em {{ formatDate(pending.createdAt) }}</span>
+                  @if (pending.updatedAt) {
+                    <span>Atualizada em {{ formatDate(pending.updatedAt) }}</span>
+                  }
+                  @if (pending.dueDate) {
+                    <span>Prazo {{ formatDate(pending.dueDate) }}</span>
+                  }
+                  @if (pending.priority) {
+                    <span [class]="'priority-badge priority-badge-' + getPendingPriorityTone(pending.priority)">
+                      Prioridade {{ getPendingPriorityLabel(pending.priority) }}
+                    </span>
+                  }
+                </div>
+
+                <a class="pending-link" [routerLink]="['/pending', pending.id]">Ver pendência</a>
+              </article>
+            }
+          </div>
+        </section>
+      }
 
       <section class="content-grid">
         <article class="timeline-card">
@@ -282,55 +340,6 @@
         </article>
       </section>
 
-      <section class="release-section">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Changelog</p>
-            <h3>O que mudou</h3>
-          </div>
-        </div>
-
-        <div class="release-list">
-          @for (release of releases(); track release.id) {
-            <article class="release-card">
-              <div>
-                <span>{{ release.version }}</span>
-                <h4>{{ release.title }}</h4>
-                @if (release.description) {
-                  <p>{{ release.description }}</p>
-                }
-              </div>
-
-              @if (getChangesByType(release, 'feature').length > 0) {
-                <div class="change-group">
-                  <strong>Novidades</strong>
-                  @for (change of getChangesByType(release, 'feature'); track change.id) {
-                    <p>{{ change.label }}</p>
-                  }
-                </div>
-              }
-
-              @if (getChangesByType(release, 'improvement').length > 0) {
-                <div class="change-group">
-                  <strong>Melhorias</strong>
-                  @for (change of getChangesByType(release, 'improvement'); track change.id) {
-                    <p>{{ change.label }}</p>
-                  }
-                </div>
-              }
-
-              @if (getChangesByType(release, 'fix').length > 0) {
-                <div class="change-group">
-                  <strong>Correcoes</strong>
-                  @for (change of getChangesByType(release, 'fix'); track change.id) {
-                    <p>{{ change.label }}</p>
-                  }
-                </div>
-              }
-            </article>
-          }
-        </div>
-      </section>
     }
   }
 </section>
