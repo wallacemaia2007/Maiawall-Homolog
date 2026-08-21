@@ -11,7 +11,6 @@ export interface User {
   phone?: string;
   birthDate?: string;
   address?: UserAddress;
-  rg?: string;
   gender?: string;
   profession?: string;
   company?: string;
@@ -26,3 +25,9 @@ export interface UserAddress {
   city?: string;
   state?: string;
 }
+
+export type UserProfileUpdatePayload = Partial<
+  Pick<User, 'name' | 'email' | 'cpf' | 'phone' | 'birthDate' | 'gender' | 'profession' | 'company'>
+> & {
+  address?: UserAddress;
+};

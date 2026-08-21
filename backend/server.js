@@ -64,6 +64,26 @@ const loginSchema = z.object({
   password: z.string().min(1, "Senha obrigatoria"),
 });
 
+const userProfilePatchSchema = z.object({
+  name: z.string().min(2, "Nome obrigatorio").optional(),
+  email: z.string().email("E-mail invalido").optional(),
+  cpf: z.string().optional(),
+  phone: z.string().optional(),
+  birthDate: z.string().optional(),
+  gender: z.string().optional(),
+  profession: z.string().optional(),
+  company: z.string().optional(),
+  address: z.object({
+    cep: z.string().optional(),
+    street: z.string().optional(),
+    number: z.string().optional(),
+    complement: z.string().optional(),
+    neighborhood: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+  }).optional(),
+});
+
 const projectSchema = z.object({
   name: z.string().min(2),
   description: z.string().optional().default(""),
@@ -309,6 +329,47 @@ app.post("/api/auth/forgot-password", validateBody(z.object({ email: z.string().
 
 app.get("/api/users/me", requireAuth, (req, res) => {
   res.json(successResponse(publicUser(req.user)));
+});
+
+app.patch("/api/users/me", requireAuth, validateBody(userProfilePatchSchema), async (req, res) => {
+  const db = databaseService.getState();
+  const user = db.users.find((item) => item.id === req.user.id);
+
+  if (!user) {
+    return res.status(404).json(errorResponse("Usuario nao encontrado"));
+  }
+
+  if (req.body.email) {
+    const normalizedEmail = req.body.email.trim().toLowerCase();
+    const emailInUse = db.users.some(
+      (item) => item.id !== user.id && item.email?.toLowerCase() === normalizedEmail,
+    );
+
+    if (emailInUse) {
+      return res.status(409).json(errorResponse("Este e-mail ja esta em uso"));
+    }
+
+    user.email = normalizedEmail;
+  }
+
+  const editableFields = ["name", "cpf", "phone", "birthDate", "gender", "profession", "company"];
+
+  editableFields.forEach((field) => {
+    if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+      user[field] = typeof req.body[field] === "string" ? req.body[field].trim() : req.body[field];
+    }
+  });
+
+  if (req.body.address) {
+    user.address = Object.fromEntries(
+      Object.entries(req.body.address).map(([key, value]) => [key, typeof value === "string" ? value.trim() : value]),
+    );
+  }
+
+  user.updatedAt = new Date().toISOString();
+
+  await databaseService.replaceDocument("users", user);
+  res.json(successResponse(publicUser(user)));
 });
 
 app.get("/api/users", requireAuth, requireRole("ADMIN"), (_req, res) => {

@@ -4,7 +4,7 @@ import { Observable, map } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { ApiResponse, unwrapApiData } from '../models/api-response.model';
-import { User } from '../models/user.model';
+import { User, UserProfileUpdatePayload } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +15,14 @@ export class UserService {
   getCurrentUser(): Observable<User> {
     return this.http
       .get<ApiResponse<User>>(`${environment.apiUrl}/users/me`, {
+        withCredentials: true,
+      })
+      .pipe(map(unwrapApiData));
+  }
+
+  updateCurrentUser(payload: UserProfileUpdatePayload): Observable<User> {
+    return this.http
+      .patch<ApiResponse<User>>(`${environment.apiUrl}/users/me`, payload, {
         withCredentials: true,
       })
       .pipe(map(unwrapApiData));

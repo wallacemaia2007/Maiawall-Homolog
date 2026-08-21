@@ -40,124 +40,241 @@
             <h3>{{ currentUser.name }}</h3>
             <p class="profile-email">{{ currentUser.email }}</p>
           </div>
+          <button
+            type="button"
+            class="btn-edit-profile"
+            (click)="editing() ? cancelEditing() : startEditing()"
+            [disabled]="saving()"
+          >
+            {{ editing() ? 'Cancelar edição' : 'Editar informações' }}
+          </button>
         </div>
+
+        @if (successMessage()) {
+          <p class="profile-feedback profile-feedback--success" aria-live="polite">{{ successMessage() }}</p>
+        }
+
+        @if (saveError()) {
+          <p class="profile-feedback profile-feedback--error" aria-live="polite">{{ saveError() }}</p>
+        }
 
         <div class="profile-divider"></div>
 
-        <section class="profile-section">
-          <h4 class="section-title">Informacoes pessoais</h4>
-          <dl class="info-grid">
-            <div class="info-item">
-              <dt>Nome completo</dt>
-              <dd>{{ currentUser.name }}</dd>
-            </div>
-            <div class="info-item">
-              <dt>Email</dt>
-              <dd>{{ currentUser.email }}</dd>
-            </div>
-            <div class="info-item">
-              <dt>CPF</dt>
-              <dd>{{ currentUser.cpf ? formatCpf(currentUser.cpf) : 'Nao informado' }}</dd>
-            </div>
-            <div class="info-item">
-              <dt>Telefone</dt>
-              <dd>{{ currentUser.phone ? formatPhone(currentUser.phone) : 'Nao informado' }}</dd>
-            </div>
-            <div class="info-item">
-              <dt>Data de nascimento</dt>
-              <dd>{{ currentUser.birthDate ? formatDate(currentUser.birthDate) : 'Nao informado' }}</dd>
-            </div>
-            @if (currentUser.rg) {
-              <div class="info-item">
-                <dt>RG</dt>
-                <dd>{{ currentUser.rg }}</dd>
-              </div>
-            }
-            @if (currentUser.gender) {
-              <div class="info-item">
-                <dt>Genero</dt>
-                <dd>{{ currentUser.gender }}</dd>
-              </div>
-            }
-            @if (currentUser.profession) {
-              <div class="info-item">
-                <dt>Profissao</dt>
-                <dd>{{ currentUser.profession }}</dd>
-              </div>
-            }
-            @if (currentUser.company) {
-              <div class="info-item">
-                <dt>Empresa</dt>
-                <dd>{{ currentUser.company }}</dd>
-              </div>
-            }
-            @if (currentUser.createdAt) {
-              <div class="info-item">
-                <dt>Data de cadastro</dt>
-                <dd>{{ formatDate(currentUser.createdAt) }}</dd>
-              </div>
-            }
-          </dl>
-        </section>
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+          <section class="profile-section">
+            <h4 class="section-title">Informacoes pessoais</h4>
 
-        @if (hasAddress(currentUser)) {
+            @if (editing()) {
+              <div class="form-grid">
+                <label class="form-field">
+                  <span>Nome completo</span>
+                  <input type="text" formControlName="name" autocomplete="name" />
+                  @if (fieldInvalid('name')) {
+                    <small>Informe pelo menos 2 caracteres.</small>
+                  }
+                </label>
+
+                <label class="form-field">
+                  <span>Email</span>
+                  <input type="email" formControlName="email" autocomplete="email" />
+                  @if (fieldInvalid('email')) {
+                    <small>Informe um e-mail válido.</small>
+                  }
+                </label>
+
+                <label class="form-field">
+                  <span>CPF/CNPJ</span>
+                  <input
+                    type="text"
+                    formControlName="cpf"
+                    autocomplete="off"
+                    mask="000.000.000-00||00.000.000/0000-00"
+                  />
+                </label>
+
+                <label class="form-field">
+                  <span>Telefone</span>
+                  <input
+                    type="tel"
+                    formControlName="phone"
+                    autocomplete="tel"
+                    mask="(00) 0000-0000||(00) 00000-0000"
+                  />
+                </label>
+
+                <label class="form-field">
+                  <span>Data de nascimento</span>
+                  <input type="date" formControlName="birthDate" />
+                </label>
+
+                <label class="form-field">
+                  <span>Gênero</span>
+                  <input type="text" formControlName="gender" autocomplete="off" />
+                </label>
+
+                <label class="form-field">
+                  <span>Profissão</span>
+                  <input type="text" formControlName="profession" autocomplete="organization-title" />
+                </label>
+
+                <label class="form-field">
+                  <span>Empresa</span>
+                  <input type="text" formControlName="company" autocomplete="organization" />
+                </label>
+              </div>
+            } @else {
+              <dl class="info-grid">
+                <div class="info-item">
+                  <dt>Nome completo</dt>
+                  <dd>{{ currentUser.name }}</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Email</dt>
+                  <dd>{{ currentUser.email }}</dd>
+                </div>
+                <div class="info-item">
+                  <dt>CPF/CNPJ</dt>
+                  <dd>{{ currentUser.cpf ? formatCpfCnpj(currentUser.cpf) : 'Nao informado' }}</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Telefone</dt>
+                  <dd>{{ currentUser.phone ? formatPhone(currentUser.phone) : 'Nao informado' }}</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Data de nascimento</dt>
+                  <dd>{{ currentUser.birthDate ? formatDate(currentUser.birthDate) : 'Nao informado' }}</dd>
+                </div>
+                @if (currentUser.gender) {
+                  <div class="info-item">
+                    <dt>Genero</dt>
+                    <dd>{{ currentUser.gender }}</dd>
+                  </div>
+                }
+                @if (currentUser.profession) {
+                  <div class="info-item">
+                    <dt>Profissao</dt>
+                    <dd>{{ currentUser.profession }}</dd>
+                  </div>
+                }
+                @if (currentUser.company) {
+                  <div class="info-item">
+                    <dt>Empresa</dt>
+                    <dd>{{ currentUser.company }}</dd>
+                  </div>
+                }
+                @if (currentUser.createdAt) {
+                  <div class="info-item">
+                    <dt>Data de cadastro</dt>
+                    <dd>{{ formatDate(currentUser.createdAt) }}</dd>
+                  </div>
+                }
+              </dl>
+            }
+          </section>
+
           <div class="profile-divider"></div>
 
           <section class="profile-section">
             <h4 class="section-title">Endereco</h4>
-            <dl class="info-grid info-grid--address">
-              @if (currentUser.address?.cep) {
-                <div class="info-item">
-                  <dt>CEP</dt>
-                  <dd>{{ currentUser.address!.cep }}</dd>
-                </div>
-              }
-              @if (currentUser.address?.street) {
-                <div class="info-item">
-                  <dt>Rua</dt>
-                  <dd>{{ currentUser.address!.street }}</dd>
-                </div>
-              }
-              @if (currentUser.address?.number) {
-                <div class="info-item">
-                  <dt>Numero</dt>
-                  <dd>{{ currentUser.address!.number }}</dd>
-                </div>
-              }
-              @if (currentUser.address?.complement) {
-                <div class="info-item">
-                  <dt>Complemento</dt>
-                  <dd>{{ currentUser.address!.complement }}</dd>
-                </div>
-              }
-              @if (currentUser.address?.neighborhood) {
-                <div class="info-item">
-                  <dt>Bairro</dt>
-                  <dd>{{ currentUser.address!.neighborhood }}</dd>
-                </div>
-              }
-              @if (currentUser.address?.city) {
-                <div class="info-item">
-                  <dt>Cidade</dt>
-                  <dd>{{ currentUser.address!.city }}</dd>
-                </div>
-              }
-              @if (currentUser.address?.state) {
-                <div class="info-item">
-                  <dt>Estado</dt>
-                  <dd>{{ currentUser.address!.state }}</dd>
-                </div>
-              }
-            </dl>
-          </section>
-        } @else {
-          <div class="profile-divider"></div>
 
-          <section class="profile-section">
-            <h4 class="section-title">Endereco</h4>
-            <p class="info-empty">Endereco nao informado.</p>
+            @if (editing()) {
+              <div class="form-grid form-grid--address" formGroupName="address">
+                <label class="form-field">
+                  <span>CEP</span>
+                  <input type="text" formControlName="cep" autocomplete="postal-code" mask="00000-000" />
+                </label>
+
+                <label class="form-field form-field--wide">
+                  <span>Rua</span>
+                  <input type="text" formControlName="street" autocomplete="address-line1" />
+                </label>
+
+                <label class="form-field">
+                  <span>Número</span>
+                  <input type="text" formControlName="number" autocomplete="address-line2" />
+                </label>
+
+                <label class="form-field">
+                  <span>Complemento</span>
+                  <input type="text" formControlName="complement" autocomplete="address-line3" />
+                </label>
+
+                <label class="form-field">
+                  <span>Bairro</span>
+                  <input type="text" formControlName="neighborhood" autocomplete="address-level3" />
+                </label>
+
+                <label class="form-field">
+                  <span>Cidade</span>
+                  <input type="text" formControlName="city" autocomplete="address-level2" />
+                </label>
+
+                <label class="form-field">
+                  <span>Estado</span>
+                  <input type="text" formControlName="state" autocomplete="address-level1" />
+                </label>
+              </div>
+            } @else if (hasAddress(currentUser)) {
+              <dl class="info-grid info-grid--address">
+                @if (currentUser.address?.cep) {
+                  <div class="info-item">
+                    <dt>CEP</dt>
+                    <dd>{{ currentUser.address!.cep }}</dd>
+                  </div>
+                }
+                @if (currentUser.address?.street) {
+                  <div class="info-item">
+                    <dt>Rua</dt>
+                    <dd>{{ currentUser.address!.street }}</dd>
+                  </div>
+                }
+                @if (currentUser.address?.number) {
+                  <div class="info-item">
+                    <dt>Numero</dt>
+                    <dd>{{ currentUser.address!.number }}</dd>
+                  </div>
+                }
+                @if (currentUser.address?.complement) {
+                  <div class="info-item">
+                    <dt>Complemento</dt>
+                    <dd>{{ currentUser.address!.complement }}</dd>
+                  </div>
+                }
+                @if (currentUser.address?.neighborhood) {
+                  <div class="info-item">
+                    <dt>Bairro</dt>
+                    <dd>{{ currentUser.address!.neighborhood }}</dd>
+                  </div>
+                }
+                @if (currentUser.address?.city) {
+                  <div class="info-item">
+                    <dt>Cidade</dt>
+                    <dd>{{ currentUser.address!.city }}</dd>
+                  </div>
+                }
+                @if (currentUser.address?.state) {
+                  <div class="info-item">
+                    <dt>Estado</dt>
+                    <dd>{{ currentUser.address!.state }}</dd>
+                  </div>
+                }
+              </dl>
+            } @else {
+              <p class="info-empty">Endereco nao informado.</p>
+            }
           </section>
-        }
+
+          @if (editing()) {
+            <div class="profile-form-actions">
+              <button type="button" class="btn-secondary" (click)="cancelEditing()" [disabled]="saving()">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-primary" [disabled]="saving()">
+                {{ saving() ? 'Salvando...' : 'Salvar informações' }}
+              </button>
+            </div>
+          }
+        </form>
 
         <div class="profile-divider"></div>
 
