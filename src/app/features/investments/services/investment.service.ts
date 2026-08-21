@@ -1,29 +1,41 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, catchError, map, of } from 'rxjs';
 
 import { environment } from '../../../../environments/environment';
 import { ApiResponse, unwrapApiData } from '../../../core/models/api-response.model';
-import { Installment, InvestmentPlan, InvestmentSummary } from '../models/investment.model';
+import { Installment, InvestmentPlan, InvestmentPayment, InvestmentSummary } from '../models/investment.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InvestmentService {
-  private readonly installmentsCache = new Map<string, Installment[]>();
-
   constructor(private readonly http: HttpClient) {}
 
-  getPlans(): Observable<InvestmentPlan[]> {
+  getInvestments(): Observable<InvestmentPlan[]> {
     return this.http
       .get<ApiResponse<InvestmentPlan[]>>(this.apiUrl('/investments'), { withCredentials: true })
-      .pipe(map(unwrapApiData), map((plans) => plans.map((plan) => this.normalizePlan(plan))));
+      .pipe(
+        map(unwrapApiData),
+        map((plans) => plans.map((plan) => this.normalizeInvestment(plan))),
+        catchError((error) => {
+          console.error('Error fetching investments:', error);
+          return of([]);
+        }),
+      );
   }
 
-  getPlanById(id: string): Observable<InvestmentPlan | null> {
+  getInvestmentById(id: string): Observable<InvestmentPlan | null> {
     return this.http
       .get<ApiResponse<InvestmentPlan>>(this.apiUrl(`/investments/${id}`), { withCredentials: true })
-      .pipe(map(unwrapApiData), map((plan) => this.normalizePlan(plan)));
+      .pipe(
+        map(unwrapApiData),
+        map((plan) => this.normalizeInvestment(plan)),
+        catchError((error) => {
+          console.error('Error fetching investment:', error);
+          return of(null);
+        }),
+      );
   }
 
   getInstallments(planId: string): Observable<Installment[]> {
@@ -34,46 +46,80 @@ export class InvestmentService {
       .pipe(
         map(unwrapApiData),
         map((installments) => installments.map((installment) => this.normalizeInstallment(installment))),
-        tap((installments) => this.installmentsCache.set(planId, installments)),
+        catchError((error) => {
+          console.error('Error fetching installments:', error);
+          return of([]);
+        }),
       );
   }
 
-  getInstallmentsByPlanId(planId: string): Installment[] {
-    return this.installmentsCache.get(planId) ?? [];
+  getPaymentHistory(planId: string): Observable<InvestmentPayment[]> {
+    return this.http
+      .get<ApiResponse<InvestmentPayment[]>>(this.apiUrl(`/investments/${planId}/payments`), {
+        withCredentials: true,
+      })
+      .pipe(
+        map(unwrapApiData),
+        catchError((error) => {
+          console.error('Error fetching payment history:', error);
+          return of([]);
+        }),
+      );
   }
 
-  getPrimaryPlan(plans: InvestmentPlan[]): InvestmentPlan | null {
+  getPrimaryInvestment(investments: InvestmentPlan[]): InvestmentPlan | null {
     return (
-      plans.find((plan) => plan.status === 'ACTIVE') ??
-      plans.find((plan) => plan.status === 'PENDING') ??
-      plans[0] ??
+      investments.find((inv) => inv.status === 'ACTIVE') ??
+      investments.find((inv) => inv.status === 'PARTIALLY_PAID') ??
+      investments.find((inv) => inv.status === 'PENDING') ??
+      investments[0] ??
       null
     );
   }
 
-  calculateSummary(plans: InvestmentPlan[]): InvestmentSummary {
-    const billablePlans = plans.filter((plan) => plan.status !== 'CANCELLED');
+  calculateSummary(investments: InvestmentPlan[]): InvestmentSummary {
+    const billableInvestments = investments.filter((inv) => inv.status !== 'CANCELLED');
 
-    return billablePlans.reduce<InvestmentSummary>(
-      (summary, plan) => ({
-        totalContracted: summary.totalContracted + plan.totalAmount,
-        totalPaid: summary.totalPaid + plan.paidAmount,
-        totalRemaining: summary.totalRemaining + plan.remainingAmount,
-        activePlans: summary.activePlans + (plan.status === 'ACTIVE' ? 1 : 0),
+    return billableInvestments.reduce<InvestmentSummary>(
+      (summary, inv) => ({
+        totalContracted: summary.totalContracted + inv.totalAmount,
+        totalPaid: summary.totalPaid + inv.paidAmount,
+        totalRemaining: summary.totalRemaining + inv.remainingAmount,
+        activeInvestments: summary.activeInvestments + (inv.status === 'ACTIVE' || inv.status === 'PARTIALLY_PAID' ? 1 : 0),
       }),
       {
         totalContracted: 0,
         totalPaid: 0,
         totalRemaining: 0,
-        activePlans: 0,
+        activeInvestments: 0,
       },
     );
   }
 
-  private normalizePlan(plan: InvestmentPlan): InvestmentPlan {
+  getNextInstallment(investment: InvestmentPlan, installments: Installment[]): Installment | null {
+    const pendingInstallments = installments
+      .filter((inst) => inst.status !== 'PAID')
+      .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+    return pendingInstallments[0] ?? null;
+  }
+
+  getProgress(investment: InvestmentPlan): number {
+    if (investment.totalAmount <= 0) {
+      return 0;
+    }
+    return Math.round((investment.paidAmount / investment.totalAmount) * 100);
+  }
+
+  hasDownPayment(investment: InvestmentPlan): boolean {
+    return (investment.downPayment ?? 0) > 0;
+  }
+
+  private normalizeInvestment(investment: InvestmentPlan): InvestmentPlan {
     return {
-      ...plan,
-      projectName: plan.projectName ?? 'Projeto Maiawall',
+      ...investment,
+      projectName: investment.projectName ?? 'Projeto Maiawall',
+      downPayment: investment.downPayment ?? 0,
+      downPaymentStatus: investment.downPaymentStatus ?? 'PENDING',
     };
   }
 

@@ -8,6 +8,8 @@ const COLLECTIONS = [
   "projectReleases",
   "projectCommits",
   "investmentPlans",
+  "plans",
+  "planPayments",
   "installments",
   "notifications",
   "pending",

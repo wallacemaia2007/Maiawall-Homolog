@@ -1,128 +1,177 @@
 <section class="investments-page">
   <header class="investments-hero">
     <p class="eyebrow">Investimentos</p>
-    <h2>Planos financeiros dos seus projetos</h2>
-    <p>Acompanhe valores contratados, parcelas pagas e proximos vencimentos.</p>
+    <h2>Investimentos financeiros dos projetos</h2>
+    <p>Acompanhe o valor total, entrada, parcelamento e pagamentos de cada projeto.</p>
   </header>
 
-  @if (plans$ | async; as plans) {
-  @if (plans.length > 0) {
+  @if (viewModel$ | async; as viewModels) {
+  @if (viewModels.length > 0) {
   <section class="summary-grid" aria-label="Resumo financeiro">
     <article class="summary-card">
-      <span>Total contratado</span>
-      <strong>{{ formatCurrency(getSummaryValue(plans, 'totalContracted')) }}</strong>
+      <span>Total investido</span>
+      <strong>{{ getTotalContracted(viewModels) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
     </article>
     <article class="summary-card">
-      <span>Ja pago</span>
-      <strong>{{ formatCurrency(getSummaryValue(plans, 'totalPaid')) }}</strong>
+      <span>Já pago</span>
+      <strong>{{ getTotalPaid(viewModels) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
     </article>
     <article class="summary-card">
       <span>Falta pagar</span>
-      <strong>{{ formatCurrency(getSummaryValue(plans, 'totalRemaining')) }}</strong>
+      <strong>{{ getTotalRemaining(viewModels) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+    </article>
+    <article class="summary-card highlight">
+      <span>Investimentos ativos</span>
+      <strong>{{ getActiveCount(viewModels) }}</strong>
     </article>
   </section>
 
-  <p class="active-count">
-    Voce possui {{ getActivePlansCount(plans) }} plano ativo.
-  </p>
-
-  @if (getPrimaryPlan(plans); as primaryPlan) {
+  @if (primaryViewModel$ | async; as primaryVm) {
   <section class="main-grid">
-    <article class="featured-plan">
+    <article class="featured-investment">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">Plano principal</p>
-          <h3>{{ primaryPlan.name }}</h3>
+          <p class="eyebrow">Investimento principal</p>
+          <h3>{{ primaryVm.investment.projectName }}</h3>
         </div>
-        <span class="status-badge" [class]="'status-badge status-' + primaryPlan.status.toLowerCase()">
-          {{ getPlanStatusLabel(primaryPlan.status) }}
+        <span class="status-badge" [class]="'status-badge status-' + primaryVm.investment.status.toLowerCase()">
+          {{ getInvestmentStatusLabel(primaryVm.investment.status) }}
         </span>
       </div>
 
-      <dl class="plan-facts">
+      <dl class="investment-facts">
         <div>
-          <dt>Projeto</dt>
-          <dd>{{ primaryPlan.projectName }}</dd>
+          <dt>Valor total do projeto</dt>
+          <dd>{{ primaryVm.investment.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</dd>
         </div>
+        @if (hasDownPayment(primaryVm.investment)) {
         <div>
-          <dt>Valor total</dt>
-          <dd>{{ formatCurrency(primaryPlan.totalAmount) }}</dd>
+          <dt>Entrada</dt>
+          <dd>{{ (primaryVm.investment.downPayment ?? 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</dd>
         </div>
+        }
         <div>
           <dt>Parcelamento</dt>
-          <dd>{{ primaryPlan.installments }}x de {{ formatCurrency(primaryPlan.installmentAmount) }}</dd>
+          <dd>{{ primaryVm.investment.installments }}x de {{ (primaryVm.investment.installmentAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR') }}</dd>
         </div>
         <div>
           <dt>Parcelas pagas</dt>
-          <dd>{{ primaryPlan.paidInstallments }} de {{ primaryPlan.installments }}</dd>
+          <dd>{{ primaryVm.investment.paidInstallments }} de {{ primaryVm.investment.installments }}</dd>
         </div>
+        @if (primaryVm.investment.paymentMethod) {
+        <div>
+          <dt>Forma de pagamento</dt>
+          <dd>{{ primaryVm.investment.paymentMethod }}</dd>
+        </div>
+        }
       </dl>
 
       <div class="progress-block">
         <div class="progress-label">
           <span>Progresso financeiro</span>
-          <strong>{{ getProgress(primaryPlan) }}% pago</strong>
+          <strong>{{ primaryVm.progress }}% pago</strong>
         </div>
         <div class="progress-track" aria-hidden="true">
-          <span [style.width.%]="getProgress(primaryPlan)"></span>
+          <span [style.width.%]="primaryVm.progress"></span>
         </div>
       </div>
 
       <div class="money-split">
         <div>
           <span>Pago</span>
-          <strong>{{ formatCurrency(primaryPlan.paidAmount) }}</strong>
+          <strong>{{ primaryVm.investment.paidAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
         </div>
         <div>
           <span>Restante</span>
-          <strong>{{ formatCurrency(primaryPlan.remainingAmount) }}</strong>
+          <strong>{{ primaryVm.investment.remainingAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
         </div>
       </div>
     </article>
 
-    <aside class="next-payment" aria-label="Proximo pagamento">
-      <p class="eyebrow">Proximo pagamento</p>
-      @if (getNextInstallment(primaryPlan.id); as nextInstallment) {
-      <strong>{{ nextInstallment.number }}ª parcela</strong>
-      <span class="next-amount">{{ formatCurrency(nextInstallment.amount) }}</span>
-      <div>
-        <small>Vencimento</small>
-        <span>{{ formatLongDate(nextInstallment.dueDate) }}</span>
+    <aside class="next-payment" aria-label="Próxima parcela">
+      <p class="eyebrow">Próxima parcela</p>
+      @if (primaryVm.nextInstallment; as nextInstallment) {
+      <strong>Parcela {{ nextInstallment.number }} de {{ primaryVm.investment.installments }}</strong>
+      <div class="next-payment-grid">
+        <div>
+          <small>Valor</small>
+          <span>{{ nextInstallment.amount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+        </div>
+        <div>
+          <small>Data de validade</small>
+          <span>{{ formatLongDate(nextInstallment.dueDate) }}</span>
+        </div>
+        <div>
+          <small>Status</small>
+          <span class="installment-badge" [class]="'installment-badge status-' + nextInstallment.status.toLowerCase()">
+            {{ getInstallmentStatusLabel(nextInstallment.status) }}
+          </span>
+        </div>
       </div>
-      <button type="button">Pagar parcela</button>
+      <a [routerLink]="['/investments', primaryVm.investment.id]">Ver detalhes</a>
       } @else {
-      <strong>Plano quitado</strong>
-      <span class="next-amount">{{ formatCurrency(0) }}</span>
+      <strong>Investimento quitado</strong>
       <p>Nenhuma parcela pendente para este projeto.</p>
+      <a [routerLink]="['/investments', primaryVm.investment.id]">Ver detalhes</a>
       }
     </aside>
   </section>
 
-  <section class="plans-list-section">
+  <section class="investments-list-section">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Meus planos</p>
+        <p class="eyebrow">Meus investimentos</p>
         <h3>Projetos contratados</h3>
       </div>
     </div>
 
-    <div class="plans-list">
-      @for (plan of plans; track plan.id) {
-      <article class="plan-card">
-        <div>
-          <span class="project-name">{{ plan.projectName }}</span>
-          <h4>{{ plan.name }}</h4>
+    <div class="investments-list">
+      @for (vm of viewModels; track vm.investment.id) {
+      <article class="investment-card" [class.paid]="vm.investment.status === 'PAID'">
+        <div class="investment-header">
+          <div>
+            <span class="project-name">{{ vm.investment.projectName }}</span>
+            <h4>{{ vm.investment.name }}</h4>
+          </div>
+          <span class="status-badge" [class]="'status-badge status-' + vm.investment.status.toLowerCase()">
+            {{ getInvestmentStatusLabel(vm.investment.status) }}
+          </span>
         </div>
 
-        <div class="mini-progress">
-          <span>{{ getProgress(plan) }}% pago</span>
-          <div class="progress-track" aria-hidden="true">
-            <span [style.width.%]="getProgress(plan)"></span>
+        <div class="investment-summary">
+          <div class="summary-item">
+            <span class="label">Valor total</span>
+            <strong>{{ vm.investment.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+          </div>
+          @if (hasDownPayment(vm.investment)) {
+          <div class="summary-item">
+            <span class="label">Entrada</span>
+            <strong>{{ (vm.investment.downPayment ?? 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+          </div>
+          }
+          <div class="summary-item">
+            <span class="label">Parcelamento</span>
+            <strong>{{ vm.investment.installments }}x de {{ (vm.investment.installmentAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR') }}</strong>
+          </div>
+          <div class="summary-item">
+            <span class="label">Parcelas pagas</span>
+            <strong>{{ vm.investment.paidInstallments }} de {{ vm.investment.installments }}</strong>
           </div>
         </div>
 
-        <p>{{ formatCurrency(plan.paidAmount) }} / {{ formatCurrency(plan.totalAmount) }}</p>
-        <a [routerLink]="['/investments', plan.id]">Ver detalhes</a>
+        <div class="mini-progress">
+          <span>{{ vm.progress }}% pago</span>
+          <div class="progress-track" aria-hidden="true">
+            <span [style.width.%]="vm.progress"></span>
+          </div>
+        </div>
+
+        <div class="investment-values">
+          <span class="paid">{{ vm.investment.paidAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }} pago</span>
+          <span class="remaining">{{ vm.investment.remainingAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }} restante</span>
+        </div>
+
+        <a [routerLink]="['/investments', vm.investment.id]">Ver detalhes</a>
       </article>
       }
     </div>
@@ -132,37 +181,52 @@
     <div class="section-heading">
       <div>
         <p class="eyebrow">Parcelas</p>
-        <h3>Parcelas por projeto</h3>
+        <h3>Cronograma por projeto</h3>
       </div>
     </div>
 
     <div class="groups">
-      @for (plan of plans; track plan.id) {
+      @for (vm of viewModels; track vm.investment.id) {
       <article class="group">
         <div class="section-heading">
           <div>
-            <span class="project-name">{{ plan.projectName }}</span>
-            <h4>{{ plan.name }}</h4>
+            <span class="project-name">{{ vm.investment.projectName }}</span>
+            <h4>{{ vm.investment.name }}</h4>
           </div>
-          <span class="status-badge" [class]="'status-badge status-' + plan.status.toLowerCase()">
-            {{ getPlanStatusLabel(plan.status) }}
+          <span class="status-badge" [class]="'status-badge status-' + vm.investment.status.toLowerCase()">
+            {{ getInvestmentStatusLabel(vm.investment.status) }}
           </span>
         </div>
 
-        <div class="installments-table" role="table" [attr.aria-label]="'Parcelas de ' + plan.projectName">
+        @if (hasDownPayment(vm.investment)) {
+        <div class="down-payment-info">
+          <p class="down-payment-label">Entrada</p>
+          <div class="down-payment-detail">
+            <span>{{ (vm.investment.downPayment ?? 0) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+            <span class="installment-badge" [class]="'installment-badge status-' + (vm.investment.downPaymentStatus ?? 'PENDING').toLowerCase()">
+              {{ getInstallmentStatusLabel(vm.investment.downPaymentStatus ?? 'PENDING') }}
+            </span>
+            @if (vm.investment.downPaymentDate) {
+            <small>{{ formatDate(vm.investment.downPaymentDate) }}</small>
+            }
+          </div>
+        </div>
+        }
+
+        <div class="installments-table" role="table" [attr.aria-label]="'Cronograma de parcelas de ' + vm.investment.projectName">
           <div class="installments-row installments-head" role="row">
-            <span role="columnheader">No.</span>
+            <span role="columnheader">Parcela</span>
             <span role="columnheader">Valor</span>
             <span role="columnheader">Vencimento</span>
-            <span role="columnheader">Status</span>
+            <span role="columnheader">Situação</span>
           </div>
 
-          @for (installment of getInstallments(plan.id); track installment.id) {
+          @for (installment of getVisibleInstallments(vm); track installment.id) {
           <div class="installments-row" role="row">
-            <span role="cell">{{ installment.number | number: '2.0-0' }}</span>
-            <span role="cell">{{ formatCurrency(installment.amount) }}</span>
-            <span role="cell">{{ formatDate(installment.dueDate) }}</span>
-            <span role="cell">
+            <span role="cell" class="installment-index">Parcela {{ installment.number }} de {{ vm.investment.installments }}</span>
+            <span role="cell" class="installment-value">{{ installment.amount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</span>
+            <span role="cell" class="installment-date">Vence em {{ formatDate(installment.dueDate) }}</span>
+            <span role="cell" class="installment-status-cell">
               <span class="installment-badge" [class]="'installment-badge status-' + installment.status.toLowerCase()">
                 {{ getInstallmentStatusLabel(installment.status) }}
               </span>
@@ -170,6 +234,11 @@
           </div>
           }
         </div>
+        @if (hasHiddenInstallments(vm)) {
+        <button type="button" class="installments-toggle" (click)="toggleInstallmentGroup(vm.investment.id)">
+          {{ isInstallmentGroupExpanded(vm.investment.id) ? 'Ver menos parcelas' : 'Ver mais parcelas' }}
+        </button>
+        }
       </article>
       }
     </div>
@@ -178,8 +247,8 @@
   } @else {
   <section class="empty-state">
     <p class="eyebrow">Investimentos</p>
-    <h2>Voce ainda nao possui nenhum plano financeiro cadastrado.</h2>
-    <p>Quando um plano for associado aos seus projetos, ele aparecera aqui.</p>
+    <h2>Você ainda não possui nenhum investimento registrado.</h2>
+    <p>Quando um investimento for associado aos seus projetos, ele aparecerá aqui.</p>
   </section>
   }
   }

@@ -62,21 +62,21 @@ h4 {
 
 .investments-hero p:not(.eyebrow),
 .active-count,
-.plan-card p,
+.investment-card p,
 .next-payment p {
   color: #6b6e76;
 }
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
 .summary-card,
-.featured-plan,
+.featured-investment,
 .next-payment,
-.plan-card,
+.investment-card,
 .installments-section,
 .empty-state {
   border: 1px solid #e4e4e1;
@@ -107,19 +107,24 @@ dt,
   font-weight: 700;
 }
 
+.summary-card.highlight {
+  border-color: #4c3ae3;
+  background: #faf9ff;
+}
+
 .main-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.34fr);
   gap: 18px;
 }
 
-.featured-plan,
+.featured-investment,
 .next-payment,
 .installments-section {
   padding: 24px;
 }
 
-.featured-plan {
+.featured-investment {
   display: grid;
   gap: 24px;
 }
@@ -142,6 +147,11 @@ dt,
   color: #4c3ae3;
 }
 
+.status-partially_paid {
+  background: #e8f4fd;
+  color: #1a73e8;
+}
+
 .status-paid {
   background: #eaf8ef;
   color: #1c7c3e;
@@ -157,13 +167,13 @@ dt,
   color: #6b6e76;
 }
 
-.plan-facts {
+.investment-facts {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
 
-.plan-facts div {
+.investment-facts div {
   display: grid;
   gap: 6px;
   padding: 16px;
@@ -229,13 +239,31 @@ dd {
   gap: 16px;
 }
 
-.next-payment div {
+.next-payment-grid {
   display: grid;
-  gap: 4px;
+  gap: 12px;
 }
 
-.next-payment button,
-.plan-card a {
+.next-payment-grid div {
+  display: grid;
+  min-height: 86px;
+  align-content: start;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+  background: #fafaf9;
+}
+
+.next-payment-grid span:not(.installment-badge) {
+  color: #16171b;
+  font-size: 1rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.next-payment a,
+.investment-card a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -249,26 +277,184 @@ dd {
   text-decoration: none;
 }
 
-.plans-list-section {
+.investments-list-section {
   display: grid;
   gap: 16px;
 }
 
-.plans-list {
+.investments-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
-.plan-card {
+.investment-card {
   display: grid;
-  gap: 18px;
+  gap: 16px;
   padding: 20px;
+  border: 1px solid #e4e4e1;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: #4c3ae3;
+    box-shadow: 0 4px 16px rgba(76, 58, 227, 0.08);
+  }
+
+  &.paid {
+    border-color: #1c7c3e;
+    background: #f0fdf4;
+
+    &:hover {
+      border-color: #1c7c3e;
+      box-shadow: 0 4px 16px rgba(28, 124, 62, 0.12);
+    }
+  }
 }
 
-.plan-card a {
+.investment-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.investment-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #16171b;
+}
+
+.investment-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: #fafaf9;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-item .label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b6e76;
+}
+
+.summary-item strong {
+  font-size: 0.9rem;
+  color: #16171b;
+  font-weight: 600;
+}
+
+.mini-progress {
+  display: grid;
+  gap: 8px;
+}
+
+.mini-progress span {
+  font-size: 0.8rem;
+  color: #6b6e76;
+  font-weight: 500;
+}
+
+.mini-progress .progress-track {
+  height: 6px;
+  background: #f0f0ee;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mini-progress .progress-track span {
+  display: block;
+  height: 100%;
+  background: #4c3ae3;
+  border-radius: 3px;
+}
+
+.investment-card.paid .mini-progress .progress-track span {
+  background: #1c7d3e;
+}
+
+.investment-values {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0ee;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.investment-values .paid {
+  color: #1c7c3e;
+}
+
+.investment-values .remaining {
+  color: #b45616;
+}
+
+.investment-card a {
   width: max-content;
-  padding: 0 14px;
+  padding: 10px 16px;
+  margin-top: 4px;
+  border: 1px solid #d8d8d4;
+  border-radius: 8px;
+  background: #fff;
+  color: #16171b;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    border-color: #4c3ae3;
+    color: #4c3ae3;
+  }
+
+  .investment-card.paid &:hover {
+    border-color: #1c7c3e;
+    color: #1c7c3e;
+  }
+}
+
+@media (max-width: 640px) {
+  .investment-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+.down-payment-info {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  background: #fafaf9;
+  border: 1px solid #ededeb;
+  border-radius: 8px;
+}
+
+.down-payment-label {
+  color: #6b6e76;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.down-payment-detail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .installments-section {
@@ -283,20 +469,23 @@ dd {
 
 .group {
   display: grid;
-  gap: 12px;
+  gap: 14px;
+  padding-top: 2px;
 }
 
 .installments-table {
   overflow: hidden;
   border: 1px solid #ededeb;
   border-radius: 8px;
+  background: #fff;
 }
 
 .installments-row {
   display: grid;
-  grid-template-columns: 0.5fr 1fr 1fr 1fr;
+  grid-template-columns: minmax(220px, 1.35fr) minmax(160px, 1fr) minmax(210px, 1.2fr) 112px;
   gap: 16px;
   align-items: center;
+  min-height: 62px;
   padding: 16px 18px;
   color: #16171b;
 }
@@ -314,6 +503,48 @@ dd {
   text-transform: uppercase;
 }
 
+.installment-index,
+.installment-value {
+  font-weight: 700;
+}
+
+.installment-date {
+  color: #6b6e76;
+  font-size: 0.9rem;
+}
+
+.installment-status-cell {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.installment-status-cell .installment-badge {
+  justify-content: center;
+  min-width: 76px;
+}
+
+.installments-toggle {
+  display: inline-flex;
+  width: max-content;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: 1px solid #d8d8d4;
+  border-radius: 8px;
+  background: #fff;
+  color: #16171b;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  &:hover {
+    border-color: #4c3ae3;
+    color: #4c3ae3;
+  }
+}
+
 .empty-state {
   display: grid;
   gap: 10px;
@@ -325,8 +556,8 @@ dd {
 
 @media (max-width: 1040px) {
   .main-grid,
-  .plans-list,
-  .plan-facts {
+  .investments-list,
+  .investment-facts {
     grid-template-columns: 1fr;
   }
 }
@@ -347,10 +578,18 @@ dd {
   }
 
   .installments-row {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 10px;
     border: 1px solid #ededeb;
     border-radius: 8px;
     background: #fff;
+  }
+
+  .installment-status-cell {
+    justify-content: flex-start;
+  }
+
+  .installments-toggle {
+    width: 100%;
   }
 }

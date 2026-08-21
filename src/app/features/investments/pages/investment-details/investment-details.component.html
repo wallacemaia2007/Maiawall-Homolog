@@ -7,101 +7,228 @@
   </button>
 
   @if (viewModel$ | async; as viewModel) {
-    @if (viewModel.plan; as plan) {
-      <header class="details-hero">
-        <div>
-          <p class="eyebrow">Detalhes do plano</p>
-          <h2>{{ plan.projectName }}</h2>
-          <p>{{ plan.name }}</p>
-        </div>
-        <span class="status-badge" [class]="'status-badge status-' + plan.status.toLowerCase()">
-          {{ getPlanStatusLabel(plan.status) }}
+  @if (viewModel.investment; as investment) {
+  <header class="details-hero">
+    <div>
+      <p class="eyebrow">Detalhes do investimento</p>
+      <h2>{{ investment.projectName }}</h2>
+      <p>{{ investment.name }}</p>
+    </div>
+    <span class="status-badge" [class]="'status-badge tone-' + getInvestmentStatusTone(investment.status)">
+      {{ getInvestmentStatusLabel(investment.status) }}
+    </span>
+  </header>
+
+  <section class="details-grid">
+    <article class="details-card">
+      <span class="details-card-icon tone-neutral" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <ellipse cx="12" cy="17" rx="7" ry="2.6" />
+          <ellipse cx="12" cy="12" rx="7" ry="2.6" />
+          <ellipse cx="12" cy="7" rx="7" ry="2.6" />
+        </svg>
+      </span>
+      <div>
+        <span>Valor total do projeto</span>
+        <strong>{{ formatCurrency(investment.totalAmount) }}</strong>
+      </div>
+    </article>
+    @if (hasDownPayment(investment)) {
+    <article class="details-card">
+      <span class="details-card-icon tone-info" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 4v11" />
+          <path d="m7 10 5 5 5-5" />
+          <path d="M4 19h16" />
+        </svg>
+      </span>
+      <div>
+        <span>Entrada</span>
+        <strong>{{ formatCurrency(investment.downPayment ?? 0) }}</strong>
+      </div>
+    </article>
+    }
+    <article class="details-card">
+      <span class="details-card-icon tone-success" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="8" />
+          <path d="m8.5 12.5 2.5 2.5 5-5" />
+        </svg>
+      </span>
+      <div>
+        <span>Valor pago</span>
+        <strong>{{ formatCurrency(investment.paidAmount) }}</strong>
+      </div>
+    </article>
+    <article class="details-card">
+      <span class="details-card-icon tone-warning" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="8" />
+          <path d="M12 7v5l3 2" />
+        </svg>
+      </span>
+      <div>
+        <span>Valor restante</span>
+        <strong>{{ formatCurrency(investment.remainingAmount) }}</strong>
+      </div>
+    </article>
+    <article class="details-card">
+      <span class="details-card-icon tone-neutral" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <rect x="4" y="5" width="16" height="15" rx="2" />
+          <path d="M4 10h16" />
+          <path d="M8 3v4" />
+          <path d="M16 3v4" />
+        </svg>
+      </span>
+      <div>
+        <span>Parcelamento</span>
+        <strong>{{ investment.installments }}x de {{ formatCurrency(investment.installmentAmount) }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <section class="details-panel">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Status financeiro</p>
+        <h3>{{ getProgress(investment) }}% pago</h3>
+      </div>
+    </div>
+
+    <div class="progress-track" aria-hidden="true">
+      <span [style.width.%]="getProgress(investment)"></span>
+    </div>
+    <p class="progress-caption">
+      {{ formatCurrency(investment.paidAmount) }} de {{ formatCurrency(investment.totalAmount) }}
+    </p>
+
+    <dl class="installment-stats">
+      <div>
+        <span class="stat-icon tone-success" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8" />
+            <path d="m8.5 12.5 2.5 2.5 5-5" />
+          </svg>
         </span>
-      </header>
-
-      <section class="details-grid">
-        <article class="details-card">
-          <span>Valor total</span>
-          <strong>{{ formatCurrency(plan.totalAmount) }}</strong>
-        </article>
-        <article class="details-card">
-          <span>Valor pago</span>
-          <strong>{{ formatCurrency(plan.paidAmount) }}</strong>
-        </article>
-        <article class="details-card">
-          <span>Valor restante</span>
-          <strong>{{ formatCurrency(plan.remainingAmount) }}</strong>
-        </article>
-        <article class="details-card">
-          <span>Parcelamento</span>
-          <strong>{{ plan.installments }}x de {{ formatCurrency(plan.installmentAmount) }}</strong>
-        </article>
-      </section>
-
-      <section class="details-panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Status financeiro</p>
-            <h3>{{ getProgress(plan) }}% pago</h3>
-          </div>
+        <div>
+          <dt>Parcelas pagas</dt>
+          <dd>{{ countInstallments(viewModel.installments, 'PAID') }}</dd>
         </div>
-
-        <div class="progress-track" aria-hidden="true">
-          <span [style.width.%]="getProgress(plan)"></span>
+      </div>
+      <div>
+        <span class="stat-icon tone-warning" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8" />
+            <path d="M12 7v5l3 2" />
+          </svg>
+        </span>
+        <div>
+          <dt>Parcelas pendentes</dt>
+          <dd>{{ countInstallments(viewModel.installments, 'PENDING') }}</dd>
         </div>
-
-        <dl class="installment-stats">
-          <div>
-            <dt>Parcelas pagas</dt>
-            <dd>{{ countInstallments(viewModel.installments, 'PAID') }}</dd>
-          </div>
-          <div>
-            <dt>Parcelas pendentes</dt>
-            <dd>{{ countInstallments(viewModel.installments, 'PENDING') }}</dd>
-          </div>
-          <div>
-            <dt>Parcelas atrasadas</dt>
-            <dd>{{ countInstallments(viewModel.installments, 'OVERDUE') }}</dd>
-          </div>
-          <div>
-            <dt>Criado em</dt>
-            <dd>{{ formatDate(plan.createdAt) }}</dd>
-          </div>
-        </dl>
-      </section>
-
-      <section class="details-panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Parcelas</p>
-            <h3>Cronograma financeiro</h3>
-          </div>
+      </div>
+      <div>
+        <span class="stat-icon tone-danger" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="8" />
+            <path d="M12 8v5" />
+            <path d="M12 16.5v.01" />
+          </svg>
+        </span>
+        <div>
+          <dt>Parcelas atrasadas</dt>
+          <dd>{{ countInstallments(viewModel.installments, 'OVERDUE') }}</dd>
         </div>
+      </div>
+      <div>
+        <span class="stat-icon tone-neutral" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <rect x="4" y="5" width="16" height="15" rx="2" />
+            <path d="M4 10h16" />
+            <path d="M8 3v4" />
+            <path d="M16 3v4" />
+          </svg>
+        </span>
+        <div>
+          <dt>Criado em</dt>
+          <dd>{{ formatDate(investment.createdAt) }}</dd>
+        </div>
+      </div>
+    </dl>
+  </section>
 
-        <div class="installments-list">
-          @for (installment of viewModel.installments; track installment.id) {
-            <article class="installment-card">
-              <span class="installment-number">{{ installment.number | number: '2.0-0' }}</span>
-              <div>
-                <strong>{{ formatCurrency(installment.amount) }}</strong>
-                <small>Vencimento em {{ formatDate(installment.dueDate) }}</small>
-              </div>
-              <span
-                class="installment-badge"
-                [class]="'installment-badge status-' + installment.status.toLowerCase()"
-              >
-                {{ getInstallmentStatusLabel(installment.status) }}
-              </span>
-            </article>
+  @if (getNextInstallment(viewModel.installments); as nextInstallment) {
+  <section class="details-panel">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Próxima parcela</p>
+        <h3>Parcela {{ nextInstallment.number }} de {{ investment.installments }}</h3>
+      </div>
+    </div>
+
+    <div class="next-installment-card">
+      <div>
+        <span>Valor</span>
+        <strong>{{ formatCurrency(nextInstallment.amount) }}</strong>
+      </div>
+      <div>
+        <span>Data de validade</span>
+        <strong>{{ formatLongDate(nextInstallment.dueDate) }}</strong>
+      </div>
+      <div>
+        <span>Status</span>
+        <span class="status-badge" [class]="'status-badge tone-' + getInstallmentStatusTone(nextInstallment.status)">
+          {{ getInstallmentStatusLabel(nextInstallment.status) }}
+        </span>
+      </div>
+    </div>
+  </section>
+  }
+
+  @if (viewModel.payments.length > 0) {
+  <section class="details-panel">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Histórico de pagamentos</p>
+        <h3>Todos os pagamentos registrados</h3>
+      </div>
+    </div>
+
+    <div class="payment-history-list">
+      @for (payment of viewModel.payments; track payment.id) {
+      <article class="payment-history-card" [class]="'payment-history-card type-' + payment.type.toLowerCase()">
+        <div class="payment-type">
+          <span class="type-label">{{ payment.type === 'DOWN_PAYMENT' ? 'Entrada' : 'Parcela ' + payment.number
+            }}</span>
+          <span class="payment-amount">{{ formatCurrency(payment.amount) }}</span>
+        </div>
+        <div class="payment-meta">
+          <span class="payment-status" [class]="'payment-status status-' + payment.status.toLowerCase()">
+            {{ getInstallmentStatusLabel(payment.status) }}
+          </span>
+          <span class="payment-date">
+            {{ payment.status === 'PAID' && payment.paidAt ? formatDate(payment.paidAt) : 'Vence em: ' + formatDate(payment.dueDate) }}
+          </span>
+          @if (payment.status === 'PAID' && payment.paymentMethod) {
+          <span class="payment-method">{{ payment.paymentMethod }}</span>
           }
         </div>
-      </section>
-    } @else {
-      <section class="empty-state">
-        <p class="eyebrow">Investimentos</p>
-        <h2>Plano nao encontrado.</h2>
-        <p>Verifique a lista de investimentos disponiveis para este cliente.</p>
-      </section>
-    }
+      </article>
+      }
+    </div>
+  </section>
+  }
+
+  <div class="details-actions">
+    <button type="button" class="btn-primary" (click)="goToProject(investment.projectId)">Ver projeto</button>
+  </div>
+  } @else {
+  <section class="empty-state">
+    <p class="eyebrow">Investimentos</p>
+    <h2>Investimento não encontrado.</h2>
+    <p>Verifique a lista de investimentos disponíveis.</p>
+  </section>
+  }
   }
 </section>

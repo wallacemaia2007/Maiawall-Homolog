@@ -10,6 +10,13 @@ import {
   InvestmentPlanStatus,
 } from '../../models/investment.model';
 import { InvestmentService } from '../../services/investment.service';
+import {
+  getInvestmentStatusLabel,
+  getInvestmentStatusTone,
+  getInstallmentStatusLabel,
+  getInstallmentStatusTone,
+} from '../../models/investment.model';
+import { formatDate, formatLongDate } from '../../../../shared/utils/date.utils';
 
 @Component({
   selector: 'app-investment-details',
@@ -24,34 +31,18 @@ export class InvestmentDetailsComponent {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly investmentService = inject(InvestmentService);
-  private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
-  private readonly dateFormatter = new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
 
   protected readonly viewModel$ = this.route.paramMap.pipe(
     switchMap((params) => {
       const planId = params.get('id') ?? '';
 
       return combineLatest({
-        plan: this.investmentService.getPlanById(planId),
+        investment: this.investmentService.getInvestmentById(planId),
         installments: this.investmentService.getInstallments(planId),
+        payments: this.investmentService.getPaymentHistory(planId),
       });
     }),
   );
-
-  protected getProgress(plan: InvestmentPlan): number {
-    if (plan.totalAmount <= 0) {
-      return 0;
-    }
-
-    return Math.round((plan.paidAmount / plan.totalAmount) * 100);
-  }
 
   protected goBack(): void {
     if (window.history.length > 1) {
@@ -62,37 +53,58 @@ export class InvestmentDetailsComponent {
     this.router.navigateByUrl('/investments');
   }
 
+  protected goToProject(projectId: string): void {
+    this.router.navigate(['/projects', projectId]);
+  }
+
   protected countInstallments(installments: Installment[], status: InstallmentStatus): number {
     return installments.filter((installment) => installment.status === status).length;
   }
 
+  protected getNextInstallment(installments: Installment[]): Installment | null {
+    return (
+      installments
+        .filter((installment) => installment.status !== 'PAID')
+        .sort((current, next) => new Date(current.dueDate).getTime() - new Date(next.dueDate).getTime())[0] ?? null
+    );
+  }
+
   protected formatCurrency(value: number): string {
-    return this.currencyFormatter.format(value);
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
   }
 
   protected formatDate(value: string): string {
-    return this.dateFormatter.format(new Date(`${value}T00:00:00`));
+    return formatDate(value);
   }
 
-  protected getPlanStatusLabel(status: InvestmentPlanStatus): string {
-    const labels: Record<InvestmentPlanStatus, string> = {
-      ACTIVE: 'Ativo',
-      PAID: 'Quitado',
-      PENDING: 'Pendente',
-      OVERDUE: 'Em atraso',
-      CANCELLED: 'Cancelado',
-    };
+  protected formatLongDate(value: string): string {
+    return formatLongDate(value);
+  }
 
-    return labels[status];
+  protected getInvestmentStatusLabel(status: InvestmentPlanStatus): string {
+    return getInvestmentStatusLabel(status);
+  }
+
+  protected getInvestmentStatusTone(status: InvestmentPlanStatus): string {
+    return getInvestmentStatusTone(status);
   }
 
   protected getInstallmentStatusLabel(status: InstallmentStatus): string {
-    const labels: Record<InstallmentStatus, string> = {
-      PAID: 'Pago',
-      PENDING: 'Pendente',
-      OVERDUE: 'Em atraso',
-    };
+    return getInstallmentStatusLabel(status);
+  }
 
-    return labels[status];
+  protected getInstallmentStatusTone(status: InstallmentStatus): string {
+    return getInstallmentStatusTone(status);
+  }
+
+  protected getProgress(investment: InvestmentPlan): number {
+    return this.investmentService.getProgress(investment);
+  }
+
+  protected hasDownPayment(investment: InvestmentPlan): boolean {
+    return this.investmentService.hasDownPayment(investment);
   }
 }

@@ -11,6 +11,8 @@ const COLLECTIONS = [
   "projectReleases",
   "projectCommits",
   "investmentPlans",
+  "plans",
+  "planPayments",
   "installments",
   "notifications",
   "pending",
@@ -24,6 +26,12 @@ function id() {
 function daysAgo(days) {
   const date = new Date();
   date.setDate(date.getDate() - days);
+  return date.toISOString();
+}
+
+function daysFromNow(days) {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
   return date.toISOString();
 }
 
@@ -44,7 +52,16 @@ async function main() {
   const clientId = id();
   const primaryProjectId = id();
   const homologProjectId = id();
-  const planId = id();
+  const mobileProjectId = id();
+
+  const maintenancePlanId = id();
+  const hostingPlanId = id();
+  const domainPlanId = id();
+  const supportPlanId = id();
+
+  const investmentPortalId = id();
+  const investmentDashboardId = id();
+  const investmentMobileId = id();
 
   const users = [
     {
@@ -107,7 +124,7 @@ async function main() {
     {
       id: primaryProjectId,
       name: "Portal Institucional Maiawall",
-      description: "Portal principal em homologacao para validacao do cliente.",
+      description: "Portal principal em homologação para validação do cliente. Site institucional com blog, área de serviços, formulário de contato e integração com CRM.",
       imageUrl: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=80",
       clientId,
       isPrimary: true,
@@ -123,7 +140,7 @@ async function main() {
     {
       id: homologProjectId,
       name: "Dashboard Operacional",
-      description: "Area autenticada para acompanhamento de indicadores e entregas.",
+      description: "Área autenticada para acompanhamento de indicadores, entregas e métricas dos projetos. Gráficos em tempo real, relatórios exportáveis.",
       imageUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
       clientId,
       isPrimary: false,
@@ -136,6 +153,22 @@ async function main() {
       createdAt: daysAgo(18),
       updatedAt: daysAgo(1),
     },
+    {
+      id: mobileProjectId,
+      name: "App Mobile Cliente",
+      description: "Aplicativo mobile para acompanhamento de projetos, visualização de tarefas e comunicação com a equipe.",
+      imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1400&q=80",
+      clientId,
+      isPrimary: false,
+      status: "APPROVED",
+      progress: 100,
+      version: "v2.1.0",
+      productionUrl: "https://app.maiawall.com",
+      homologationUrl: "",
+      repositoryUrl: "https://github.com/maiawall/mobile",
+      createdAt: daysAgo(120),
+      updatedAt: daysAgo(30),
+    },
   ];
 
   const projectActivities = [
@@ -144,15 +177,15 @@ async function main() {
       projectId: primaryProjectId,
       type: "PROJECT_CREATED",
       title: "Projeto criado",
-      description: "Kickoff do portal institucional concluido.",
+      description: "Kickoff do portal institucional concluído.",
       createdAt: daysAgo(40),
     },
     {
       id: id(),
       projectId: primaryProjectId,
       type: "VERSION_RELEASED",
-      title: "Versao v1.4.0 publicada",
-      description: "Nova area de servicos e ajustes mobile enviados para homologacao.",
+      title: "Versão v1.4.0 publicada",
+      description: "Nova área de serviços e ajustes mobile enviados para homologação.",
       createdAt: daysAgo(3),
     },
     {
@@ -163,6 +196,14 @@ async function main() {
       description: "Fluxos internos do dashboard entraram em desenvolvimento.",
       createdAt: daysAgo(1),
     },
+    {
+      id: id(),
+      projectId: mobileProjectId,
+      type: "PROJECT_APPROVED",
+      title: "Projeto aprovado",
+      description: "Cliente aprovou versão 2.1.0 para produção.",
+      createdAt: daysAgo(30),
+    },
   ];
 
   const projectReleases = [
@@ -170,10 +211,40 @@ async function main() {
       id: id(),
       projectId: primaryProjectId,
       version: "v1.4.0",
-      title: "Homologacao do portal",
+      title: "Homologação do portal",
       description: "Pacote de melhorias visuais e responsivas.",
-      changes: ["Nova secao de servicos", "Melhorias no formulario", "Correcoes mobile"],
+      changes: [
+        { id: "1", label: "Nova seção de serviços", type: "feature" },
+        { id: "2", label: "Melhorias no formulário", type: "improvement" },
+        { id: "3", label: "Correções mobile", type: "fix" },
+      ],
       releasedAt: daysAgo(3),
+    },
+    {
+      id: id(),
+      projectId: primaryProjectId,
+      version: "v1.3.0",
+      title: "Lançamento blog",
+      description: "Sistema de blog integrado ao portal.",
+      changes: [
+        { id: "1", label: "Editor de posts", type: "feature" },
+        { id: "2", label: "Categorias e tags", type: "feature" },
+        { id: "3", label: "SEO otimizado", type: "improvement" },
+      ],
+      releasedAt: daysAgo(20),
+    },
+    {
+      id: id(),
+      projectId: mobileProjectId,
+      version: "v2.1.0",
+      title: "Atualização mobile",
+      description: "Push notifications e modo offline.",
+      changes: [
+        { id: "1", label: "Push notifications", type: "feature" },
+        { id: "2", label: "Modo offline", type: "feature" },
+        { id: "3", label: "Correção sync", type: "fix" },
+      ],
+      releasedAt: daysAgo(30),
     },
   ];
 
@@ -185,7 +256,7 @@ async function main() {
       message: "Ajusta componentes principais da home",
       author: "Wallace Maia",
       createdAt: daysAgo(4),
-      url: "https://github.com/",
+      url: "https://github.com/maiawall/portal/commit/7fd2a91",
     },
     {
       id: id(),
@@ -194,42 +265,282 @@ async function main() {
       message: "Implementa estrutura inicial do dashboard",
       author: "Wallace Maia",
       createdAt: daysAgo(2),
-      url: "https://github.com/",
+      url: "https://github.com/maiawall/dashboard/commit/a03bc82",
+    },
+    {
+      id: id(),
+      projectId: mobileProjectId,
+      sha: "f4e9d21",
+      message: "Corrige navegação profunda no iOS",
+      author: "Wallace Maia",
+      createdAt: daysAgo(35),
+      url: "https://github.com/maiawall/mobile/commit/f4e9d21",
+    },
+  ];
+
+  const plans = [
+    {
+      id: maintenancePlanId,
+      projectId: primaryProjectId,
+      projectName: "Portal Institucional Maiawall",
+      name: "Plano de Manutenção Mensal",
+      description: "Manutenção contínua do portal institucional incluindo correções de bugs, atualizações de segurança, monitoramento e pequenos ajustes.",
+      amount: 300,
+      billingCycle: "MONTHLY",
+      startDate: daysAgo(60),
+      endDate: daysFromNow(305),
+      status: "ACTIVE",
+      includedItems: [
+        { id: id(), name: "Correção de bugs", description: "Correção de erros e falhas no portal", status: "INCLUDED" },
+        { id: id(), name: "Atualizações de segurança", description: "Aplicação de patches de segurança mensais", status: "INCLUDED" },
+        { id: id(), name: "Backup automático", description: "Backup diário do banco de dados e arquivos", status: "INCLUDED" },
+        { id: id(), name: "Monitoramento 24/7", description: "Monitoramento de uptime e performance", status: "INCLUDED" },
+        { id: id(), name: "Pequenos ajustes", description: "Alterações de texto, cores, imagens (até 4h/mês)", quantity: 4, limit: "4 horas/mês", status: "INCLUDED" },
+        { id: id(), name: "Suporte técnico", description: "Atendimento por e-mail e WhatsApp", status: "INCLUDED" },
+      ],
+      extraCosts: [
+        { id: id(), name: "Hospedagem dedicada", description: "Servidor VPS com 4GB RAM, 80GB SSD", amount: 150, periodicity: "MONTHLY", nextDueDate: daysFromNow(5), status: "ACTIVE" },
+        { id: id(), name: "Certificado SSL Wildcard", description: "SSL para domínio e subdomínios", amount: 300, periodicity: "ANNUAL", nextDueDate: daysFromNow(120), status: "ACTIVE" },
+        { id: id(), name: "CDN Global", description: "Distribuição de conteúdo em edge locations", amount: 80, periodicity: "MONTHLY", nextDueDate: daysFromNow(5), status: "ACTIVE" },
+      ],
+      payments: [],
+      createdAt: daysAgo(60),
+      updatedAt: now,
+    },
+    {
+      id: hostingPlanId,
+      projectId: primaryProjectId,
+      projectName: "Portal Institucional Maiawall",
+      name: "Hospedagem Premium + SSL",
+      description: "Hospedagem em servidor dedicado com SSL, backups e CDN.",
+      amount: 200,
+      billingCycle: "MONTHLY",
+      startDate: daysAgo(30),
+      endDate: daysFromNow(335),
+      status: "ACTIVE",
+      includedItems: [
+        { id: id(), name: "Servidor VPS 4GB RAM", description: "Recursos dedicados para o portal", status: "INCLUDED" },
+        { id: id(), name: "Certificado SSL", description: "SSL Let's Encrypt renovado automaticamente", status: "INCLUDED" },
+        { id: id(), name: "Backup diário", description: "Retenção de 30 dias", status: "INCLUDED" },
+        { id: id(), name: "Painel de controle", description: "Acesso ao cPanel/WHM", status: "INCLUDED" },
+      ],
+      extraCosts: [],
+      payments: [],
+      createdAt: daysAgo(30),
+      updatedAt: now,
+    },
+    {
+      id: domainPlanId,
+      projectId: primaryProjectId,
+      projectName: "Portal Institucional Maiawall",
+      name: "Registro de Domínio .com.br",
+      description: "Renovação anual do domínio maiawall.com.br",
+      amount: 50,
+      billingCycle: "ANNUAL",
+      startDate: daysAgo(10),
+      endDate: daysFromNow(355),
+      status: "ACTIVE",
+      includedItems: [
+        { id: id(), name: "Registro .com.br", description: "Domínio principal por 1 ano", status: "INCLUDED" },
+        { id: id(), name: "Proteção de privacidade", description: "WHOIS privacy incluído", status: "INCLUDED" },
+        { id: id(), name: "DNS gerenciado", description: "Gerenciamento de zona DNS", status: "INCLUDED" },
+      ],
+      extraCosts: [],
+      payments: [],
+      createdAt: daysAgo(10),
+      updatedAt: now,
+    },
+    {
+      id: supportPlanId,
+      projectId: homologProjectId,
+      projectName: "Dashboard Operacional",
+      name: "Plano de Suporte Técnico",
+      description: "Suporte prioritário para o dashboard operacional com SLA de 4 horas.",
+      amount: 500,
+      billingCycle: "MONTHLY",
+      startDate: daysAgo(15),
+      endDate: daysFromNow(350),
+      status: "ACTIVE",
+      includedItems: [
+        { id: id(), name: "Suporte prioritário", description: "Atendimento em até 4h úteis", status: "INCLUDED" },
+        { id: id(), name: "Canal dedicado Slack", description: "Canal exclusivo para comunicação", status: "INCLUDED" },
+        { id: id(), name: "Relatórios mensais", description: "Relatório de performance e incidentes", status: "INCLUDED" },
+        { id: id(), name: "Hotfix emergencial", description: "Correções críticas em até 2h", quantity: 2, limit: "2 por mês", status: "INCLUDED" },
+      ],
+      extraCosts: [
+        { id: id(), name: "Horas extras de desenvolvimento", description: "Além do incluído no plano", amount: 180, periodicity: "ONE_TIME", nextDueDate: null, status: "ACTIVE" },
+      ],
+      payments: [],
+      createdAt: daysAgo(15),
+      updatedAt: now,
     },
   ];
 
   const investmentPlans = [
     {
-      id: planId,
+      id: investmentPortalId,
       projectId: primaryProjectId,
       clientId,
-      name: "Plano Portal Institucional",
-      totalAmount: 3000,
-      installments: 6,
-      installmentAmount: 500,
-      status: "ACTIVE",
-      createdAt: daysAgo(40),
+      projectName: "Portal Institucional Maiawall",
+      name: "Desenvolvimento Portal Institucional",
+      description: "Desenvolvimento completo do portal institucional: homepage, blog, serviços, contato, área admin, responsivo, SEO.",
+      totalAmount: 15000,
+      downPayment: 3000,
+      downPaymentDate: daysAgo(50),
+      downPaymentStatus: "PAID",
+      installments: 12,
+      installmentAmount: 1000,
+      paidAmount: 8000,
+      remainingAmount: 7000,
+      paidInstallments: 5,
+      remainingInstallments: 7,
+      status: "PARTIALLY_PAID",
+      paymentMethod: "PIX + Boleto",
+      createdAt: daysAgo(50),
       updatedAt: now,
+    },
+    {
+      id: investmentDashboardId,
+      projectId: homologProjectId,
+      clientId,
+      projectName: "Dashboard Operacional",
+      name: "Desenvolvimento Dashboard Operacional",
+      description: "Dashboard autenticado com gráficos, métricas, relatórios, gestão de usuários e permissões.",
+      totalAmount: 12000,
+      downPayment: 2000,
+      downPaymentDate: daysAgo(15),
+      downPaymentStatus: "PAID",
+      installments: 10,
+      installmentAmount: 1000,
+      paidAmount: 2000,
+      remainingAmount: 10000,
+      paidInstallments: 0,
+      remainingInstallments: 10,
+      status: "ACTIVE",
+      paymentMethod: "Boleto",
+      createdAt: daysAgo(15),
+      updatedAt: now,
+    },
+    {
+      id: investmentMobileId,
+      projectId: mobileProjectId,
+      clientId,
+      projectName: "App Mobile Cliente",
+      name: "Desenvolvimento App Mobile",
+      description: "App nativo iOS/Android com React Native: autenticação, lista de projetos, tarefas, chat, push notifications.",
+      totalAmount: 25000,
+      downPayment: 5000,
+      downPaymentDate: daysAgo(100),
+      downPaymentStatus: "PAID",
+      installments: 8,
+      installmentAmount: 2500,
+      paidAmount: 25000,
+      remainingAmount: 0,
+      paidInstallments: 8,
+      remainingInstallments: 0,
+      status: "PAID",
+      paymentMethod: "Transferência",
+      createdAt: daysAgo(100),
+      updatedAt: daysAgo(30),
     },
   ];
 
-  const installments = Array.from({ length: 6 }, (_, index) => ({
-    id: id(),
-    investmentPlanId: planId,
-    planId,
-    number: index + 1,
-    amount: 500,
-    dueDate: daysAgo(30 - index * 30),
-    paidAt: index < 3 ? daysAgo(28 - index * 30) : null,
-    status: index < 3 ? "PAID" : "PENDING",
-  }));
+  const planPayments = [
+    ...Array.from({ length: 4 }, (_, index) => ({
+      id: id(),
+      planId: maintenancePlanId,
+      number: index + 1,
+      amount: 300,
+      dueDate: daysAgo(30 - index * 30),
+      paidAt: daysAgo(28 - index * 30),
+      status: "PAID",
+    })),
+    {
+      id: id(),
+      planId: maintenancePlanId,
+      number: 5,
+      amount: 300,
+      dueDate: daysAgo(0),
+      paidAt: null,
+      status: "PENDING",
+    },
+    ...Array.from({ length: 2 }, (_, index) => ({
+      id: id(),
+      planId: hostingPlanId,
+      number: index + 1,
+      amount: 200,
+      dueDate: daysAgo(15 - index * 30),
+      paidAt: daysAgo(13 - index * 30),
+      status: "PAID",
+    })),
+    {
+      id: id(),
+      planId: hostingPlanId,
+      number: 3,
+      amount: 200,
+      dueDate: daysFromNow(15),
+      paidAt: null,
+      status: "PENDING",
+    },
+    {
+      id: id(),
+      planId: domainPlanId,
+      number: 1,
+      amount: 50,
+      dueDate: daysAgo(10),
+      paidAt: daysAgo(8),
+      status: "PAID",
+    },
+    ...Array.from({ length: 3 }, (_, index) => ({
+      id: id(),
+      planId: supportPlanId,
+      number: index + 1,
+      amount: 500,
+      dueDate: daysAgo(10 - index * 30),
+      paidAt: daysAgo(8 - index * 30),
+      status: "PAID",
+    })),
+  ];
+
+  const installments = [
+    ...Array.from({ length: 12 }, (_, index) => ({
+      id: id(),
+      investmentPlanId: investmentPortalId,
+      planId: investmentPortalId,
+      number: index + 1,
+      amount: 1000,
+      dueDate: daysAgo(20 - index * 30),
+      paidAt: index < 5 ? daysAgo(18 - index * 30) : null,
+      status: index < 5 ? "PAID" : "PENDING",
+    })),
+    ...Array.from({ length: 10 }, (_, index) => ({
+      id: id(),
+      investmentPlanId: investmentDashboardId,
+      planId: investmentDashboardId,
+      number: index + 1,
+      amount: 1000,
+      dueDate: daysFromNow(15 + index * 30),
+      paidAt: null,
+      status: "PENDING",
+    })),
+    ...Array.from({ length: 8 }, (_, index) => ({
+      id: id(),
+      investmentPlanId: investmentMobileId,
+      planId: investmentMobileId,
+      number: index + 1,
+      amount: 2500,
+      dueDate: daysAgo(70 - index * 30),
+      paidAt: daysAgo(68 - index * 30),
+      status: "PAID",
+    })),
+  ];
 
   const notifications = [
     {
       id: id(),
       userId: clientId,
-      title: "Nova versao disponivel",
-      message: "A versao v1.4.0 do portal esta pronta para revisao.",
+      title: "Nova versão disponível",
+      message: "A versão v1.4.0 do portal está pronta para revisão.",
       type: "PROJECT",
       read: false,
       createdAt: daysAgo(3),
@@ -237,7 +548,7 @@ async function main() {
     {
       id: id(),
       userId: clientId,
-      title: "Pendencia criada",
+      title: "Pendência criada",
       message: "Precisamos dos arquivos de identidade visual para seguir com o portal.",
       type: "PENDING",
       relatedEntityId: null,
@@ -247,12 +558,42 @@ async function main() {
     {
       id: id(),
       userId: clientId,
-      title: "Pendencia criada",
-      message: "Confirme os textos finais da pagina inicial.",
+      title: "Pendência criada",
+      message: "Confirme os textos finais da página inicial.",
       type: "PENDING",
       relatedEntityId: null,
       read: false,
       createdAt: daysAgo(1),
+    },
+    {
+      id: id(),
+      userId: clientId,
+      title: "Pagamento de plano próximo",
+      message: "O pagamento do Plano de Manutenção Mensal vence em 5 dias.",
+      type: "PLAN_PAYMENT",
+      relatedEntityId: maintenancePlanId,
+      read: false,
+      createdAt: daysAgo(0),
+    },
+    {
+      id: id(),
+      userId: clientId,
+      title: "Parcela de investimento vencendo",
+      message: "A parcela 6/12 do investimento do Portal Institucional vence em 3 dias.",
+      type: "INVESTMENT_PAYMENT",
+      relatedEntityId: investmentPortalId,
+      read: false,
+      createdAt: daysAgo(0),
+    },
+    {
+      id: id(),
+      userId: adminId,
+      title: "Projeto entrou em homologação",
+      message: "O Portal Institucional Maiawall entrou em homologação.",
+      type: "PROJECT_ENTERED_HOMOLOGATION",
+      relatedEntityId: primaryProjectId,
+      read: false,
+      createdAt: daysAgo(3),
     },
   ];
 
@@ -267,7 +608,7 @@ async function main() {
         status: "HOMOLOGATION",
       },
       title: "Enviar identidade visual",
-      description: "Precisamos dos arquivos de logo, paleta de cores e referencias visuais para seguir com a interface.",
+      description: "Precisamos dos arquivos de logo, paleta de cores e referências visuais para seguir com a interface.",
       status: "PENDING",
       isRead: false,
       priority: "HIGH",
@@ -287,7 +628,7 @@ async function main() {
         {
           id: id(),
           type: "TEXTAREA",
-          label: "Referencias visuais",
+          label: "Referências visuais",
           description: "Cole links ou descreva estilos que deseja seguir.",
           required: false,
           value: null,
@@ -306,7 +647,7 @@ async function main() {
         name: "Portal Institucional Maiawall",
         status: "HOMOLOGATION",
       },
-      title: "Confirmar textos da pagina inicial",
+      title: "Confirmar textos da página inicial",
       description: "Revise e envie os textos finais que devem aparecer na primeira dobra do site.",
       status: "PENDING",
       isRead: false,
@@ -315,7 +656,7 @@ async function main() {
         {
           id: id(),
           type: "TEXT",
-          label: "Titulo principal",
+          label: "Título principal",
           description: "Texto principal da home.",
           required: true,
           value: null,
@@ -323,8 +664,8 @@ async function main() {
         {
           id: id(),
           type: "TEXTAREA",
-          label: "Descricao curta",
-          description: "Resumo abaixo do titulo principal.",
+          label: "Descrição curta",
+          description: "Resumo abaixo do título principal.",
           required: true,
           value: null,
         },
@@ -352,7 +693,7 @@ async function main() {
           id: id(),
           type: "EMAIL",
           label: "E-mail comercial",
-          description: "E-mail publico para contato.",
+          description: "E-mail público para contato.",
           required: true,
           value: null,
         },
@@ -360,7 +701,7 @@ async function main() {
           id: id(),
           type: "TEXT",
           label: "WhatsApp",
-          description: "Numero com DDD.",
+          description: "Número com DDD.",
           required: true,
           value: null,
         },
@@ -368,6 +709,35 @@ async function main() {
       responses: [],
       createdAt: daysAgo(4),
       updatedAt: daysAgo(3),
+    },
+    {
+      id: id(),
+      clientId,
+      projectId: primaryProjectId,
+      project: {
+        id: primaryProjectId,
+        name: "Portal Institucional Maiawall",
+        status: "HOMOLOGATION",
+      },
+      title: "Aprovar layout final",
+      description: "Aprovar o layout final da home antes do deploy em produção.",
+      status: "PENDING",
+      isRead: false,
+      priority: "HIGH",
+      dueDate: daysAgo(-2),
+      fields: [
+        {
+          id: id(),
+          type: "TEXT",
+          label: "Aprovação",
+          description: "Confirmar que o layout está aprovado para produção.",
+          required: true,
+          value: null,
+        },
+      ],
+      responses: [],
+      createdAt: daysAgo(1),
+      updatedAt: daysAgo(1),
     },
   ];
 
@@ -384,6 +754,8 @@ async function main() {
     projectReleases,
     projectCommits,
     investmentPlans,
+    plans,
+    planPayments,
     installments,
     notifications,
     pending,
@@ -393,7 +765,7 @@ async function main() {
   for (const collectionName of COLLECTIONS) {
     const collection = db.collection(collectionName);
     await collection.deleteMany({});
-    if (data[collectionName].length > 0) {
+    if (data[collectionName] && data[collectionName].length > 0) {
       await collection.insertMany(data[collectionName].map(toMongoDocument));
     }
   }
@@ -404,6 +776,10 @@ async function main() {
     db.collection("projects").createIndex({ clientId: 1, isPrimary: 1 }),
     db.collection("investmentPlans").createIndex({ clientId: 1 }),
     db.collection("investmentPlans").createIndex({ projectId: 1 }),
+    db.collection("plans").createIndex({ clientId: 1 }),
+    db.collection("plans").createIndex({ projectId: 1 }),
+    db.collection("plans").createIndex({ status: 1 }),
+    db.collection("planPayments").createIndex({ planId: 1 }),
     db.collection("installments").createIndex({ investmentPlanId: 1 }),
     db.collection("notifications").createIndex({ userId: 1 }),
     db.collection("pending").createIndex({ clientId: 1 }),
@@ -413,10 +789,14 @@ async function main() {
     db.collection("passwordRecoveryTokens").createIndex({ tokenHash: 1 }, { unique: true }),
   ]);
 
-  console.log("Seed Maiawall Homolog concluido.");
-  console.log("ADMIN  admin@maiawall.com   Admin@123");
-  console.log("CLIENT cliente@maiawall.com Cliente@123");
-  console.log(`PENDENCIAS ${pending.length} registros criados para o cliente.`);
+  console.log("Seed Maiawall Homolog concluído.");
+  console.log("ADMIN   admin@maiawall.com   Admin@123");
+  console.log("CLIENT  cliente@maiawall.com Cliente@123");
+  console.log(`PENDÊNCIAS: ${pending.length} registros criados para o cliente.`);
+  console.log(`INVESTIMENTOS: ${investmentPlans.length} planos de investimento criados.`);
+  console.log(`PLANOS DE SERVIÇO: ${plans.length} planos de serviços recorrentes criados.`);
+  console.log(`PARCELAS DE PLANOS: ${planPayments.length} pagamentos de planos criados.`);
+  console.log(`PARCELAS DE INVESTIMENTOS: ${installments.length} parcelas de investimento criadas.`);
 }
 
 function assertSeedAllowed() {
@@ -428,7 +808,7 @@ function assertSeedAllowed() {
   const expectedConfirmation = `SEED ${databaseName}`;
   if (process.env.CONFIRM_SEED !== expectedConfirmation) {
     throw new Error(
-      `Seed bloqueado para APP_ENV=${environment}. Defina CONFIRM_SEED="${expectedConfirmation}" para confirmar a limpeza das colecoes.`,
+      `Seed bloqueado para APP_ENV=${environment}. Defina CONFIRM_SEED="${expectedConfirmation}" para confirmar a limpeza das coleções.`,
     );
   }
 }

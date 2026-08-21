@@ -53,8 +53,11 @@ const ACTIVITY_TYPES = [
   "CHANGES_REQUESTED",
 ];
 
-const INVESTMENT_STATUSES = ["ACTIVE", "PAID", "PENDING", "OVERDUE", "CANCELLED"];
+const INVESTMENT_STATUSES = ["ACTIVE", "PAID", "PARTIALLY_PAID", "PENDING", "OVERDUE", "CANCELLED"];
 const INSTALLMENT_STATUSES = ["PAID", "PENDING", "OVERDUE"];
+const PLAN_STATUSES = ["ACTIVE", "PAUSED", "CANCELLED", "EXPIRED"];
+const PLAN_BILLING_CYCLES = ["MONTHLY", "QUARTERLY", "SEMI_ANNUAL", "ANNUAL"];
+const PLAN_PAYMENT_STATUSES = ["PAID", "PENDING", "OVERDUE"];
 const PENDING_STATUSES = ["PENDING", "RESPONDED", "COMPLETED", "CANCELLED"];
 const loginSchema = z.object({
   email: z.string().email("E-mail invalido"),
@@ -103,6 +106,45 @@ const installmentSchema = z.object({
 });
 
 const installmentPatchSchema = installmentSchema.partial();
+
+const planSchema = z.object({
+  projectId: z.string(),
+  clientId: z.string().optional(),
+  name: z.string().min(2),
+  description: z.string().optional().default(""),
+  amount: z.number().min(0),
+  billingCycle: z.enum(PLAN_BILLING_CYCLES).optional().default("MONTHLY"),
+  startDate: z.string().min(1),
+  endDate: z.string().optional().nullable().default(null),
+  status: z.enum(PLAN_STATUSES).optional().default("ACTIVE"),
+  includedItems: z.array(z.object({
+    id: z.string().optional(),
+    name: z.string().min(1),
+    description: z.string().optional(),
+    quantity: z.number().optional(),
+    limit: z.string().optional(),
+    status: z.string().optional(),
+  })).optional().default([]),
+  extraCosts: z.array(z.object({
+    id: z.string().optional(),
+    name: z.string().min(1),
+    description: z.string().optional(),
+    amount: z.number().min(0),
+    periodicity: z.enum([...PLAN_BILLING_CYCLES, "ONE_TIME"]).optional().default("MONTHLY"),
+    nextDueDate: z.string().optional().nullable(),
+    status: z.enum(["ACTIVE", "INACTIVE", "PAUSED"]).optional().default("ACTIVE"),
+  })).optional().default([]),
+});
+
+const planPaymentSchema = z.object({
+  number: z.number().int().min(1),
+  amount: z.number().min(0),
+  dueDate: z.string().min(1),
+  paidAt: z.string().nullable().optional().default(null),
+  status: z.enum(PLAN_PAYMENT_STATUSES).optional().default("PENDING"),
+});
+
+const planPaymentPatchSchema = planPaymentSchema.partial();
 
 const notificationReadSchema = z.object({
   read: z.boolean().optional().default(true),
@@ -438,6 +480,48 @@ app.get("/api/investments/:id/installments", requireAuth, (req, res) => {
   res.json(successResponse(items));
 });
 
+app.get("/api/investments/:id/payments", requireAuth, (req, res) => {
+  const plan = getVisibleInvestmentPlans(req.user).find((item) => item.id === req.params.id);
+  if (!plan) return res.status(404).json(errorResponse("Plano financeiro nao encontrado"));
+  
+  const installments = databaseService.getState().installments
+    .filter((item) => item.investmentPlanId === plan.id || item.planId === plan.id)
+    .sort((a, b) => Number(a.number) - Number(b.number));
+  
+  const payments = [];
+  
+  // Add down payment as first payment if it exists
+  if (plan.downPayment && plan.downPayment > 0) {
+    payments.push({
+      id: `downpayment-${plan.id}`,
+      investmentPlanId: plan.id,
+      type: 'DOWN_PAYMENT',
+      amount: Number(plan.downPayment),
+      dueDate: plan.downPaymentDate || plan.createdAt,
+      paidAt: plan.downPaymentStatus === 'PAID' ? (plan.downPaymentDate || plan.createdAt) : null,
+      status: plan.downPaymentStatus || 'PENDING',
+      paymentMethod: plan.paymentMethod,
+    });
+  }
+  
+  // Add installments
+  installments.forEach((inst) => {
+    payments.push({
+      id: inst.id,
+      investmentPlanId: plan.id,
+      type: 'INSTALLMENT',
+      number: inst.number,
+      amount: Number(inst.amount),
+      dueDate: inst.dueDate,
+      paidAt: inst.paidAt || null,
+      status: inst.status,
+      paymentMethod: plan.paymentMethod,
+    });
+  });
+  
+  res.json(successResponse(payments));
+});
+
 app.post("/api/investments/:id/installments", requireAuth, requireRole("ADMIN"), validateBody(installmentSchema), async (req, res) => {
   const db = databaseService.getState();
   const plan = db.investmentPlans.find((item) => item.id === req.params.id);
@@ -472,6 +556,130 @@ app.delete("/api/installments/:id", requireAuth, requireRole("ADMIN"), async (re
 
   db.installments.splice(index, 1);
   await databaseService.deleteDocument("installments", req.params.id);
+  res.status(204).send();
+});
+
+function getVisiblePlans(user) {
+  const plans = databaseService.getState().plans || [];
+  if (user.role === "ADMIN") return plans;
+  return plans.filter((plan) => {
+    const project = databaseService.getState().projects?.find((p) => p.id === plan.projectId);
+    return project && project.clientId === user.id;
+  });
+}
+
+function findPlanForUser(planId, user) {
+  return getVisiblePlans(user).find((plan) => plan.id === planId);
+}
+
+function withPlanCalculations(plan) {
+  const payments = databaseService.getState().planPayments
+    .filter((item) => item.planId === plan.id)
+    .sort((a, b) => Number(a.number) - Number(b.number));
+  const paidPayments = payments.filter((item) => item.status === "PAID").length;
+  const paidAmount = roundCurrency(payments
+    .filter((item) => item.status === "PAID")
+    .reduce((sum, item) => sum + Number(item.amount || 0), 0));
+  const totalExpected = payments.length > 0
+    ? payments.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+    : plan.amount;
+
+  return {
+    ...plan,
+    payments,
+    paidAmount,
+    remainingAmount: roundCurrency(Math.max(totalExpected - paidAmount, 0)),
+    paidPayments,
+    remainingPayments: Math.max(payments.length - paidPayments, 0),
+    progressPercent: totalExpected > 0 ? Math.round((paidAmount / totalExpected) * 100) : 0,
+  };
+}
+
+app.get("/api/plans", requireAuth, (req, res) => {
+  res.json(successResponse(getVisiblePlans(req.user).map(withPlanCalculations)));
+});
+
+app.get("/api/plans/:id", requireAuth, (req, res) => {
+  const plan = findPlanForUser(req.params.id, req.user);
+  if (!plan) return res.status(404).json(errorResponse("Plano nao encontrado"));
+  res.json(successResponse(withPlanCalculations(plan)));
+});
+
+app.post("/api/plans", requireAuth, requireRole("ADMIN"), validateBody(planSchema), async (req, res) => {
+  const db = databaseService.getState();
+  const project = db.projects.find((item) => item.id === req.body.projectId);
+  if (!project) return res.status(404).json(errorResponse("Projeto nao encontrado"));
+  if (req.body.clientId && req.body.clientId !== project.clientId) {
+    return res.status(400).json(errorResponse("Cliente do plano deve ser o mesmo cliente do projeto"));
+  }
+
+  const now = new Date().toISOString();
+  const plan = {
+    id: databaseService.createObjectId(),
+    projectId: project.id,
+    projectName: project.name,
+    clientId: req.body.clientId || project.clientId,
+    name: req.body.name,
+    description: req.body.description || "",
+    amount: req.body.amount,
+    billingCycle: req.body.billingCycle || "MONTHLY",
+    startDate: req.body.startDate,
+    endDate: req.body.endDate || null,
+    status: req.body.status || "ACTIVE",
+    includedItems: req.body.includedItems || [],
+    extraCosts: req.body.extraCosts || [],
+    payments: [],
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  db.plans.push(plan);
+  await databaseService.insertDocument("plans", plan);
+  res.status(201).json(successResponse(withPlanCalculations(plan)));
+});
+
+app.get("/api/plans/:id/payments", requireAuth, (req, res) => {
+  const plan = findPlanForUser(req.params.id, req.user);
+  if (!plan) return res.status(404).json(errorResponse("Plano nao encontrado"));
+  const items = databaseService.getState().planPayments
+    .filter((item) => item.planId === plan.id)
+    .sort((a, b) => Number(a.number) - Number(b.number));
+  res.json(successResponse(items));
+});
+
+app.post("/api/plans/:id/payments", requireAuth, requireRole("ADMIN"), validateBody(planPaymentSchema), async (req, res) => {
+  const db = databaseService.getState();
+  const plan = db.plans.find((item) => item.id === req.params.id);
+  if (!plan) return res.status(404).json(errorResponse("Plano nao encontrado"));
+
+  const payment = {
+    id: databaseService.createObjectId(),
+    planId: plan.id,
+    ...req.body,
+  };
+
+  db.planPayments.push(payment);
+  await databaseService.insertDocument("planPayments", payment);
+  res.status(201).json(successResponse(payment));
+});
+
+app.patch("/api/planPayments/:id", requireAuth, requireRole("ADMIN"), validateBody(planPaymentPatchSchema), async (req, res) => {
+  const db = databaseService.getState();
+  const payment = db.planPayments.find((item) => item.id === req.params.id);
+  if (!payment) return res.status(404).json(errorResponse("Pagamento de plano nao encontrado"));
+
+  Object.assign(payment, req.body);
+  await databaseService.replaceDocument("planPayments", payment);
+  res.json(successResponse(payment));
+});
+
+app.delete("/api/planPayments/:id", requireAuth, requireRole("ADMIN"), async (req, res) => {
+  const db = databaseService.getState();
+  const index = db.planPayments.findIndex((item) => item.id === req.params.id);
+  if (index < 0) return res.status(404).json(errorResponse("Pagamento de plano nao encontrado"));
+
+  db.planPayments.splice(index, 1);
+  await databaseService.deleteDocument("planPayments", req.params.id);
   res.status(204).send();
 });
 
@@ -813,17 +1021,23 @@ function withInvestmentCalculations(plan) {
   const installments = databaseService.getState().installments
     .filter((item) => item.investmentPlanId === plan.id || item.planId === plan.id);
   const paidInstallments = installments.filter((item) => item.status === "PAID").length;
-  const paidAmount = roundCurrency(installments
+  const installmentsPaidAmount = roundCurrency(installments
     .filter((item) => item.status === "PAID")
     .reduce((sum, item) => sum + Number(item.amount || 0), 0));
+  const downPaymentPaid = (plan.downPaymentStatus === "PAID" && plan.downPayment) ? Number(plan.downPayment) : 0;
+  const paidAmount = roundCurrency(installmentsPaidAmount + downPaymentPaid);
   const totalAmount = Number(plan.totalAmount || 0);
+  const remainingAmount = roundCurrency(Math.max(totalAmount - paidAmount, 0));
+  const remainingInstallments = Math.max(Number(plan.installments || 0) - paidInstallments, 0);
+  const derivedStatus = remainingAmount === 0 ? "PAID" : (paidAmount > 0 ? "PARTIALLY_PAID" : (plan.status === "PENDING" ? "PENDING" : "ACTIVE"));
 
   return {
     ...plan,
     paidAmount,
-    remainingAmount: roundCurrency(Math.max(totalAmount - paidAmount, 0)),
+    remainingAmount,
     paidInstallments,
-    remainingInstallments: Math.max(Number(plan.installments || 0) - paidInstallments, 0),
+    remainingInstallments,
+    status: derivedStatus,
   };
 }
 

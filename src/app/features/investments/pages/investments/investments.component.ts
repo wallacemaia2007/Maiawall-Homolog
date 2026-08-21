@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { map, of, shareReplay, switchMap, tap } from 'rxjs';
+import { combineLatest, map, of, shareReplay, switchMap } from 'rxjs';
 
 import {
   Installment,
@@ -10,6 +10,14 @@ import {
   InvestmentPlanStatus,
 } from '../../models/investment.model';
 import { InvestmentService } from '../../services/investment.service';
+import { formatDate, formatLongDate } from '../../../../shared/utils/date.utils';
+
+interface InvestmentViewModel {
+  investment: InvestmentPlan;
+  installments: Installment[];
+  nextInstallment: Installment | null;
+  progress: number;
+}
 
 @Component({
   selector: 'app-investments',
@@ -21,80 +29,132 @@ import { InvestmentService } from '../../services/investment.service';
 })
 export class InvestmentsComponent {
   private readonly investmentService = inject(InvestmentService);
-  private readonly currencyFormatter = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
-  private readonly dateFormatter = new Intl.DateTimeFormat('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-  private readonly longDateFormatter = new Intl.DateTimeFormat('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  private readonly visibleInstallmentLimit = 3;
+  protected readonly expandedInstallmentGroups = signal<Set<string>>(new Set());
 
-  private readonly loadingInstallments = new Set<string>();
-
-  protected readonly plans$ = this.investmentService.getPlans().pipe(
-    tap((plans) => plans.forEach((plan) => this.loadInstallments(plan.id))),
+  protected readonly viewModel$ = this.investmentService.getInvestments().pipe(
+    switchMap((investments) => {
+      if (investments.length === 0) {
+        return of([]);
+      }
+      const installmentRequests = investments.map((inv) =>
+        this.investmentService.getInstallments(inv.id).pipe(
+          map((installments) => ({ investment: inv, installments })),
+        ),
+      );
+      return combineLatest(installmentRequests);
+    }),
+    map((investmentData) =>
+      investmentData.map(({ investment, installments }) => ({
+        investment,
+        installments,
+        nextInstallment: installments
+          .filter((i) => i.status !== 'PAID')
+          .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())[0] ?? null,
+        progress: this.investmentService.getProgress(investment),
+      })),
+    ),
     shareReplay(1),
   );
-  protected readonly primaryInstallments$ = this.plans$.pipe(
-    map((plans) => this.getPrimaryPlan(plans)),
-    switchMap((plan) => (plan ? this.investmentService.getInstallments(plan.id) : of([]))),
+
+  protected readonly primaryViewModel$ = this.viewModel$.pipe(
+    map((vms) => vms.find((vm) => this.investmentService.getPrimaryInvestment([vm.investment]) === vm.investment) ?? null),
     shareReplay(1),
   );
 
-  protected getPrimaryPlan(plans: InvestmentPlan[]): InvestmentPlan | null {
-    return this.investmentService.getPrimaryPlan(plans);
+  protected getPrimaryInvestment(investments: InvestmentPlan[]): InvestmentPlan | null {
+    return this.investmentService.getPrimaryInvestment(investments);
   }
 
-  protected getInstallments(planId: string): Installment[] {
-    return this.investmentService.getInstallmentsByPlanId(planId);
+  protected getInstallments(planId: string, viewModels: InvestmentViewModel[]): Installment[] {
+    return viewModels.find((vm) => vm.investment.id === planId)?.installments ?? [];
   }
 
-  protected getNextInstallment(planId: string): Installment | null {
-    return this.getInstallments(planId).find((installment) => installment.status !== 'PAID') ?? null;
+  protected getNextInstallment(planId: string, viewModels: InvestmentViewModel[]): Installment | null {
+    return viewModels.find((vm) => vm.investment.id === planId)?.nextInstallment ?? null;
   }
 
-  protected getProgress(plan: InvestmentPlan): number {
-    if (plan.totalAmount <= 0) {
-      return 0;
+  protected getVisibleInstallments(vm: InvestmentViewModel): Installment[] {
+    if (this.isInstallmentGroupExpanded(vm.investment.id)) {
+      return vm.installments;
     }
 
-    return Math.round((plan.paidAmount / plan.totalAmount) * 100);
+    return vm.installments.slice(0, this.visibleInstallmentLimit);
+  }
+
+  protected hasHiddenInstallments(vm: InvestmentViewModel): boolean {
+    return vm.installments.length > this.visibleInstallmentLimit;
+  }
+
+  protected isInstallmentGroupExpanded(investmentId: string): boolean {
+    return this.expandedInstallmentGroups().has(investmentId);
+  }
+
+  protected toggleInstallmentGroup(investmentId: string): void {
+    this.expandedInstallmentGroups.update((expandedGroups) => {
+      const nextExpandedGroups = new Set(expandedGroups);
+
+      if (nextExpandedGroups.has(investmentId)) {
+        nextExpandedGroups.delete(investmentId);
+      } else {
+        nextExpandedGroups.add(investmentId);
+      }
+
+      return nextExpandedGroups;
+    });
+  }
+
+  protected getProgress(investment: InvestmentPlan): number {
+    return this.investmentService.getProgress(investment);
   }
 
   protected getSummaryValue(
-    plans: InvestmentPlan[],
+    investments: InvestmentPlan[],
     key: 'totalContracted' | 'totalPaid' | 'totalRemaining',
   ): number {
-    return this.investmentService.calculateSummary(plans)[key];
+    return this.investmentService.calculateSummary(investments)[key];
   }
 
-  protected getActivePlansCount(plans: InvestmentPlan[]): number {
-    return this.investmentService.calculateSummary(plans).activePlans;
+  protected getActiveInvestmentsCount(investments: InvestmentPlan[]): number {
+    return this.investmentService.calculateSummary(investments).activeInvestments;
+  }
+
+  protected getTotalContracted(viewModels: InvestmentViewModel[]): number {
+    return viewModels.reduce((sum, vm) => sum + vm.investment.totalAmount, 0);
+  }
+
+  protected getTotalPaid(viewModels: InvestmentViewModel[]): number {
+    return viewModels.reduce((sum, vm) => sum + vm.investment.paidAmount, 0);
+  }
+
+  protected getTotalRemaining(viewModels: InvestmentViewModel[]): number {
+    return viewModels.reduce((sum, vm) => sum + vm.investment.remainingAmount, 0);
+  }
+
+  protected getActiveCount(viewModels: InvestmentViewModel[]): number {
+    return viewModels.filter((vm) => vm.investment.status === 'ACTIVE' || vm.investment.status === 'PARTIALLY_PAID').length;
   }
 
   protected formatCurrency(value: number): string {
-    return this.currencyFormatter.format(value);
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
   }
 
   protected formatDate(value: string): string {
-    return this.dateFormatter.format(new Date(`${value}T00:00:00`));
+    return formatDate(value);
   }
 
   protected formatLongDate(value: string): string {
-    return this.longDateFormatter.format(new Date(`${value}T00:00:00`));
+    return formatLongDate(value);
   }
 
-  protected getPlanStatusLabel(status: InvestmentPlanStatus): string {
+  protected getInvestmentStatusLabel(status: InvestmentPlanStatus): string {
     const labels: Record<InvestmentPlanStatus, string> = {
       ACTIVE: 'Ativo',
       PAID: 'Quitado',
+      PARTIALLY_PAID: 'Em andamento',
       PENDING: 'Pendente',
       OVERDUE: 'Em atraso',
       CANCELLED: 'Cancelado',
@@ -113,12 +173,7 @@ export class InvestmentsComponent {
     return labels[status];
   }
 
-  private loadInstallments(planId: string): void {
-    if (this.loadingInstallments.has(planId)) {
-      return;
-    }
-
-    this.loadingInstallments.add(planId);
-    this.investmentService.getInstallments(planId).subscribe();
+  protected hasDownPayment(investment: InvestmentPlan): boolean {
+    return this.investmentService.hasDownPayment(investment);
   }
 }
