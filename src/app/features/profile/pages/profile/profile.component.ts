@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgxMaskDirective } from 'ngx-mask';
-import { finalize } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize, map, switchMap, tap } from 'rxjs';
 
 import { User, UserProfileUpdatePayload } from '../../../../core/models/user.model';
 import { UserService } from '../../../../core/services/user.service';
+import { ViaCepService } from '../../../../core/services/via-cep.service';
 import { PasswordChangeModalComponent } from '../../components/password-change-modal/password-change-modal.component';
 
 @Component({
@@ -18,13 +20,18 @@ import { PasswordChangeModalComponent } from '../../components/password-change-m
 })
 export class ProfileComponent {
   private readonly userService = inject(UserService);
+  private readonly viaCepService = inject(ViaCepService);
   private readonly formBuilder = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
   protected readonly user = signal<User | null>(null);
   protected readonly editing = signal(false);
   protected readonly saving = signal(false);
+  protected readonly searchingCep = signal(false);
+  protected readonly cepFeedback = signal('');
+  protected readonly cepFeedbackTone = signal<'neutral' | 'success' | 'error'>('neutral');
   protected readonly successMessage = signal('');
   protected readonly saveError = signal('');
   protected readonly passwordModalOpen = signal(false);
@@ -50,6 +57,7 @@ export class ProfileComponent {
   });
 
   constructor() {
+    this.watchCepChanges();
     this.loadProfile();
   }
 
@@ -165,6 +173,20 @@ export class ProfileComponent {
     return phone;
   }
 
+  protected formatCep(cep?: string): string {
+    if (!cep) {
+      return 'Nao informado';
+    }
+
+    const numbers = cep.replace(/\D/g, '');
+
+    if (numbers.length === 8) {
+      return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
+    }
+
+    return cep;
+  }
+
   protected formatDate(dateString: string): string {
     try {
       const date = new Date(dateString);
@@ -248,5 +270,53 @@ export class ProfileComponent {
     }
 
     return date.toISOString().slice(0, 10);
+  }
+
+  private watchCepChanges(): void {
+    const cepControl = this.profileForm.controls.address.controls.cep;
+
+    cepControl.valueChanges
+      .pipe(
+        debounceTime(350),
+        map((value) => value.replace(/\D/g, '')),
+        distinctUntilChanged(),
+        tap((cep) => {
+          if (cep.length < 8) {
+            this.searchingCep.set(false);
+            this.cepFeedback.set('');
+            this.cepFeedbackTone.set('neutral');
+          }
+        }),
+        filter((cep) => this.editing() && cep.length === 8),
+        tap(() => {
+          this.searchingCep.set(true);
+          this.cepFeedback.set('Consultando CEP...');
+          this.cepFeedbackTone.set('neutral');
+        }),
+        switchMap((cep) =>
+          this.viaCepService.search(cep).pipe(
+            finalize(() => this.searchingCep.set(false)),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((address) => {
+        if (!address) {
+          this.cepFeedback.set('CEP não encontrado.');
+          this.cepFeedbackTone.set('error');
+          return;
+        }
+
+        this.profileForm.controls.address.patchValue({
+          cep: address.cep,
+          street: address.street,
+          complement: address.complement,
+          neighborhood: address.neighborhood,
+          city: address.city,
+          state: address.state,
+        });
+        this.cepFeedback.set('Endereço preenchido pelo CEP.');
+        this.cepFeedbackTone.set('success');
+      });
   }
 }

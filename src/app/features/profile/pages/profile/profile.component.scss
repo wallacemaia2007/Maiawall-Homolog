@@ -220,6 +220,8 @@ h2 {
 
 .form-field {
   display: grid;
+  grid-template-rows: auto 44px 16px;
+  align-content: start;
   gap: 8px;
 }
 
@@ -258,6 +260,21 @@ h2 {
   color: #ad3328;
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.form-field .cep-feedback,
+.form-field .cep-feedback--neutral {
+  min-height: 16px;
+  color: #6b6e76;
+  line-height: 1.25;
+}
+
+.form-field .cep-feedback--success {
+  color: #247348;
+}
+
+.form-field .cep-feedback--error {
+  color: #ad3328;
 }
 
 .profile-form-actions {

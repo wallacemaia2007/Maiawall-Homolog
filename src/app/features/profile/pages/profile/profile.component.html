@@ -182,6 +182,11 @@
                 <label class="form-field">
                   <span>CEP</span>
                   <input type="text" formControlName="cep" autocomplete="postal-code" mask="00000-000" />
+                  @if (cepFeedback()) {
+                    <small [class]="'cep-feedback cep-feedback--' + cepFeedbackTone()">
+                      {{ cepFeedback() }}
+                    </small>
+                  }
                 </label>
 
                 <label class="form-field form-field--wide">
@@ -219,7 +224,7 @@
                 @if (currentUser.address?.cep) {
                   <div class="info-item">
                     <dt>CEP</dt>
-                    <dd>{{ currentUser.address!.cep }}</dd>
+                    <dd>{{ formatCep(currentUser.address!.cep) }}</dd>
                   </div>
                 }
                 @if (currentUser.address?.street) {
