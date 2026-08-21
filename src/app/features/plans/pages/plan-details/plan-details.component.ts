@@ -13,6 +13,7 @@ import { PlanService } from '../../services/plan.service';
 import { PlanRenewalModalComponent } from '../../components/plan-renewal-modal/plan-renewal-modal.component';
 import { PlanIncludedItemsComponent } from '../plans/components/plan-included-items/plan-included-items.component';
 import { PlanExtraCostsComponent } from '../plans/components/plan-extra-costs/plan-extra-costs.component';
+import { PlanPaymentsComponent } from '../plans/components/plan-payments/plan-payments.component';
 import {
   getPlanStatusLabel,
   getPlanStatusTone,
@@ -25,7 +26,13 @@ import { formatDate, formatLongDate } from '../../../../shared/utils/date.utils'
 @Component({
   selector: 'app-plan-details',
   standalone: true,
-  imports: [CommonModule, PlanRenewalModalComponent, PlanIncludedItemsComponent, PlanExtraCostsComponent],
+  imports: [
+    CommonModule,
+    PlanRenewalModalComponent,
+    PlanIncludedItemsComponent,
+    PlanExtraCostsComponent,
+    PlanPaymentsComponent,
+  ],
   templateUrl: './plan-details.component.html',
   styleUrl: './plan-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

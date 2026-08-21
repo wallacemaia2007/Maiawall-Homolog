@@ -396,68 +396,6 @@ dd {
   line-height: 1.7;
 }
 
-.payment-history-list {
-  display: grid;
-  gap: 12px;
-}
-
-.payment-history-card {
-  display: grid;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid var(--color-border-light);
-  border-left: 4px solid var(--color-primary);
-  border-radius: 8px;
-  background: var(--color-bg-primary);
-}
-
-.payment-type {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.type-label,
-.payment-amount {
-  color: var(--color-text-primary);
-  font-weight: 700;
-}
-
-.payment-amount {
-  font-size: 1.08rem;
-}
-
-.payment-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.86rem;
-}
-
-.payment-status {
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 0.76rem;
-  font-weight: 700;
-}
-
-.payment-status.status-paid {
-  background: var(--color-success-bg);
-  color: var(--color-success);
-}
-
-.payment-status.status-pending {
-  background: var(--color-warning-bg);
-  color: var(--color-warning);
-}
-
-.payment-status.status-overdue {
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
-}
-
 .details-actions {
   display: flex;
   justify-content: stretch;
@@ -513,8 +451,7 @@ dd {
 
 @media (max-width: 900px) {
   .details-hero,
-  .renewal-panel,
-  .payment-type {
+  .renewal-panel {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -536,9 +473,4 @@ dd {
     grid-template-columns: 1fr;
   }
 
-  .payment-meta {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
-  }
 }

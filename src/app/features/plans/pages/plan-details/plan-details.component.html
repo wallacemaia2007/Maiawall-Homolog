@@ -227,41 +227,11 @@
       }
 
       <section class="details-panel">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Histórico de pagamentos</p>
-            <h3>Todos os pagamentos registrados</h3>
-          </div>
-        </div>
-
-        @if (plan.payments.length > 0) {
-          <div class="payment-history-list">
-            @for (payment of plan.payments; track payment.id) {
-              <article class="payment-history-card">
-                <div class="payment-type">
-                  <span class="type-label">Parcela {{ payment.number }}</span>
-                  <span class="payment-amount">{{ formatCurrency(payment.amount) }}</span>
-                </div>
-                <div class="payment-meta">
-                  <span class="payment-status" [ngClass]="'status-' + payment.status.toLowerCase()">
-                    {{ getInstallmentStatusLabel(payment.status) }}
-                  </span>
-                  <span class="payment-date">
-                    {{ payment.status === 'PAID' && payment.paidAt ? 'Pago em: ' + formatDate(payment.paidAt) : 'Vence em: ' + formatDate(payment.dueDate) }}
-                  </span>
-                </div>
-              </article>
-            }
-          </div>
-        } @else {
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z" />
-              <path d="M12 6v6l4 2" />
-            </svg>
-            <p>Nenhum pagamento registrado para este plano.</p>
-          </div>
-        }
+        <app-plan-payments
+          [payments]="plan.payments"
+          title="Histórico de pagamentos"
+          subtitle="Todos os pagamentos registrados"
+        />
       </section>
 
       <div class="details-actions">

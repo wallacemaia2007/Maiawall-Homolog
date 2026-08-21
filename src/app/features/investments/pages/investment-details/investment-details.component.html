@@ -196,7 +196,7 @@
     </div>
 
     <div class="payment-history-list">
-      @for (payment of viewModel.payments; track payment.id) {
+      @for (payment of getVisiblePayments(viewModel.payments); track payment.id) {
       <article class="payment-history-card" [class]="'payment-history-card type-' + payment.type.toLowerCase()">
         <div class="payment-type">
           <span class="type-label">{{ payment.type === 'DOWN_PAYMENT' ? 'Entrada' : 'Parcela ' + payment.number
@@ -217,6 +217,17 @@
       </article>
       }
     </div>
+
+    @if (hasHiddenPayments(viewModel.payments)) {
+    <button
+      type="button"
+      class="payments-toggle"
+      [attr.aria-expanded]="paymentHistoryExpanded()"
+      (click)="togglePaymentHistory()"
+    >
+      {{ paymentHistoryExpanded() ? 'Ver menos pagamentos' : 'Ver mais pagamentos' }}
+    </button>
+    }
   </section>
   }
 

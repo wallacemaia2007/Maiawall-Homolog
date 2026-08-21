@@ -1,11 +1,12 @@
 import { CommonModule, Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, switchMap } from 'rxjs';
 
 import {
   Installment,
   InstallmentStatus,
+  InvestmentPayment,
   InvestmentPlan,
   InvestmentPlanStatus,
 } from '../../models/investment.model';
@@ -31,6 +32,8 @@ export class InvestmentDetailsComponent {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
   private readonly investmentService = inject(InvestmentService);
+  private readonly visiblePaymentLimit = 3;
+  protected readonly paymentHistoryExpanded = signal(false);
 
   protected readonly viewModel$ = this.route.paramMap.pipe(
     switchMap((params) => {
@@ -67,6 +70,22 @@ export class InvestmentDetailsComponent {
         .filter((installment) => installment.status !== 'PAID')
         .sort((current, next) => new Date(current.dueDate).getTime() - new Date(next.dueDate).getTime())[0] ?? null
     );
+  }
+
+  protected getVisiblePayments(payments: InvestmentPayment[]): InvestmentPayment[] {
+    if (this.paymentHistoryExpanded()) {
+      return payments;
+    }
+
+    return payments.slice(0, this.visiblePaymentLimit);
+  }
+
+  protected hasHiddenPayments(payments: InvestmentPayment[]): boolean {
+    return payments.length > this.visiblePaymentLimit;
+  }
+
+  protected togglePaymentHistory(): void {
+    this.paymentHistoryExpanded.update((expanded) => !expanded);
   }
 
   protected formatCurrency(value: number): string {

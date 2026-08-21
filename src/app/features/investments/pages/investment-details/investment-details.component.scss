@@ -417,6 +417,33 @@ dd {
   font-style: italic;
 }
 
+.payments-toggle {
+  display: inline-flex;
+  width: max-content;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+
+  &:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
+  }
+}
+
 .details-actions {
   display: flex;
   justify-content: stretch;
@@ -491,6 +518,10 @@ dd {
     align-items: flex-start;
     flex-direction: column;
     gap: 6px;
+  }
+
+  .payments-toggle {
+    width: 100%;
   }
 
   .details-actions,
