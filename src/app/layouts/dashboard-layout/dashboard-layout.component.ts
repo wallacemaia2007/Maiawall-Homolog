@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { catchError, filter, of } from 'rxjs';
+import { catchError, filter, map, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
+import { Notification } from '../../core/models/notification.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
@@ -21,6 +22,9 @@ import { SidebarComponent, SidebarNavItem } from './components/sidebar/sidebar.c
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardLayoutComponent {
+  @ViewChild('notificationsMenu')
+  private readonly notificationsMenu?: ElementRef<HTMLElement>;
+
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly userService = inject(UserService);
@@ -34,6 +38,10 @@ export class DashboardLayoutComponent {
   protected readonly darkTheme = this.themeService.darkTheme;
   protected readonly currentUser$ = this.userService.getCurrentUser();
   protected readonly unreadNotifications$ = this.notificationService.unreadCount$;
+  protected readonly headerNotifications$ = this.notificationService.notifications$.pipe(
+    map((notifications) => notifications.slice(0, 6)),
+  );
+  protected readonly notificationsMenuOpen = signal(false);
 
   protected readonly navItems: SidebarNavItem[] = [
     {
@@ -83,6 +91,16 @@ export class DashboardLayoutComponent {
   protected closeOnEscape(): void {
     this.closeDrawer();
     this.closeLogoutModal();
+    this.closeNotificationsMenu();
+  }
+
+  @HostListener('document:click', ['$event'])
+  protected closeOnOutsideClick(event: MouseEvent): void {
+    if (this.notificationsMenu?.nativeElement.contains(event.target as Node)) {
+      return;
+    }
+
+    this.closeNotificationsMenu();
   }
 
   protected openDrawer(): void {
@@ -94,7 +112,50 @@ export class DashboardLayoutComponent {
   }
 
   protected openQuoteCart(): void {
+    this.closeNotificationsMenu();
     this.quoteCart.open();
+  }
+
+  protected toggleNotificationsMenu(event: Event): void {
+    event.stopPropagation();
+    this.notificationsMenuOpen.update((open) => !open);
+  }
+
+  protected closeNotificationsMenu(): void {
+    this.notificationsMenuOpen.set(false);
+  }
+
+  protected openNotification(notification: Notification, event: Event): void {
+    event.stopPropagation();
+
+    const markAsRead$ = notification.read ? of(notification) : this.notificationService.markAsRead(notification.id);
+
+    markAsRead$
+      .pipe(
+        switchMap((updatedNotification) =>
+          this.notificationService.resolveDestination(updatedNotification),
+        ),
+        catchError(() => of(null)),
+      )
+      .subscribe((destination) => {
+        this.closeNotificationsMenu();
+
+        if (destination) {
+          this.router.navigate(destination);
+        }
+      });
+  }
+
+  protected hasNotificationAction(notification: Notification): boolean {
+    return Boolean(this.notificationService.getDestination(notification));
+  }
+
+  protected notificationActionLabel(notification: Notification): string {
+    return this.notificationService.getVisual(notification).actionLabel;
+  }
+
+  protected notificationSummary(notification: Notification): string {
+    return this.notificationService.getVisual(notification).label;
   }
 
   protected toggleSidebar(): void {

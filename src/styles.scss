@@ -350,6 +350,190 @@ input[type='checkbox']:disabled {
   color: #fff;
 }
 
+.notifications-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 40;
+  width: min(420px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid rgba(20, 20, 24, 0.1);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 22px 54px rgba(17, 18, 20, 0.16);
+}
+
+.notifications-popover::before {
+  position: absolute;
+  top: -6px;
+  right: 14px;
+  width: 12px;
+  height: 12px;
+  content: '';
+  border-top: 1px solid rgba(20, 20, 24, 0.1);
+  border-left: 1px solid rgba(20, 20, 24, 0.1);
+  background: #fff;
+  transform: rotate(45deg);
+}
+
+.notifications-popover-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid #e4e4e1;
+}
+
+.notifications-popover-header strong {
+  color: #16171b;
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+.notifications-popover-header span {
+  color: #6b6e76;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.notifications-popover-list {
+  display: grid;
+  max-height: 333px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.notifications-popover-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notifications-popover-list::-webkit-scrollbar-thumb {
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: rgba(76, 58, 227, 0.32);
+}
+
+.notifications-popover-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  min-height: 111px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e4e4e1;
+  background: #fff;
+}
+
+.notifications-popover-item.is-unread {
+  background: linear-gradient(90deg, rgba(76, 58, 227, 0.08), #fff 58%);
+}
+
+.notification-copy {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.notification-copy div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.notification-copy div span {
+  color: #4c3ae3;
+  font-size: 0.69rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.notification-copy i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #4c3ae3;
+}
+
+.notification-copy strong,
+.notification-copy p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notification-copy strong {
+  color: #16171b;
+  font-size: 0.9rem;
+  font-weight: 760;
+  white-space: nowrap;
+}
+
+.notification-copy p {
+  display: -webkit-box;
+  margin: 0;
+  color: #6b6e76;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.notification-copy time {
+  color: #8a8d96;
+  font-size: 0.72rem;
+}
+
+.notification-action {
+  align-self: end;
+  min-width: 92px;
+  max-width: 118px;
+  min-height: 32px;
+  padding: 7px 10px;
+  border: 1px solid rgba(76, 58, 227, 0.22);
+  border-radius: 8px;
+  background: rgba(76, 58, 227, 0.08);
+  color: #4c3ae3;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.notification-action:hover {
+  border-color: rgba(76, 58, 227, 0.36);
+  background: rgba(76, 58, 227, 0.13);
+}
+
+.notifications-empty {
+  margin: 0;
+  padding: 22px 16px;
+  color: #6b6e76;
+  font-size: 0.86rem;
+}
+
+.notifications-view-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  background: #fbfbfa;
+  color: #4c3ae3;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.notifications-view-all:hover {
+  background: rgba(76, 58, 227, 0.08);
+}
+
 @keyframes mw-fade-up {
   from {
     opacity: 0;
@@ -431,5 +615,19 @@ input[type='checkbox']:disabled {
   .theme-switch,
   .theme-switch::before {
     transition: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .notifications-popover {
+    position: fixed;
+    top: 76px;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+
+  .notifications-popover::before {
+    right: 64px;
   }
 }

@@ -54,15 +54,77 @@
           }
         </button>
 
-        <a routerLink="/notifications" class="header-icon-button" aria-label="Abrir notificacoes">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 01-3.46 0" />
-          </svg>
-          @if ((unreadNotifications$ | async) ?? 0; as unreadNotifications) {
-            <span class="header-badge" aria-label="Notificacoes nao lidas">{{ unreadNotifications }}</span>
+        <div #notificationsMenu class="notifications-menu">
+          <button
+            type="button"
+            class="header-icon-button"
+            aria-label="Abrir notificacoes"
+            [attr.aria-expanded]="notificationsMenuOpen()"
+            aria-controls="header-notifications-menu"
+            (click)="toggleNotificationsMenu($event)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 01-3.46 0" />
+            </svg>
+            @if ((unreadNotifications$ | async) ?? 0; as unreadNotifications) {
+              <span class="header-badge" aria-label="Notificacoes nao lidas">{{ unreadNotifications }}</span>
+            }
+          </button>
+
+          @if (notificationsMenuOpen()) {
+            <section
+              id="header-notifications-menu"
+              class="notifications-popover"
+              aria-label="Ultimas notificacoes"
+            >
+              <div class="notifications-popover-header">
+                <strong>Ultimas notificacoes</strong>
+                @if ((unreadNotifications$ | async) ?? 0; as unreadNotifications) {
+                  <span>{{ unreadNotifications }} nao lida(s)</span>
+                }
+              </div>
+
+              @if (headerNotifications$ | async; as notifications) {
+                @if (notifications.length > 0) {
+                  <ol class="notifications-popover-list">
+                    @for (notification of notifications; track notification.id) {
+                      <li class="notifications-popover-item" [class.is-unread]="!notification.read">
+                        <div class="notification-copy">
+                          <div>
+                            <span>{{ notificationSummary(notification) }}</span>
+                            @if (!notification.read) {
+                              <i aria-label="Notificacao nao lida"></i>
+                            }
+                          </div>
+                          <strong>{{ notification.title }}</strong>
+                          <p>{{ notification.message }}</p>
+                          <time>{{ notification.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
+                        </div>
+
+                        @if (hasNotificationAction(notification)) {
+                          <button
+                            type="button"
+                            class="notification-action"
+                            (click)="openNotification(notification, $event)"
+                          >
+                            {{ notificationActionLabel(notification) }}
+                          </button>
+                        }
+                      </li>
+                    }
+                  </ol>
+                } @else {
+                  <p class="notifications-empty">Nenhuma notificacao recente.</p>
+                }
+              }
+
+              <a routerLink="/notifications" class="notifications-view-all" (click)="closeNotificationsMenu()">
+                Ver todas notificacoes
+              </a>
+            </section>
           }
-        </a>
+        </div>
         @if (currentUser$ | async; as user) {
           <a routerLink="/profile" class="header-user">
             <span>{{ user.name }}</span>
