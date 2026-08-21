@@ -14,7 +14,6 @@ import {
   Project,
   ProjectActivity,
   ProjectChange,
-  ProjectCommit,
   ProjectRelease,
   ProjectStatus,
 } from '../../../../core/models/project.model';
@@ -43,6 +42,7 @@ import { MeetingRequestModalComponent } from '../../../../shared/components/meet
     MeetingRequestModalComponent,
   ],
   templateUrl: './project-details.component.html',
+  styleUrl: './project-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProjectDetailsComponent {
@@ -73,7 +73,6 @@ export class ProjectDetailsComponent {
   protected readonly error = signal(false);
   protected readonly project = signal<Project | null>(null);
   protected readonly history = signal<ProjectActivity[]>([]);
-  protected readonly commits = signal<ProjectCommit[]>([]);
   protected readonly releases = signal<ProjectRelease[]>([]);
   protected readonly investments = signal<InvestmentPlan[]>([]);
   protected readonly plans = signal<Plan[]>([]);
@@ -104,6 +103,34 @@ export class ProjectDetailsComponent {
     return this.plans().filter((plan) => plan.projectId === project.id);
   });
 
+  protected readonly latestDelivery = computed(() => {
+    const latestRelease = [...this.releases()].sort(
+      (current, next) => new Date(next.releasedAt).getTime() - new Date(current.releasedAt).getTime(),
+    )[0];
+
+    if (latestRelease) {
+      return {
+        title: latestRelease.title,
+        description: latestRelease.description || 'Entrega registrada no changelog do projeto.',
+        date: latestRelease.releasedAt,
+      };
+    }
+
+    const latestActivity = [...this.history()].sort(
+      (current, next) => new Date(next.createdAt).getTime() - new Date(current.createdAt).getTime(),
+    )[0];
+
+    if (latestActivity) {
+      return {
+        title: latestActivity.title,
+        description: latestActivity.description,
+        date: latestActivity.createdAt,
+      };
+    }
+
+    return null;
+  });
+
   constructor() {
     this.loadProject();
   }
@@ -123,17 +150,15 @@ export class ProjectDetailsComponent {
     forkJoin({
       project: this.projectService.getProjectById(id),
       history: this.projectService.getProjectHistory(id),
-      commits: this.projectService.getProjectCommits(id),
       releases: this.projectService.getProjectReleases(id),
       investments: this.investmentService.getInvestments(),
       plans: this.planService.getPlans(),
     })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
-        next: ({ project, history, commits, releases, investments, plans }) => {
+        next: ({ project, history, releases, investments, plans }) => {
           this.project.set(project);
           this.history.set(history);
-          this.commits.set(commits);
           this.releases.set(releases);
           this.investments.set(investments);
           this.plans.set(plans);
@@ -210,6 +235,41 @@ export class ProjectDetailsComponent {
 
   protected getStatusTone(status: ProjectStatus): string {
     return getProjectStatusView(status).tone;
+  }
+
+  protected getNextStep(project: Project): string {
+    switch (project.status) {
+      case 'DEVELOPMENT':
+        return 'Implementação em andamento pela Maiawall.';
+      case 'HOMOLOGATION':
+        return 'Revisão do cliente no ambiente de homologação.';
+      case 'CHANGES_REQUESTED':
+        return 'Ajustes solicitados serão analisados e implementados.';
+      case 'APPROVED':
+        return 'Preparação para publicação ou acompanhamento final.';
+      case 'PRODUCTION':
+        return 'Projeto em produção com acompanhamento ativo.';
+      case 'COMPLETED':
+        return 'Projeto concluído e disponível para consulta.';
+      default:
+        return 'Acompanhamento do projeto em andamento.';
+    }
+  }
+
+  protected getCurrentResponsible(project: Project): string {
+    switch (project.status) {
+      case 'HOMOLOGATION':
+        return 'Cliente';
+      case 'CHANGES_REQUESTED':
+      case 'DEVELOPMENT':
+      case 'APPROVED':
+        return 'Maiawall';
+      case 'PRODUCTION':
+      case 'COMPLETED':
+        return 'Maiawall e cliente';
+      default:
+        return 'Maiawall';
+    }
   }
 
   protected formatDate(value: string): string {

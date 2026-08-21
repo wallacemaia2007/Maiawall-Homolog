@@ -105,121 +105,156 @@
       }
 
       <section class="details-grid">
-        <article class="info-card">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Dados</p>
-              <h3>Informacoes do projeto</h3>
-            </div>
-          </div>
-
-          <dl class="info-list">
-            <div>
-              <dt>Cliente</dt>
-              <dd>{{ project.clientName }}</dd>
-            </div>
-            <div>
-              <dt>Versao</dt>
-              <dd>{{ project.version }}</dd>
-            </div>
-            <div>
-              <dt>Criado em</dt>
-              <dd>{{ formatDate(project.createdAt) }}</dd>
-            </div>
-            <div>
-              <dt>Ultima atualizacao</dt>
-              <dd>{{ formatDateTime(project.updatedAt) }}</dd>
-            </div>
-            <div>
-              <dt>Status</dt>
-              <dd>{{ getStatusLabel(project.status) }}</dd>
-            </div>
-            <div>
-              <dt>Progresso</dt>
-              <dd>{{ project.progress }}%</dd>
-            </div>
-          </dl>
-        </article>
-
-        <article class="links-card">
-          <p class="eyebrow">Links</p>
-          <h3>Acessos do projeto</h3>
-
-          <div class="link-row">
-            <div>
-              <span>Homologacao</span>
-              <strong>{{ project.homologationUrl || 'Ainda nao disponivel' }}</strong>
-            </div>
-            @if (project.homologationUrl) {
-              <a [href]="project.homologationUrl" target="_blank" rel="noreferrer">Abrir</a>
-            }
-          </div>
-
-          <div class="link-row">
-            <div>
-              <span>Producao</span>
-              <strong>{{ project.productionUrl || 'Ainda nao disponivel' }}</strong>
-            </div>
-            @if (project.productionUrl) {
-              <a [href]="project.productionUrl" target="_blank" rel="noreferrer">Abrir</a>
-            }
-          </div>
-        </article>
-
-        <article class="investment-card">
-          <p class="eyebrow">Investimento</p>
-          <h3>Investimento do projeto</h3>
-
-          @if (relatedInvestment(); as investment) {
-            <dl class="investment-list">
+        <div class="main-stack">
+          <article class="info-card">
+            <div class="section-heading">
               <div>
-                <dt>Projeto</dt>
-                <dd>{{ investment.name }}</dd>
+                <p class="eyebrow">Dados</p>
+                <h3>Informações do projeto</h3>
+              </div>
+            </div>
+
+            <dl class="info-list">
+              <div>
+                <dt>Cliente</dt>
+                <dd>{{ project.clientName }}</dd>
               </div>
               <div>
-                <dt>Valor total</dt>
-                <dd>{{ formatCurrency(investment.totalAmount) }}</dd>
+                <dt>Versão</dt>
+                <dd>{{ project.version }}</dd>
               </div>
               <div>
-                <dt>Pago</dt>
-                <dd>{{ formatCurrency(investment.paidAmount) }}</dd>
+                <dt>Criado em</dt>
+                <dd>{{ formatDate(project.createdAt) }}</dd>
               </div>
               <div>
-                <dt>Restante</dt>
-                <dd>{{ formatCurrency(investment.remainingAmount) }}</dd>
+                <dt>Última atualização</dt>
+                <dd>{{ formatDateTime(project.updatedAt) }}</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd>{{ getStatusLabel(project.status) }}</dd>
+              </div>
+              <div>
+                <dt>Progresso</dt>
+                <dd>{{ project.progress }}%</dd>
               </div>
             </dl>
+          </article>
 
-            <p class="payment-count">{{ investment.paidInstallments }} de {{ investment.installments }} parcelas pagas</p>
-            <a class="card-link" [routerLink]="['/investments', investment.id]">Ver detalhes do investimento</a>
-          } @else {
-            <p class="muted">Nenhum investimento associado.</p>
-          }
-        </article>
+          <article class="operations-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Resumo operacional</p>
+                <h3>Próximos passos do projeto</h3>
+              </div>
+            </div>
 
-        <article class="plans-card">
-          <p class="eyebrow">Planos</p>
-          <h3>Planos de serviços recorrentes</h3>
+            <div class="operations-list">
+              <div>
+                <span>Próxima etapa</span>
+                <strong>{{ getNextStep(project) }}</strong>
+              </div>
+              <div>
+                <span>Responsável agora</span>
+                <strong>{{ getCurrentResponsible(project) }}</strong>
+              </div>
+              <div class="latest-delivery">
+                <span>Última entrega</span>
+                @if (latestDelivery(); as delivery) {
+                  <strong>{{ delivery.title }}</strong>
+                  <p>{{ delivery.description }}</p>
+                  <small>{{ formatDateTime(delivery.date) }}</small>
+                } @else {
+                  <strong>Ainda sem entrega registrada</strong>
+                  <p>Quando uma entrega for registrada, ela aparecerá aqui.</p>
+                }
+              </div>
+            </div>
+          </article>
+        </div>
 
-          @if (relatedPlans().length > 0) {
-            <div class="plans-list">
-              @for (plan of relatedPlans(); track plan.id) {
-                <div class="plan-item">
-                  <div>
-                    <span class="plan-name">{{ plan.name }}</span>
-                    <small>{{ formatCurrency(plan.amount) }} / {{ getBillingCycleLabel(plan.billingCycle) }}</small>
-                  </div>
-                  <span class="status-badge" [class]="'status-badge tone-' + getPlanStatusTone(plan.status)">
-                    {{ getPlanStatusLabel(plan.status) }}
-                  </span>
-                  <a class="card-link" [routerLink]="['/plans', plan.id]">Ver plano</a>
-                </div>
+        <div class="side-stack">
+          <article class="links-card">
+            <p class="eyebrow">Links</p>
+            <h3>Acessos do projeto</h3>
+
+            <div class="link-row">
+              <div>
+                <span>Homologação</span>
+                <strong>{{ project.homologationUrl || 'Ainda não disponível' }}</strong>
+              </div>
+              @if (project.homologationUrl) {
+                <a [href]="project.homologationUrl" target="_blank" rel="noreferrer">Abrir</a>
               }
             </div>
-          } @else {
-            <p class="muted">Nenhum plano de serviços associado.</p>
-          }
-        </article>
+
+            <div class="link-row">
+              <div>
+                <span>Produção</span>
+                <strong>{{ project.productionUrl || 'Ainda não disponível' }}</strong>
+              </div>
+              @if (project.productionUrl) {
+                <a [href]="project.productionUrl" target="_blank" rel="noreferrer">Abrir</a>
+              }
+            </div>
+          </article>
+
+          <article class="investment-card">
+            <p class="eyebrow">Investimento</p>
+            <h3>Investimento do projeto</h3>
+
+            @if (relatedInvestment(); as investment) {
+              <dl class="investment-list">
+                <div>
+                  <dt>Projeto</dt>
+                  <dd>{{ investment.name }}</dd>
+                </div>
+                <div>
+                  <dt>Valor total</dt>
+                  <dd>{{ formatCurrency(investment.totalAmount) }}</dd>
+                </div>
+                <div>
+                  <dt>Pago</dt>
+                  <dd>{{ formatCurrency(investment.paidAmount) }}</dd>
+                </div>
+                <div>
+                  <dt>Restante</dt>
+                  <dd>{{ formatCurrency(investment.remainingAmount) }}</dd>
+                </div>
+              </dl>
+
+              <p class="payment-count">{{ investment.paidInstallments }} de {{ investment.installments }} parcelas pagas</p>
+              <a class="card-link" [routerLink]="['/investments', investment.id]">Ver detalhes do investimento</a>
+            } @else {
+              <p class="muted">Nenhum investimento associado.</p>
+            }
+          </article>
+
+          <article class="plans-card">
+            <p class="eyebrow">Planos</p>
+            <h3>Planos de serviços recorrentes</h3>
+
+            @if (relatedPlans().length > 0) {
+              <div class="plans-list">
+                @for (plan of relatedPlans(); track plan.id) {
+                  <div class="plan-item">
+                    <div>
+                      <span class="plan-name">{{ plan.name }}</span>
+                      <small>{{ formatCurrency(plan.amount) }} / {{ getBillingCycleLabel(plan.billingCycle) }}</small>
+                    </div>
+                    <span class="status-badge" [class]="'status-badge tone-' + getPlanStatusTone(plan.status)">
+                      {{ getPlanStatusLabel(plan.status) }}
+                    </span>
+                    <a class="card-link" [routerLink]="['/plans', plan.id]">Ver plano</a>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="muted">Nenhum plano de serviços associado.</p>
+            }
+          </article>
+        </div>
       </section>
 
       <section class="content-grid">
@@ -241,27 +276,6 @@
                   <p>{{ activity.description }}</p>
                   <time>{{ formatDateTime(activity.createdAt) }}</time>
                 </div>
-              </article>
-            }
-          </div>
-        </article>
-
-        <article class="commits-card">
-          <p class="eyebrow">Tecnico</p>
-          <h3>Atualizacoes tecnicas</h3>
-
-          <div class="commit-list">
-            @for (commit of commits(); track commit.id) {
-              <article class="commit-item">
-                <div>
-                  <h4>{{ commit.message }}</h4>
-                  <code>{{ commit.sha }}</code>
-                </div>
-                <p>{{ commit.author }}</p>
-                <time>{{ formatDateTime(commit.createdAt) }}</time>
-                @if (commit.url) {
-                  <a [href]="commit.url" target="_blank" rel="noreferrer">Ver no GitHub</a>
-                }
               </article>
             }
           </div>
