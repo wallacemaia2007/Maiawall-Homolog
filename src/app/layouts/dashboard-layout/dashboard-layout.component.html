@@ -90,6 +90,20 @@
                   <ol class="notifications-popover-list">
                     @for (notification of notifications; track notification.id) {
                       <li class="notifications-popover-item" [class.is-unread]="!notification.read">
+                        @if (!notification.read) {
+                          <button
+                            type="button"
+                            class="notification-read-button"
+                            aria-label="Marcar notificacao como lida"
+                            [disabled]="markingReadNotificationId() === notification.id"
+                            (click)="markNotificationAsRead(notification, $event)"
+                          >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="m5 12 4 4L19 6" />
+                            </svg>
+                          </button>
+                        }
+
                         <div class="notification-copy">
                           <div>
                             <span>{{ notificationSummary(notification) }}</span>

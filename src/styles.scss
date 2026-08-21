@@ -9,35 +9,35 @@
   /* Color CSS Custom Properties */
   --color-primary: #4c3ae3;
   --color-primary-hover: #3d2fd1;
-  
+
   --color-success: #1c7c3e;
   --color-success-bg: #eaf8ef;
-  
+
   --color-info: #2362a8;
   --color-info-bg: #eaf3ff;
-  
+
   --color-warning: #9c6812;
   --color-warning-bg: #fff5db;
-  
+
   --color-danger: #ad3328;
   --color-danger-bg: #fff0ee;
-  
+
   --color-neutral: #575a62;
   --color-neutral-bg: #f0f0ef;
-  
+
   --color-on-primary: #ffffff;
-  
+
   --color-text-primary: #16171b;
   --color-text-secondary: #6b6e76;
   --color-text-muted: #8a8d94;
-  
+
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #fafaf9;
   --color-bg-tertiary: #f4f4f2;
-  
+
   --color-border: #e4e4e1;
   --color-border-light: #ededeb;
-  
+
   --motion-fast: 140ms;
   --motion-base: 220ms;
   --motion-slow: 420ms;
@@ -50,8 +50,8 @@
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-full: 999px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 8px rgba(0,0,0,0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-lg: 1.125rem;
@@ -95,23 +95,23 @@
   transform: translateY(-2px);
 }
 
-[class*='grid'] > :nth-child(1),
-[class*='list'] > :nth-child(1) {
+[class*='grid']> :nth-child(1),
+[class*='list']> :nth-child(1) {
   animation-delay: 60ms;
 }
 
-[class*='grid'] > :nth-child(2),
-[class*='list'] > :nth-child(2) {
+[class*='grid']> :nth-child(2),
+[class*='list']> :nth-child(2) {
   animation-delay: 110ms;
 }
 
-[class*='grid'] > :nth-child(3),
-[class*='list'] > :nth-child(3) {
+[class*='grid']> :nth-child(3),
+[class*='list']> :nth-child(3) {
   animation-delay: 160ms;
 }
 
-[class*='grid'] > :nth-child(4),
-[class*='list'] > :nth-child(4) {
+[class*='grid']> :nth-child(4),
+[class*='list']> :nth-child(4) {
   animation-delay: 210ms;
 }
 
@@ -419,6 +419,7 @@ input[type='checkbox']:disabled {
 }
 
 .notifications-popover-item {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px;
@@ -432,6 +433,41 @@ input[type='checkbox']:disabled {
   background: linear-gradient(90deg, rgba(76, 58, 227, 0.08), #fff 58%);
 }
 
+.notification-read-button {
+  position: absolute;
+  top: 9px;
+  right: 10px;
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 1px solid rgba(76, 58, 227, 0.22);
+  border-radius: 999px;
+  background: #fff;
+  color: #4c3ae3;
+  cursor: pointer;
+}
+
+.notification-read-button:hover {
+  border-color: rgba(76, 58, 227, 0.42);
+  background: rgba(76, 58, 227, 0.1);
+}
+
+.notification-read-button:disabled {
+  cursor: progress;
+  opacity: 0.55;
+}
+
+.notification-read-button svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.4;
+}
+
 .notification-copy {
   display: grid;
   min-width: 0;
@@ -443,6 +479,7 @@ input[type='checkbox']:disabled {
   align-items: center;
   gap: 7px;
   min-width: 0;
+  padding-right: 28px;
 }
 
 .notification-copy div span {
@@ -530,10 +567,6 @@ input[type='checkbox']:disabled {
   text-decoration: none;
 }
 
-.notifications-view-all:hover {
-  background: rgba(76, 58, 227, 0.08);
-}
-
 @keyframes mw-fade-up {
   from {
     opacity: 0;
@@ -601,6 +634,7 @@ input[type='checkbox']:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {

@@ -17,24 +17,6 @@
     </section>
   } @else {
     @if (notifications().length > 0) {
-      <section class="summary-grid" aria-label="Resumo das notificacoes">
-        <article>
-          <span>Todas</span>
-          <strong>{{ summary().total }}</strong>
-        </article>
-        <article>
-          <span>Nao lidas</span>
-          <strong>{{ summary().unread }}</strong>
-        </article>
-        <article>
-          <span>Projetos</span>
-          <strong>{{ summary().projects }}</strong>
-        </article>
-        <article>
-          <span>Financeiro</span>
-          <strong>{{ summary().financial }}</strong>
-        </article>
-      </section>
 
       <section class="pending-controls" aria-label="Filtros de notificacoes">
         <div class="filter-tabs" role="tablist" aria-label="Categorias de notificacao">

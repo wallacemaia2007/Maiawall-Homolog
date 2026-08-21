@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, ViewChild, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { catchError, filter, map, of, switchMap } from 'rxjs';
+import { catchError, filter, finalize, map, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../../core/services/auth.service';
 import { Notification } from '../../core/models/notification.model';
@@ -42,6 +42,7 @@ export class DashboardLayoutComponent {
     map((notifications) => notifications.slice(0, 6)),
   );
   protected readonly notificationsMenuOpen = signal(false);
+  protected readonly markingReadNotificationId = signal<string | null>(null);
 
   protected readonly navItems: SidebarNavItem[] = [
     {
@@ -144,6 +145,24 @@ export class DashboardLayoutComponent {
           this.router.navigate(destination);
         }
       });
+  }
+
+  protected markNotificationAsRead(notification: Notification, event: Event): void {
+    event.stopPropagation();
+
+    if (notification.read || this.markingReadNotificationId() === notification.id) {
+      return;
+    }
+
+    this.markingReadNotificationId.set(notification.id);
+
+    this.notificationService
+      .markAsRead(notification.id)
+      .pipe(
+        catchError(() => of(null)),
+        finalize(() => this.markingReadNotificationId.set(null)),
+      )
+      .subscribe();
   }
 
   protected hasNotificationAction(notification: Notification): boolean {
