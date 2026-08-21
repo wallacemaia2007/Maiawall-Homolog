@@ -11,6 +11,7 @@ import {
 } from '../../models/investment.model';
 import { InvestmentService } from '../../services/investment.service';
 import { formatDate, formatLongDate } from '../../../../shared/utils/date.utils';
+import { SummaryCardsComponent } from '../../../dashboard/pages/dashboard/components/summary-cards/summary-cards.component';
 
 interface InvestmentViewModel {
   investment: InvestmentPlan;
@@ -22,7 +23,7 @@ interface InvestmentViewModel {
 @Component({
   selector: 'app-investments',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SummaryCardsComponent],
   templateUrl: './investments.component.html',
   styleUrl: './investments.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -133,6 +134,15 @@ export class InvestmentsComponent {
 
   protected getActiveCount(viewModels: InvestmentViewModel[]): number {
     return viewModels.filter((vm) => vm.investment.status === 'ACTIVE' || vm.investment.status === 'PARTIALLY_PAID').length;
+  }
+
+  protected getSummaryCards(viewModels: InvestmentViewModel[]) {
+    return [
+      { label: 'Total investido', value: this.formatCurrency(this.getTotalContracted(viewModels)) },
+      { label: 'Ja pago', value: this.formatCurrency(this.getTotalPaid(viewModels)) },
+      { label: 'Falta pagar', value: this.formatCurrency(this.getTotalRemaining(viewModels)) },
+      { label: 'Investimentos ativos', value: this.getActiveCount(viewModels), highlight: true },
+    ];
   }
 
   protected formatCurrency(value: number): string {

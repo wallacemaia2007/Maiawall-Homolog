@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { PlanWithDetails, PlanExtraCost } from '../../../../models/plan.model';
+import { SummaryCardsComponent } from '../../../../../dashboard/pages/dashboard/components/summary-cards/summary-cards.component';
 
 @Component({
   selector: 'app-plan-summary',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SummaryCardsComponent],
   templateUrl: './plan-summary.component.html',
   styleUrl: './plan-summary.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +66,15 @@ export class PlanSummaryComponent {
 
   protected get activeExtrasCount(): number {
     return this.plan().extraCosts.filter((e: PlanExtraCost) => e.status === 'ACTIVE').length;
+  }
+
+  protected get summaryCards() {
+    return [
+      { label: 'Valor mensal', value: this.formatCurrency(this.monthlyAmount) },
+      { label: 'Valor anual', value: this.formatCurrency(this.yearlyAmount) },
+      { label: 'Extras mensais', value: this.formatCurrency(this.extrasMonthly) },
+      { label: 'Extras anuais', value: this.formatCurrency(this.extrasYearly), highlight: true },
+    ];
   }
 
   protected formatCurrency(value: number): string {

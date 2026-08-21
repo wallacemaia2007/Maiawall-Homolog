@@ -13,7 +13,6 @@ import { UserService } from '../../../../core/services/user.service';
 import { PrimaryProjectComponent } from './components/primary-project/primary-project.component';
 import { ProjectProgressComponent } from './components/project-progress/project-progress.component';
 import { RecentActivityComponent } from './components/recent-activity/recent-activity.component';
-import { SummaryCardsComponent } from './components/summary-cards/summary-cards.component';
 import { WelcomeSectionComponent } from './components/welcome-section/welcome-section.component';
 
 @Component({
@@ -24,7 +23,6 @@ import { WelcomeSectionComponent } from './components/welcome-section/welcome-se
     PrimaryProjectComponent,
     ProjectProgressComponent,
     RecentActivityComponent,
-    SummaryCardsComponent,
     WelcomeSectionComponent,
   ],
   templateUrl: './dashboard.component.html',
@@ -49,18 +47,6 @@ export class DashboardComponent {
   protected readonly progressProject = computed(() =>
     this.projectService.getMostAdvancedActiveProject(this.projects()),
   );
-
-  protected readonly summary = computed(() => {
-    const projects = this.projects();
-
-    return {
-      total: projects.length,
-      active: projects.filter((project) =>
-        ['DEVELOPMENT', 'HOMOLOGATION', 'CHANGES_REQUESTED'].includes(project.status),
-      ).length,
-      approved: projects.filter((project) => project.status === 'APPROVED').length,
-    };
-  });
 
   constructor() {
     forkJoin({

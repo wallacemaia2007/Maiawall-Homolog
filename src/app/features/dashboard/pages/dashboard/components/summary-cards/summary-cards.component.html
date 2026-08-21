@@ -1,14 +1,8 @@
-<section class="summary-grid" aria-label="Resumo rapido">
-  <article class="summary-card">
-    <span>Projetos</span>
-    <strong>{{ summary().total }}</strong>
-  </article>
-  <article class="summary-card">
-    <span>Em andamento</span>
-    <strong>{{ summary().active }}</strong>
-  </article>
-  <article class="summary-card">
-    <span>Aprovados</span>
-    <strong>{{ summary().approved }}</strong>
-  </article>
+<section class="summary-grid" [class.is-compact]="compact()" [attr.aria-label]="ariaLabel()">
+  @for (card of displayCards(); track card.label) {
+    <article class="summary-card" [class.highlight]="card.highlight">
+      <span>{{ card.label }}</span>
+      <strong>{{ card.value }}</strong>
+    </article>
+  }
 </section>

@@ -41,17 +41,6 @@ export class PendenciasComponent {
     { label: 'Concluidas', value: 'COMPLETED' },
   ];
 
-  protected readonly summary = computed(() => {
-    const pendings = this.pendings();
-
-    return {
-      total: pendings.length,
-      pending: pendings.filter((item) => this.isStatus(item, 'PENDING')).length,
-      responded: pendings.filter((item) => this.isStatus(item, 'RESPONDED')).length,
-      unread: pendings.filter((item) => (item.isRead ?? item.read) === false).length,
-    };
-  });
-
   protected readonly filteredPendings = computed(() => {
     const filter = this.selectedFilter();
 

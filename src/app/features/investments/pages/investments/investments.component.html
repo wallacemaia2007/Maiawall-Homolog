@@ -7,24 +7,7 @@
 
   @if (viewModel$ | async; as viewModels) {
   @if (viewModels.length > 0) {
-  <section class="summary-grid" aria-label="Resumo financeiro">
-    <article class="summary-card">
-      <span>Total investido</span>
-      <strong>{{ getTotalContracted(viewModels) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
-    </article>
-    <article class="summary-card">
-      <span>Já pago</span>
-      <strong>{{ getTotalPaid(viewModels) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
-    </article>
-    <article class="summary-card">
-      <span>Falta pagar</span>
-      <strong>{{ getTotalRemaining(viewModels) | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
-    </article>
-    <article class="summary-card highlight">
-      <span>Investimentos ativos</span>
-      <strong>{{ getActiveCount(viewModels) }}</strong>
-    </article>
-  </section>
+  <app-summary-cards [cards]="getSummaryCards(viewModels)" ariaLabel="Resumo financeiro" />
 
   @if (primaryViewModel$ | async; as primaryVm) {
   <section class="main-grid">

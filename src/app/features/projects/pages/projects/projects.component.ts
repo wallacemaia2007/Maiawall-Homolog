@@ -6,6 +6,7 @@ import { finalize } from 'rxjs';
 import { getProjectStatusView } from '../../../../core/models/project-status.view';
 import { Project, ProjectStatus } from '../../../../core/models/project.model';
 import { ProjectService } from '../../../../core/services/project.service';
+import { SummaryCardsComponent } from '../../../dashboard/pages/dashboard/components/summary-cards/summary-cards.component';
 import { MeetingRequestModalComponent } from '../../../../shared/components/meeting-request-modal/meeting-request-modal.component';
 
 type ProjectFilter = ProjectStatus | 'ALL';
@@ -18,7 +19,7 @@ interface ProjectFilterOption {
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, RouterLink, MeetingRequestModalComponent],
+  imports: [CommonModule, RouterLink, MeetingRequestModalComponent, SummaryCardsComponent],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +59,17 @@ export class ProjectsComponent {
         ['APPROVED', 'PRODUCTION', 'COMPLETED'].includes(project.status),
       ).length,
     };
+  });
+
+  protected readonly summaryCards = computed(() => {
+    const summary = this.summary();
+
+    return [
+      { label: 'Todos', value: summary.total },
+      { label: 'Em andamento', value: summary.active },
+      { label: 'Em homologacao', value: summary.homologation },
+      { label: 'Concluidos', value: summary.completed },
+    ];
   });
 
   protected readonly filteredProjects = computed(() => {

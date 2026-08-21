@@ -16,25 +16,6 @@
     </section>
   } @else {
     @if (pendings().length > 0) {
-      <section class="summary-grid" aria-label="Resumo das pendencias">
-        <article>
-          <span>Todas</span>
-          <strong>{{ summary().total }}</strong>
-        </article>
-        <article>
-          <span>Pendentes</span>
-          <strong>{{ summary().pending }}</strong>
-        </article>
-        <article>
-          <span>Respondidas</span>
-          <strong>{{ summary().responded }}</strong>
-        </article>
-        <article>
-          <span>Nao lidas</span>
-          <strong>{{ summary().unread }}</strong>
-        </article>
-      </section>
-
       <section class="pending-controls" aria-label="Filtros de pendencias">
         <div class="filter-tabs" role="tablist" aria-label="Status da pendencia">
           @for (option of filterOptions; track option.value) {

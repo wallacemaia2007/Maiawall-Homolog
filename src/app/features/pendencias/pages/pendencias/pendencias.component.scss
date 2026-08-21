@@ -26,13 +26,6 @@ h2 {
   font-weight: 650;
 }
 
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.summary-grid article,
 .state-card,
 .empty-state,
 .pending-card {
@@ -40,24 +33,6 @@ h2 {
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 18px 42px rgba(17, 18, 20, 0.06);
-}
-
-.summary-grid article {
-  display: grid;
-  gap: 8px;
-  padding: 18px;
-}
-
-.summary-grid span {
-  color: #6b6e76;
-  font-size: 0.82rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.summary-grid strong {
-  color: #16171b;
-  font-size: 2rem;
 }
 
 .pending-controls {
@@ -305,18 +280,8 @@ p {
 }
 
 @media (max-width: 900px) {
-  .summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .card-top {
     display: grid;
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 560px) {
-  .summary-grid {
     grid-template-columns: 1fr;
   }
 }

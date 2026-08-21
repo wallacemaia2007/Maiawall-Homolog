@@ -16,24 +16,7 @@
     </section>
   } @else {
     @if (projects().length > 0) {
-      <section class="summary-grid" aria-label="Resumo dos projetos">
-        <article class="summary-card">
-          <span>Todos</span>
-          <strong>{{ summary().total }}</strong>
-        </article>
-        <article class="summary-card">
-          <span>Em andamento</span>
-          <strong>{{ summary().active }}</strong>
-        </article>
-        <article class="summary-card">
-          <span>Em homologacao</span>
-          <strong>{{ summary().homologation }}</strong>
-        </article>
-        <article class="summary-card">
-          <span>Concluidos</span>
-          <strong>{{ summary().completed }}</strong>
-        </article>
-      </section>
+      <app-summary-cards [cards]="summaryCards()" ariaLabel="Resumo dos projetos" />
 
       <section class="project-controls" aria-label="Filtros de projetos">
         <div class="filter-tabs" role="tablist" aria-label="Status do projeto">
