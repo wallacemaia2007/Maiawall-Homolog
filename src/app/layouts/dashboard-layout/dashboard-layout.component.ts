@@ -7,13 +7,15 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { UserService } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { PlanQuoteCartService } from '../../features/plans/services/plan-quote-cart.service';
+import { QuoteCartDrawerComponent } from '../../features/plans/components/quote-cart-drawer/quote-cart-drawer.component';
 import { ModalLogoutComponent } from '../../shared/components/modal-logout/modal-logout.component';
 import { SidebarComponent, SidebarNavItem } from './components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-dashboard-layout',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterOutlet, SidebarComponent, ModalLogoutComponent],
+  imports: [CommonModule, RouterLink, RouterOutlet, SidebarComponent, ModalLogoutComponent, QuoteCartDrawerComponent],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +26,7 @@ export class DashboardLayoutComponent {
   private readonly userService = inject(UserService);
   private readonly themeService = inject(ThemeService);
   private readonly notificationService = inject(NotificationService);
+  protected readonly quoteCart = inject(PlanQuoteCartService);
 
   protected readonly drawerOpen = signal(false);
   protected readonly sidebarCollapsed = signal(true);
@@ -88,6 +91,10 @@ export class DashboardLayoutComponent {
 
   protected closeDrawer(): void {
     this.drawerOpen.set(false);
+  }
+
+  protected openQuoteCart(): void {
+    this.quoteCart.open();
   }
 
   protected toggleSidebar(): void {

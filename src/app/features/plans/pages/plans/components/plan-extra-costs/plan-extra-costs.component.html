@@ -17,9 +17,6 @@
                 <p class="extra-description">{{ extra.description }}</p>
               }
             </div>
-            <span class="status-badge" [ngClass]="'tone-' + getStatusTone(extra.status)">
-              {{ getStatusLabel(extra.status) }}
-            </span>
           </div>
 
           <div class="extra-action">
@@ -45,49 +42,4 @@
     </div>
   }
 
-  <dialog
-    #quoteDialog
-    class="quote-dialog"
-    tabindex="-1"
-    (click)="onQuoteDialogClick($event)"
-    (keydown.escape)="onQuoteDialogCancel($event)"
-    (cancel)="onQuoteDialogCancel($event)"
-    (close)="onQuoteDialogClose()"
-  >
-    <aside class="quote-panel" [class.is-closing]="isQuotePanelClosing()" aria-label="Serviços selecionados para orçamento">
-    <header class="quote-header">
-      <div>
-        <p class="eyebrow">Orçamento</p>
-        <h3>Serviços selecionados</h3>
-      </div>
-      <button type="button" class="quote-close" aria-label="Fechar orçamento" (click)="closeQuotePanel()">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 6l12 12" />
-          <path d="M18 6 6 18" />
-        </svg>
-      </button>
-    </header>
-
-    <div class="quote-list">
-      @for (extra of selectedExtras(); track extra.id) {
-        <article class="quote-item">
-          <div>
-            <h4>{{ extra.name }}</h4>
-            @if (extra.description) {
-              <p>{{ extra.description }}</p>
-            }
-          </div>
-          <button type="button" class="quote-remove" (click)="removeExtra(extra.id)">Remover</button>
-        </article>
-      }
-    </div>
-
-    <footer class="quote-footer">
-      <p>
-        O pedido será preparado para envio ao e-mail {{ quoteRecipient }} quando a integração estiver disponível.
-      </p>
-      <button type="button" class="quote-submit" (click)="requestQuote()">Solicitar orçamento</button>
-    </footer>
-    </aside>
-  </dialog>
 </section>

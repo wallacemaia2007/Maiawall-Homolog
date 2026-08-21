@@ -43,6 +43,17 @@
       </div>
 
       <div class="header-actions">
+        <button type="button" class="header-icon-button" aria-label="Abrir carrinho de orcamento" (click)="openQuoteCart()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="8" cy="21" r="1" />
+            <circle cx="19" cy="21" r="1" />
+            <path d="M2.05 2.05h2l2.4 12.1a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6l1.25-6.6H5.1" />
+          </svg>
+          @if (quoteCart.itemCount() > 0) {
+            <span class="header-badge" aria-label="Itens no carrinho">{{ quoteCart.itemCount() }}</span>
+          }
+        </button>
+
         <a routerLink="/notifications" class="header-icon-button" aria-label="Abrir notificacoes">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -69,4 +80,6 @@
   @if (logoutModalOpen()) {
     <app-modal-logout (cancelled)="closeLogoutModal()" (confirmed)="confirmLogout()" />
   }
+
+  <app-quote-cart-drawer />
 </div>

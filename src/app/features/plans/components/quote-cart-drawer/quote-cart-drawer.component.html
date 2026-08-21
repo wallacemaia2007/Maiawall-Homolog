@@ -1,0 +1,64 @@
+@if (quoteCart.isOpen()) {
+  <dialog
+    #quoteDialog
+    class="quote-dialog"
+    tabindex="-1"
+    (click)="onQuoteDialogClick($event)"
+    (keydown.escape)="onQuoteDialogCancel($event)"
+    (cancel)="onQuoteDialogCancel($event)"
+    (close)="onQuoteDialogClose()"
+  >
+    <aside
+      class="quote-panel"
+      [class.is-closing]="quoteCart.isClosing()"
+      aria-label="Carrinho de serviços extras"
+    >
+      <header class="quote-header">
+        <div>
+          <p class="eyebrow">Orçamento</p>
+          <h3>Carrinho de adicionais</h3>
+        </div>
+        <button type="button" class="quote-close" aria-label="Fechar carrinho" (click)="closeQuotePanel()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12" />
+            <path d="M18 6 6 18" />
+          </svg>
+        </button>
+      </header>
+
+      @if (quoteCart.items().length > 0) {
+        <div class="quote-list">
+          @for (extra of quoteCart.items(); track extra.id) {
+            <article class="quote-item">
+              <div>
+                <h4>{{ extra.name }}</h4>
+                @if (extra.description) {
+                  <p>{{ extra.description }}</p>
+                }
+              </div>
+              <button type="button" class="quote-remove" (click)="removeExtra(extra.id)">Remover</button>
+            </article>
+          }
+        </div>
+
+        <footer class="quote-footer">
+          <p>
+            O pedido será preparado para envio ao e-mail {{ quoteRecipient }} quando a integração estiver disponível.
+          </p>
+          <button type="button" class="quote-clear" (click)="clearCart()">Limpar carrinho</button>
+          <button type="button" class="quote-submit" (click)="requestQuote()">Solicitar orçamento</button>
+        </footer>
+      } @else {
+        <div class="empty-cart">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="8" cy="21" r="1" />
+            <circle cx="19" cy="21" r="1" />
+            <path d="M2.05 2.05h2l2.4 12.1a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6l1.25-6.6H5.1" />
+          </svg>
+          <h4>Seu carrinho está vazio</h4>
+          <p>Adicione serviços extras em qualquer plano para solicitar um orçamento.</p>
+        </div>
+      }
+    </aside>
+  </dialog>
+}
