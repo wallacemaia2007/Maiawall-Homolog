@@ -1,27 +1,43 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostListener, inject, signal } from '@angular/core';
-
-import { ThemeMode, ThemeService } from '../../../../core/services/theme.service';
-import { UserService } from '../../../../core/services/user.service';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 interface ConfigsForm {
-  name: string;
-  email: string;
-  company: string;
-  language: 'pt-BR' | 'en-US';
-  timezone: string;
-  themeMode: ThemeMode;
-  emailNotifications: boolean;
-  projectUpdates: boolean;
-  reviewRequests: boolean;
-  weeklySummary: boolean;
-  twoFactorEnabled: boolean;
-  homologationAlerts: boolean;
+  companyName: string;
+  cnpj: string;
+  phone: string;
+  commercialEmail: string;
+  address: string;
+  logoUrl: string;
+  brandColor: string;
+  notifyNewProjects: boolean;
+  notifyReleases: boolean;
+  notifyPendingItems: boolean;
+  notifyInstallments: boolean;
+  notifyPasswordRecovery: boolean;
+  notifyMeetings: boolean;
+  availableStartTime: string;
+  availableEndTime: string;
+  meetingReminder: string;
 }
 
-interface LanguageOption {
-  label: string;
-  value: ConfigsForm['language'];
+interface NotificationSetting {
+  field: keyof Pick<
+    ConfigsForm,
+    | 'notifyNewProjects'
+    | 'notifyReleases'
+    | 'notifyPendingItems'
+    | 'notifyInstallments'
+    | 'notifyPasswordRecovery'
+    | 'notifyMeetings'
+  >;
+  title: string;
+  description: string;
+}
+
+interface ExportAction {
+  title: string;
+  description: string;
+  action: string;
 }
 
 @Component({
@@ -33,105 +49,104 @@ interface LanguageOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfigsComponent {
-  private readonly userService = inject(UserService);
-  private readonly themeService = inject(ThemeService);
-  private saveFeedbackTimeout?: ReturnType<typeof setTimeout>;
+  private feedbackTimeout?: ReturnType<typeof setTimeout>;
 
-  protected readonly saved = signal(false);
-  protected readonly languageMenuOpen = signal(false);
-  protected readonly languageOptions: LanguageOption[] = [
-    {
-      label: 'Portugues',
-      value: 'pt-BR',
-    },
-    {
-      label: 'English',
-      value: 'en-US',
-    },
-  ];
+  protected readonly feedbackMessage = signal('');
   protected readonly form = signal<ConfigsForm>({
-    name: '',
-    email: '',
-    company: 'Maiawall Tech',
-    language: 'pt-BR',
-    timezone: 'America/Sao_Paulo',
-    themeMode: 'light',
-    emailNotifications: true,
-    projectUpdates: true,
-    reviewRequests: true,
-    weeklySummary: false,
-    twoFactorEnabled: false,
-    homologationAlerts: true,
+    companyName: 'Maiawall Tech',
+    cnpj: '',
+    phone: '',
+    commercialEmail: '',
+    address: '',
+    logoUrl: '',
+    brandColor: '#4c3ae3',
+    notifyNewProjects: true,
+    notifyReleases: true,
+    notifyPendingItems: true,
+    notifyInstallments: true,
+    notifyPasswordRecovery: true,
+    notifyMeetings: true,
+    availableStartTime: '09:00',
+    availableEndTime: '18:00',
+    meetingReminder: '60',
   });
 
-  protected readonly environmentItems = [
+  protected readonly notificationSettings: NotificationSetting[] = [
     {
-      label: 'Ambiente atual',
-      value: 'Homologacao',
+      field: 'notifyNewProjects',
+      title: 'Novos projetos',
+      description: 'Avisar quando um novo projeto entrar no portal.',
     },
     {
-      label: 'API configurada',
-      value: 'Backend Node/Mongo',
+      field: 'notifyReleases',
+      title: 'Commits e releases',
+      description: 'Receber atualizacoes de entregas, versoes e publicacoes.',
     },
     {
-      label: 'Ultima sincronizacao',
-      value: 'Hoje as 09:42',
+      field: 'notifyPendingItems',
+      title: 'Pendencias',
+      description: 'Sinalizar itens aguardando aprovacao ou resposta.',
+    },
+    {
+      field: 'notifyInstallments',
+      title: 'Vencimentos de parcelas',
+      description: 'Lembrar sobre parcelas proximas do vencimento.',
+    },
+    {
+      field: 'notifyPasswordRecovery',
+      title: 'Recuperacao de senha',
+      description: 'Receber avisos de solicitacoes de acesso.',
+    },
+    {
+      field: 'notifyMeetings',
+      title: 'Reunioes agendadas',
+      description: 'Confirmacoes e lembretes de horarios marcados.',
     },
   ];
 
-  constructor() {
-    this.userService.getCurrentUser().subscribe((user) => {
-      this.form.update((form) => ({
-        ...form,
-        name: user.name,
-        email: user.email,
-      }));
-    });
-
-  }
+  protected readonly exportActions: ExportAction[] = [
+    {
+      title: 'Clientes e contatos',
+      description: 'Exportar dados cadastrais vinculados a conta.',
+      action: 'clientes',
+    },
+    {
+      title: 'Projetos e planos',
+      description: 'Baixar um pacote com projetos ativos, planos e historico.',
+      action: 'projetos',
+    },
+    {
+      title: 'Relatorio financeiro',
+      description: 'Gerar resumo de parcelas, valores pagos e pendencias.',
+      action: 'financeiro',
+    },
+    {
+      title: 'Backup manual',
+      description: 'Solicitar um backup completo dos dados do portal.',
+      action: 'backup',
+    },
+  ];
 
   protected updateField<K extends keyof ConfigsForm>(field: K, value: ConfigsForm[K]): void {
-    this.saved.set(false);
+    this.feedbackMessage.set('');
     this.form.update((form) => ({
       ...form,
       [field]: value,
     }));
   }
 
-  protected updateThemeMode(mode: ThemeMode): void {
-    this.updateField('themeMode', mode);
-    this.themeService.setMode(mode);
-  }
-
-  protected toggleThemeMode(): void {
-    this.updateThemeMode(this.form().themeMode === 'dark' ? 'light' : 'dark');
-  }
-
   protected saveSettings(): void {
-    this.saved.set(true);
-    clearTimeout(this.saveFeedbackTimeout);
-    this.saveFeedbackTimeout = setTimeout(() => this.saved.set(false), 2600);
+    this.showFeedback('Configuracoes salvas localmente.');
   }
 
-  @HostListener('document:keydown.escape')
-  protected closeMenusOnEscape(): void {
-    this.languageMenuOpen.set(false);
+  protected requestExport(action: string): void {
+    const selectedAction = this.exportActions.find((item) => item.action === action);
+    this.showFeedback(`${selectedAction?.title ?? 'Exportacao'} preparada para integracao.`);
   }
 
-  protected toggleLanguageMenu(): void {
-    this.languageMenuOpen.update((open) => !open);
+  private showFeedback(message: string): void {
+    this.feedbackMessage.set(message);
+    clearTimeout(this.feedbackTimeout);
+    this.feedbackTimeout = setTimeout(() => this.feedbackMessage.set(''), 2600);
   }
-
-  protected selectLanguage(language: ConfigsForm['language']): void {
-    this.updateField('language', language);
-    this.languageMenuOpen.set(false);
-  }
-
-  protected getSelectedLanguageLabel(): string {
-    return (
-      this.languageOptions.find((option) => option.value === this.form().language)?.label ??
-      'Selecione'
-    );
-  }
-
 }

@@ -2,173 +2,186 @@
   <header class="configs-hero">
     <div>
       <p class="eyebrow">Configuracoes</p>
-      <h2>Preferencias da sua area</h2>
+      <h2>Preferencias da empresa</h2>
       <p>
-        Ajuste dados da conta, avisos e opcoes do ambiente de homologacao.
+        Atualize os dados exibidos ao cliente, canais de aviso, agenda e exportacoes do portal.
       </p>
     </div>
 
-    <div class="hero-actions">
-      <button type="button" class="save-button" (click)="saveSettings()">
-        Salvar alteracoes
-      </button>
-    </div>
+    <button type="button" class="save-button" (click)="saveSettings()">
+      Salvar alteracoes
+    </button>
   </header>
 
-  @if (saved()) {
-  <p class="save-feedback" aria-live="polite">Configuracoes salvas localmente.</p>
+  @if (feedbackMessage()) {
+    <p class="save-feedback" aria-live="polite">{{ feedbackMessage() }}</p>
   }
 
   <div class="configs-grid">
-    <div class="settings-column">
-      <section class="settings-panel">
-        <div class="panel-heading">
-          <h3>Aparencia</h3>
-          <p>Preferencias visuais para leitura e acompanhamento.</p>
-        </div>
+    <section class="settings-panel company-panel">
+      <div class="panel-heading">
+        <h3>Perfil da empresa</h3>
+        <p>Dados usados para identificar a conta e personalizar a experiencia do cliente.</p>
+      </div>
 
-        <div>
-          <span class="field-label">Tema padrao</span>
-          <button
-            type="button"
-            class="theme-switch"
-            [class.is-dark]="form().themeMode === 'dark'"
-            role="switch"
-            [attr.aria-checked]="form().themeMode === 'dark'"
-            aria-label="Alternar tema padrao"
-            (click)="toggleThemeMode()"
+      <div class="form-grid">
+        <label>
+          <span>Nome exibido</span>
+          <input
+            type="text"
+            [value]="form().companyName"
+            (input)="updateField('companyName', $any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          <span>CNPJ</span>
+          <input
+            type="text"
+            placeholder="00.000.000/0000-00"
+            [value]="form().cnpj"
+            (input)="updateField('cnpj', $any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          <span>Telefone</span>
+          <input
+            type="text"
+            placeholder="(00) 00000-0000"
+            [value]="form().phone"
+            (input)="updateField('phone', $any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          <span>E-mail comercial</span>
+          <input
+            type="email"
+            placeholder="contato@empresa.com"
+            [value]="form().commercialEmail"
+            (input)="updateField('commercialEmail', $any($event.target).value)"
+          />
+        </label>
+
+        <label class="full-field">
+          <span>Endereco</span>
+          <textarea
+            [value]="form().address"
+            (input)="updateField('address', $any($event.target).value)"
+          ></textarea>
+        </label>
+
+        <label>
+          <span>Logo</span>
+          <input
+            type="url"
+            placeholder="https://..."
+            [value]="form().logoUrl"
+            (input)="updateField('logoUrl', $any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          <span>Cor principal</span>
+          <span class="color-field">
+            <input
+              type="color"
+              [value]="form().brandColor"
+              (input)="updateField('brandColor', $any($event.target).value)"
+            />
+            <input
+              type="text"
+              [value]="form().brandColor"
+              (input)="updateField('brandColor', $any($event.target).value)"
+            />
+          </span>
+        </label>
+      </div>
+    </section>
+
+    <section class="settings-panel notifications-panel">
+      <div class="panel-heading">
+        <h3>Notificacoes</h3>
+        <p>Escolha quais eventos do portal devem gerar avisos para o cliente.</p>
+      </div>
+
+      <div class="toggle-list">
+        @for (setting of notificationSettings; track setting.field) {
+          <label class="toggle-row">
+            <span>
+              <strong>{{ setting.title }}</strong>
+              <small>{{ setting.description }}</small>
+            </span>
+            <input
+              type="checkbox"
+              [checked]="form()[setting.field]"
+              (change)="updateField(setting.field, $any($event.target).checked)"
+            />
+          </label>
+        }
+      </div>
+    </section>
+
+    <section class="settings-panel meeting-panel">
+      <div class="panel-heading">
+        <h3>Agenda e reunioes</h3>
+        <p>Defina a janela de atendimento e os padroes usados nos agendamentos.</p>
+      </div>
+
+      <div class="form-grid compact-grid">
+        <label>
+          <span>Inicio disponivel</span>
+          <input
+            type="time"
+            [value]="form().availableStartTime"
+            (input)="updateField('availableStartTime', $any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          <span>Fim disponivel</span>
+          <input
+            type="time"
+            [value]="form().availableEndTime"
+            (input)="updateField('availableEndTime', $any($event.target).value)"
+          />
+        </label>
+
+        <label>
+          <span>Lembrete antes da reuniao</span>
+          <select
+            [value]="form().meetingReminder"
+            (change)="updateField('meetingReminder', $any($event.target).value)"
           >
-            <span>Claro</span>
-            <span>Escuro</span>
-          </button>
-        </div>
+            <option value="30">30 minutos antes</option>
+            <option value="60">1 hora antes</option>
+            <option value="1440">1 dia antes</option>
+          </select>
+        </label>
+      </div>
+    </section>
 
-        <div class="select-row">
-          <span>Idioma</span>
-          <div class="custom-select" [class.is-open]="languageMenuOpen()">
-            <button
-              type="button"
-              class="custom-select-trigger"
-              aria-haspopup="listbox"
-              [attr.aria-expanded]="languageMenuOpen()"
-              (click)="toggleLanguageMenu()"
-            >
-              <span>{{ getSelectedLanguageLabel() }}</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+    <section class="settings-panel export-panel">
+      <div class="panel-heading">
+        <h3>Backup e exportacao</h3>
+        <p>Acoes preparadas para baixar dados ou solicitar um backup completo.</p>
+      </div>
+
+      <div class="export-list">
+        @for (item of exportActions; track item.action) {
+          <div class="export-row">
+            <span>
+              <strong>{{ item.title }}</strong>
+              <small>{{ item.description }}</small>
+            </span>
+
+            <button type="button" class="secondary-button" (click)="requestExport(item.action)">
+              Solicitar
             </button>
-
-            @if (languageMenuOpen()) {
-              <div class="custom-select-menu" role="listbox" aria-label="Idioma">
-                @for (option of languageOptions; track option.value) {
-                  <button
-                    type="button"
-                    class="custom-select-option"
-                    [class.is-selected]="form().language === option.value"
-                    role="option"
-                    [attr.aria-selected]="form().language === option.value"
-                    (click)="selectLanguage(option.value)"
-                  >
-                    {{ option.label }}
-                  </button>
-                }
-              </div>
-            }
           </div>
-        </div>
-      </section>
-
-      <section class="settings-panel">
-        <div class="panel-heading">
-          <h3>Ambiente</h3>
-          <p>Informacoes tecnicas da versao atual do portal.</p>
-        </div>
-
-        <dl class="environment-list">
-          @for (item of environmentItems; track item.label) {
-          <div>
-            <dt>{{ item.label }}</dt>
-            <dd>{{ item.value }}</dd>
-          </div>
-          }
-        </dl>
-      </section>
-    </div>
-
-    <div class="settings-column">
-      <section class="settings-panel">
-        <div class="panel-heading">
-          <h3>Notificacoes e seguranca</h3>
-          <p>Controle avisos do portal e opcoes preparadas para a autenticacao real.</p>
-        </div>
-
-        <div class="settings-topic">
-          <h4>Notificacoes</h4>
-
-          <div class="toggle-list">
-            <label class="toggle-row">
-              <span>
-                <strong>E-mails</strong>
-                <small>Receber avisos importantes por e-mail.</small>
-              </span>
-              <input type="checkbox" [checked]="form().emailNotifications"
-                (change)="updateField('emailNotifications', $any($event.target).checked)" />
-            </label>
-
-            <label class="toggle-row">
-              <span>
-                <strong>Atualizacoes de projeto</strong>
-                <small>Novas versoes e mudancas de status.</small>
-              </span>
-              <input type="checkbox" [checked]="form().projectUpdates"
-                (change)="updateField('projectUpdates', $any($event.target).checked)" />
-            </label>
-
-            <label class="toggle-row">
-              <span>
-                <strong>Solicitacoes de revisao</strong>
-                <small>Quando existir algo novo para aprovar.</small>
-              </span>
-              <input type="checkbox" [checked]="form().reviewRequests"
-                (change)="updateField('reviewRequests', $any($event.target).checked)" />
-            </label>
-
-            <label class="toggle-row">
-              <span>
-                <strong>Resumo semanal</strong>
-                <small>Consolidado com andamento dos projetos.</small>
-              </span>
-              <input type="checkbox" [checked]="form().weeklySummary"
-                (change)="updateField('weeklySummary', $any($event.target).checked)" />
-            </label>
-          </div>
-        </div>
-
-        <div class="settings-topic">
-          <h4>Seguranca</h4>
-
-          <div class="toggle-list">
-            <label class="toggle-row">
-              <span>
-                <strong>Verificacao em duas etapas</strong>
-                <small>Exigir confirmacao extra ao entrar.</small>
-              </span>
-              <input type="checkbox" [checked]="form().twoFactorEnabled"
-                (change)="updateField('twoFactorEnabled', $any($event.target).checked)" />
-            </label>
-
-            <label class="toggle-row">
-              <span>
-                <strong>Alertas de homologacao</strong>
-                <small>Avisar quando o link de homologacao mudar.</small>
-              </span>
-              <input type="checkbox" [checked]="form().homologationAlerts"
-                (change)="updateField('homologationAlerts', $any($event.target).checked)" />
-            </label>
-          </div>
-        </div>
-      </section>
-    </div>
+        }
+      </div>
+    </section>
   </div>
 </section>
