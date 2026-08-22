@@ -79,7 +79,7 @@
   line-height: 0;
   border-radius: 8px;
   background: #f3f2ff;
-  color: #4c3ae3;
+  color: var(--color-primary);
 }
 
 .activity-icon--check::before,
@@ -192,7 +192,7 @@
   position: absolute;
   right: 24px;
   bottom: 24px;
-  color: #4c3ae3;
+  color: var(--color-primary);
   font-size: 0.86rem;
   font-weight: 800;
   text-decoration: none;

@@ -98,6 +98,17 @@
           </span>
         </label>
       </div>
+
+      <div class="brand-preview" aria-label="Previa da identidade visual">
+        <span class="brand-preview-mark" aria-hidden="true">
+          {{ form().companyName.slice(0, 2).toUpperCase() }}
+        </span>
+
+        <span>
+          <strong>{{ form().companyName || 'Empresa' }}</strong>
+          <small>{{ form().brandColor }} aplicado em destaques, bordas e acoes.</small>
+        </span>
+      </div>
     </section>
 
     <section class="settings-panel notifications-panel">

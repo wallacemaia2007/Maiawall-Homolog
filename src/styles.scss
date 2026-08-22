@@ -1,5 +1,6 @@
 @use './app/features/projects/pages/project-details/project-details.component.scss';
 @use './app/features/pendencias/pages/pendencias/pendencias.component.scss';
+@use './styles/selects';
 
 @tailwind base;
 @tailwind components;
@@ -7,8 +8,11 @@
 
 :root {
   /* Color CSS Custom Properties */
-  --color-primary: #4c3ae3;
-  --color-primary-hover: #3d2fd1;
+  --color-primary: #c8102e;
+  --color-primary-rgb: 200, 16, 46;
+  --color-primary-hover: #a80d27;
+  --color-primary-soft: #fdeaea;
+  --color-primary-border: #f3b9b9;
 
   --color-success: #1c7c3e;
   --color-success-bg: #eaf8ef;
@@ -134,7 +138,7 @@ a:active {
 
 input:focus,
 textarea:focus {
-  box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.14);
 }
 
 .modal-layer {
@@ -177,57 +181,6 @@ textarea:focus {
   animation: mw-soft-pop var(--motion-base) var(--ease-spring) both;
 }
 
-select {
-  width: 100%;
-  min-height: 42px;
-  padding: 0 42px 0 12px;
-  border: 1px solid #e4e4e1;
-  border-radius: 8px;
-  appearance: none;
-  background:
-    linear-gradient(45deg, transparent 50%, #6b6e76 50%) calc(100% - 18px) 18px / 6px 6px no-repeat,
-    linear-gradient(135deg, #6b6e76 50%, transparent 50%) calc(100% - 13px) 18px / 6px 6px no-repeat,
-    #fff;
-  color: #16171b;
-  font: inherit;
-  font-size: 0.92rem;
-  outline: none;
-  transition:
-    border-color 160ms ease,
-    box-shadow 160ms ease,
-    background-color 160ms ease,
-    transform 140ms ease;
-  will-change: transform;
-}
-
-select:hover {
-  border-color: #c9c9c4;
-}
-
-select:active {
-  transform: scale(0.995);
-}
-
-select:focus {
-  border-color: #4c3ae3;
-  background:
-    linear-gradient(225deg, transparent 50%, #4c3ae3 50%) calc(100% - 18px) 20px / 6px 6px no-repeat,
-    linear-gradient(315deg, #4c3ae3 50%, transparent 50%) calc(100% - 13px) 20px / 6px 6px no-repeat,
-    #fff;
-  box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
-}
-
-select:disabled {
-  background-color: #f2f2f0;
-  color: #8a8d94;
-  cursor: not-allowed;
-}
-
-select option {
-  background: #fff;
-  color: #16171b;
-}
-
 input[type='checkbox'] {
   position: relative;
   display: inline-grid;
@@ -265,8 +218,8 @@ input[type='checkbox']::after {
 }
 
 input[type='checkbox']:hover {
-  border-color: #4c3ae3;
-  box-shadow: 0 0 0 4px rgba(76, 58, 227, 0.08);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.08);
 }
 
 input[type='checkbox']:active {
@@ -274,8 +227,8 @@ input[type='checkbox']:active {
 }
 
 input[type='checkbox']:checked {
-  border-color: #4c3ae3;
-  background: #4c3ae3;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
 }
 
 input[type='checkbox']:checked::after {
@@ -284,7 +237,7 @@ input[type='checkbox']:checked::after {
 }
 
 input[type='checkbox']:focus-visible {
-  box-shadow: 0 0 0 4px rgba(76, 58, 227, 0.16);
+  box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.16);
 }
 
 input[type='checkbox']:disabled {
@@ -415,7 +368,7 @@ input[type='checkbox']:disabled {
 .notifications-popover-list::-webkit-scrollbar-thumb {
   border: 2px solid #fff;
   border-radius: 999px;
-  background: rgba(76, 58, 227, 0.32);
+  background: rgba(var(--color-primary-rgb), 0.32);
 }
 
 .notifications-popover-item {
@@ -430,7 +383,7 @@ input[type='checkbox']:disabled {
 }
 
 .notifications-popover-item.is-unread {
-  background: linear-gradient(90deg, rgba(76, 58, 227, 0.08), #fff 58%);
+  background: linear-gradient(90deg, rgba(var(--color-primary-rgb), 0.08), #fff 58%);
 }
 
 .notification-read-button {
@@ -441,16 +394,16 @@ input[type='checkbox']:disabled {
   width: 24px;
   height: 24px;
   place-items: center;
-  border: 1px solid rgba(76, 58, 227, 0.22);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.22);
   border-radius: 999px;
   background: #fff;
-  color: #4c3ae3;
+  color: var(--color-primary);
   cursor: pointer;
 }
 
 .notification-read-button:hover {
-  border-color: rgba(76, 58, 227, 0.42);
-  background: rgba(76, 58, 227, 0.1);
+  border-color: rgba(var(--color-primary-rgb), 0.42);
+  background: rgba(var(--color-primary-rgb), 0.1);
 }
 
 .notification-read-button:disabled {
@@ -483,7 +436,7 @@ input[type='checkbox']:disabled {
 }
 
 .notification-copy div span {
-  color: #4c3ae3;
+  color: var(--color-primary);
   font-size: 0.69rem;
   font-weight: 800;
   letter-spacing: 0;
@@ -495,7 +448,7 @@ input[type='checkbox']:disabled {
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: #4c3ae3;
+  background: var(--color-primary);
 }
 
 .notification-copy strong,
@@ -532,10 +485,10 @@ input[type='checkbox']:disabled {
   max-width: 118px;
   min-height: 32px;
   padding: 7px 10px;
-  border: 1px solid rgba(76, 58, 227, 0.22);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.22);
   border-radius: 8px;
-  background: rgba(76, 58, 227, 0.08);
-  color: #4c3ae3;
+  background: rgba(var(--color-primary-rgb), 0.08);
+  color: var(--color-primary);
   cursor: pointer;
   font-size: 0.75rem;
   font-weight: 800;
@@ -543,8 +496,8 @@ input[type='checkbox']:disabled {
 }
 
 .notification-action:hover {
-  border-color: rgba(76, 58, 227, 0.36);
-  background: rgba(76, 58, 227, 0.13);
+  border-color: rgba(var(--color-primary-rgb), 0.36);
+  background: rgba(var(--color-primary-rgb), 0.13);
 }
 
 .notifications-empty {
@@ -561,7 +514,7 @@ input[type='checkbox']:disabled {
   min-height: 44px;
   padding: 0 16px;
   background: #fbfbfa;
-  color: #4c3ae3;
+  color: var(--color-primary);
   font-size: 0.84rem;
   font-weight: 800;
   text-decoration: none;

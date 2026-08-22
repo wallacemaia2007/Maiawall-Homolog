@@ -440,7 +440,7 @@ dd {
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.14);
   }
 }
 

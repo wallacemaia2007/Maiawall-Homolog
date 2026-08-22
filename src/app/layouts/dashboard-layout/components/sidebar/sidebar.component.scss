@@ -203,7 +203,7 @@
 }
 
 .sidebar-link.is-active {
-  box-shadow: inset 3px 0 0 #4c3ae3;
+  box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 .sidebar-link.is-active::before {
@@ -234,7 +234,7 @@
   margin-left: auto;
   place-items: center;
   border-radius: 999px;
-  background: #4c3ae3;
+  background: var(--color-primary);
   color: #fff;
   font-size: 0.72rem;
   font-weight: 800;
@@ -286,7 +286,7 @@
 }
 
 .is-collapsed .sidebar-link.is-active {
-  box-shadow: inset 3px 0 0 #4c3ae3;
+  box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 :host-context([data-theme='light']) .dashboard-sidebar {

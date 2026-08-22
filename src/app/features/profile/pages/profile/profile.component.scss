@@ -111,7 +111,7 @@ h2 {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #4c3ae3, #1a9b72);
+  background: linear-gradient(135deg, var(--color-primary), #1a9b72);
   color: #fff;
   font-size: 1.75rem;
   font-weight: 700;
@@ -371,7 +371,7 @@ h2 {
 .btn-primary:focus-visible,
 .btn-secondary:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(76, 58, 227, 0.14);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.14);
 }
 
 .btn-change-password:disabled,

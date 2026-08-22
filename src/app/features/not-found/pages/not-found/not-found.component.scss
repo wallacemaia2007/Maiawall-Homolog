@@ -5,9 +5,9 @@
   // independente, igual ao login.
   --mw-canvas: #FAFAF9;
   --mw-panel: #111214;
-  --mw-accent: #4C3AE3;
-  --mw-accent-hover: #4330D8;
-  --mw-accent-soft: #C9C2FA;
+  --mw-accent: var(--color-primary);
+  --mw-accent-hover: var(--color-primary-hover);
+  --mw-accent-soft: var(--color-primary-border);
   --mw-text: #16171B;
   --mw-text-muted: #6B6E76;
   --mw-text-faint: #A0A2A8;

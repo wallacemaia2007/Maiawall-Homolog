@@ -117,8 +117,8 @@ dt,
 
 .status-active,
 .status-pending {
-  background: #f1efff;
-  color: #4c3ae3;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 
 .status-partially_paid {
@@ -184,7 +184,7 @@ dd {
 .progress-track span {
   display: block;
   height: 10px;
-  background: linear-gradient(90deg, #4c3ae3, #1a9b72);
+  background: linear-gradient(90deg, var(--color-primary), #1a9b72);
 }
 
 .money-split {
@@ -272,8 +272,8 @@ dd {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
-    border-color: #4c3ae3;
-    box-shadow: 0 4px 16px rgba(76, 58, 227, 0.08);
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 16px rgba(var(--color-primary-rgb), 0.08);
   }
 
   &.paid {
@@ -351,7 +351,7 @@ dd {
 .mini-progress .progress-track span {
   display: block;
   height: 100%;
-  background: #4c3ae3;
+  background: var(--color-primary);
   border-radius: 3px;
 }
 
@@ -391,8 +391,8 @@ dd {
   transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
 
   &:hover {
-    border-color: #4c3ae3;
-    color: #4c3ae3;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 
   .investment-card.paid &:hover {
@@ -514,8 +514,8 @@ dd {
   font-weight: 700;
 
   &:hover {
-    border-color: #4c3ae3;
-    color: #4c3ae3;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 }
 

@@ -57,7 +57,7 @@
 }
 
 .summary-card.highlight {
-  border-color: rgba(76, 58, 227, 0.32);
+  border-color: rgba(var(--color-primary-rgb), 0.32);
   background: #faf9ff;
 }
 

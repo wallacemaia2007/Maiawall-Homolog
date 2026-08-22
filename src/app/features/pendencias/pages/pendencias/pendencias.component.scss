@@ -78,8 +78,8 @@ h2 {
 }
 
 .pending-card.is-unread {
-  border-color: rgba(76, 58, 227, 0.35);
-  box-shadow: 0 18px 42px rgba(76, 58, 227, 0.1);
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+  box-shadow: 0 18px 42px rgba(var(--color-primary-rgb), 0.1);
 }
 
 .pending-card.priority-high {
@@ -125,7 +125,7 @@ p {
   align-items: center;
   gap: 6px;
   margin-bottom: 8px;
-  color: #4c3ae3;
+  color: var(--color-primary);
   font-size: 0.76rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -268,7 +268,7 @@ p {
   width: 22px;
   height: 22px;
   border: 3px solid #dededb;
-  border-top-color: #4c3ae3;
+  border-top-color: var(--color-primary);
   border-radius: 50%;
   animation: spin 800ms linear infinite;
 }

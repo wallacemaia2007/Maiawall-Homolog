@@ -167,8 +167,8 @@ h3 {
 
 .custom-select-option:hover,
 .custom-select-option.is-selected {
-  background: #f1efff;
-  color: #4c3ae3;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 
 input,
@@ -196,7 +196,7 @@ textarea {
 
 input:focus,
 textarea:focus {
-  border-color: #4c3ae3;
+  border-color: var(--color-primary);
 }
 
 input[aria-invalid='true'],
@@ -230,7 +230,7 @@ textarea[aria-invalid='true'] {
 
 .save-button {
   border: 0;
-  background: #4c3ae3;
+  background: var(--color-primary);
   color: #fff;
 }
 

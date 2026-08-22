@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
+const BRAND_COLOR_STORAGE_KEY = 'maiawall.brandColor';
+const DEFAULT_BRAND_COLOR = '#c8102e';
+
 interface ConfigsForm {
   companyName: string;
   cnpj: string;
@@ -59,7 +62,7 @@ export class ConfigsComponent {
     commercialEmail: '',
     address: '',
     logoUrl: '',
-    brandColor: '#4c3ae3',
+    brandColor: DEFAULT_BRAND_COLOR,
     notifyNewProjects: true,
     notifyReleases: true,
     notifyPendingItems: true,
@@ -127,12 +130,24 @@ export class ConfigsComponent {
     },
   ];
 
+  constructor() {
+    const storedColor = localStorage.getItem(BRAND_COLOR_STORAGE_KEY);
+    const brandColor = this.isValidHexColor(storedColor) ? storedColor : DEFAULT_BRAND_COLOR;
+    this.form.update((form) => ({ ...form, brandColor }));
+    this.applyBrandColor(brandColor);
+  }
+
   protected updateField<K extends keyof ConfigsForm>(field: K, value: ConfigsForm[K]): void {
     this.feedbackMessage.set('');
     this.form.update((form) => ({
       ...form,
       [field]: value,
     }));
+
+    if (field === 'brandColor' && typeof value === 'string' && this.isValidHexColor(value)) {
+      this.applyBrandColor(value);
+      localStorage.setItem(BRAND_COLOR_STORAGE_KEY, value);
+    }
   }
 
   protected saveSettings(): void {
@@ -148,5 +163,37 @@ export class ConfigsComponent {
     this.feedbackMessage.set(message);
     clearTimeout(this.feedbackTimeout);
     this.feedbackTimeout = setTimeout(() => this.feedbackMessage.set(''), 2600);
+  }
+
+  private applyBrandColor(color: string): void {
+    const rgb = this.hexToRgb(color);
+    const root = document.documentElement;
+
+    root.style.setProperty('--color-primary', color);
+    root.style.setProperty('--color-primary-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+    root.style.setProperty('--color-primary-hover', this.mixWithBlack(color, 0.16));
+    root.style.setProperty('--color-primary-soft', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.1)`);
+    root.style.setProperty('--color-primary-border', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.28)`);
+  }
+
+  private isValidHexColor(color: string | null): color is string {
+    return typeof color === 'string' && /^#[0-9a-fA-F]{6}$/.test(color);
+  }
+
+  private hexToRgb(color: string): { r: number; g: number; b: number } {
+    const normalizedColor = color.replace('#', '');
+    return {
+      r: parseInt(normalizedColor.slice(0, 2), 16),
+      g: parseInt(normalizedColor.slice(2, 4), 16),
+      b: parseInt(normalizedColor.slice(4, 6), 16),
+    };
+  }
+
+  private mixWithBlack(color: string, amount: number): string {
+    const rgb = this.hexToRgb(color);
+    const mix = (value: number) => Math.round(value * (1 - amount));
+    return `#${[mix(rgb.r), mix(rgb.g), mix(rgb.b)]
+      .map((value) => value.toString(16).padStart(2, '0'))
+      .join('')}`;
   }
 }

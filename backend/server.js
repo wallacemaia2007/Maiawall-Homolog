@@ -1090,7 +1090,7 @@ function buildClientSettingsDefaults(user) {
       commercialEmail: user.email || "",
       address: "",
       logoUrl: "",
-      brandColor: "#4c3ae3",
+      brandColor: "#c8102e",
     },
     notifications: {
       newProjects: true,

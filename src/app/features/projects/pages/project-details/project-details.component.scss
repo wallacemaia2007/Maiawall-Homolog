@@ -289,7 +289,7 @@ dd,
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #4c3ae3, #1a9b72);
+  background: linear-gradient(90deg, var(--color-primary), #1a9b72);
 }
 
 .hero-actions,
@@ -489,7 +489,7 @@ dd,
 }
 
 .project-pending-item.is-unread {
-  border-color: rgba(76, 58, 227, 0.28);
+  border-color: rgba(var(--color-primary-rgb), 0.28);
 }
 
 .project-pending-item.priority-high {
@@ -526,7 +526,7 @@ dd,
   width: fit-content;
   align-items: center;
   gap: 6px;
-  color: #4c3ae3;
+  color: var(--color-primary);
   font-size: 0.76rem;
   font-weight: 800;
   text-transform: uppercase;
@@ -609,7 +609,7 @@ dd,
   height: 10px;
   margin-top: 7px;
   border-radius: 999px;
-  background: #4c3ae3;
+  background: var(--color-primary);
 }
 
 .timeline-item div {
@@ -618,7 +618,7 @@ dd,
 }
 
 .timeline-item strong {
-  color: #4c3ae3;
+  color: var(--color-primary);
   font-weight: 800;
 }
 

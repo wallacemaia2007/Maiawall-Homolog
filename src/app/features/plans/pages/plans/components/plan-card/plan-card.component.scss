@@ -110,7 +110,7 @@
 .progress-track span {
   display: block;
   height: 100%;
-  background: #4c3ae3;
+  background: var(--color-primary);
   border-radius: 3px;
   transform-origin: left center;
 }
@@ -273,8 +273,8 @@
   transition: border-color var(--motion-fast) ease, background-color var(--motion-fast) ease, color var(--motion-fast) ease;
 
   &:hover {
-    border-color: #4c3ae3;
-    color: #4c3ae3;
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 
   &:active {

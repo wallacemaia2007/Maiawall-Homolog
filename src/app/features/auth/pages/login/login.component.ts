@@ -79,11 +79,11 @@ export class LoginComponent implements AfterViewInit {
       event.currentTarget as HTMLElement,
       {
         scale: 0.992,
-        boxShadow: '0 0 0 0 rgba(76, 58, 227, 0)',
+        boxShadow: '0 0 0 0 rgba(var(--color-primary-rgb), 0)',
       },
       {
         scale: 1,
-        boxShadow: '0 0 0 4px rgba(76, 58, 227, 0.12)',
+        boxShadow: '0 0 0 4px rgba(var(--color-primary-rgb), 0.12)',
         duration: 0.28,
         ease: 'power2.out',
         overwrite: true,

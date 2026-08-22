@@ -16,7 +16,7 @@ export class ProjectProgressComponent {
   protected readonly progressBackground = computed(() => {
     const progress = this.project()?.progress ?? 0;
 
-    return `conic-gradient(#4c3ae3 ${progress * 3.6}deg, #ececf1 0deg)`;
+    return `conic-gradient(var(--color-primary) ${progress * 3.6}deg, #ececf1 0deg)`;
   });
 
   protected statusLabel(project: Project): string {

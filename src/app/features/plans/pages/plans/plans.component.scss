@@ -156,8 +156,8 @@ h2 {
 }
 
 .status-development {
-  background: #f1efff;
-  color: #4c3ae3;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 
 .status-homologation {

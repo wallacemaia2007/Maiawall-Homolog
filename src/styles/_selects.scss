@@ -1,0 +1,101 @@
+select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 42px 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--color-text-secondary) 50%) calc(100% - 18px) 18px / 6px 6px no-repeat,
+    linear-gradient(135deg, var(--color-text-secondary) 50%, transparent 50%) calc(100% - 13px) 18px / 6px 6px no-repeat,
+    var(--color-bg-primary);
+  color: var(--color-text-primary);
+  color-scheme: light;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.92rem;
+  outline: none;
+  transition:
+    border-color var(--motion-fast) ease,
+    box-shadow var(--motion-fast) ease,
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+  will-change: transform;
+}
+
+select:hover {
+  border-color: var(--color-primary-border);
+}
+
+select:active {
+  transform: scale(0.995);
+}
+
+select:focus,
+select:focus-visible {
+  border-color: var(--color-primary);
+  background:
+    linear-gradient(225deg, transparent 50%, var(--color-primary) 50%) calc(100% - 18px) 20px / 6px 6px no-repeat,
+    linear-gradient(315deg, var(--color-primary) 50%, transparent 50%) calc(100% - 13px) 20px / 6px 6px no-repeat,
+    var(--color-bg-primary);
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.14);
+}
+
+select:disabled {
+  border-color: var(--color-border-light);
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+select option,
+select optgroup {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+
+select option {
+  min-height: 36px;
+  padding: 10px 12px;
+}
+
+select option:checked {
+  background:
+    linear-gradient(90deg, var(--color-primary-soft), var(--color-primary-soft)),
+    var(--color-bg-primary);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+select option:disabled {
+  color: var(--color-text-muted);
+}
+
+.custom-select-option {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    background-color var(--motion-fast) ease,
+    color var(--motion-fast) ease,
+    transform var(--motion-fast) ease;
+}
+
+.custom-select-option:hover,
+.custom-select-option.is-selected,
+.custom-select-option[aria-selected='true'] {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.custom-select-option:active {
+  transform: scale(0.99);
+}

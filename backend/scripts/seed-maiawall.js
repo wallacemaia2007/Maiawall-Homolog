@@ -131,7 +131,7 @@ async function main() {
         commercialEmail: "cliente@maiawall.com",
         address: "Rua das Flores, 500 - Copacabana, Rio de Janeiro - RJ",
         logoUrl: "",
-        brandColor: "#4c3ae3",
+        brandColor: "#c8102e",
       },
       notifications: {
         newProjects: true,
