@@ -84,6 +84,31 @@ const userProfilePatchSchema = z.object({
   }).optional(),
 });
 
+const clientSettingsPatchSchema = z.object({
+  companyProfile: z.object({
+    displayName: z.string().optional(),
+    cnpj: z.string().optional(),
+    phone: z.string().optional(),
+    commercialEmail: z.string().email("E-mail comercial invalido").optional().or(z.literal("")),
+    address: z.string().optional(),
+    logoUrl: z.string().url("URL da logo invalida").optional().or(z.literal("")),
+    brandColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Cor principal invalida").optional(),
+  }).partial().optional(),
+  notifications: z.object({
+    newProjects: z.boolean().optional(),
+    releases: z.boolean().optional(),
+    pendingItems: z.boolean().optional(),
+    installments: z.boolean().optional(),
+    passwordRecovery: z.boolean().optional(),
+    meetings: z.boolean().optional(),
+  }).partial().optional(),
+  meetingPreferences: z.object({
+    availableStartTime: z.string().regex(/^\d{2}:\d{2}$/, "Horario inicial invalido").optional(),
+    availableEndTime: z.string().regex(/^\d{2}:\d{2}$/, "Horario final invalido").optional(),
+    reminderMinutes: z.number().int().min(0).optional(),
+  }).partial().optional(),
+});
+
 const projectSchema = z.object({
   name: z.string().min(2),
   description: z.string().optional().default(""),
@@ -375,6 +400,34 @@ app.patch("/api/users/me", requireAuth, validateBody(userProfilePatchSchema), as
 app.get("/api/users", requireAuth, requireRole("ADMIN"), (_req, res) => {
   const users = databaseService.getState().users.map(publicUser);
   res.json(successResponse(users));
+});
+
+app.get("/api/client-settings/me", requireAuth, (req, res) => {
+  res.json(successResponse(getClientSettingsForUser(req.user)));
+});
+
+app.patch("/api/client-settings/me", requireAuth, validateBody(clientSettingsPatchSchema), async (req, res) => {
+  const settings = await upsertClientSettings(req.user, req.body);
+  res.json(successResponse(settings));
+});
+
+app.get("/api/client-settings/:clientId", requireAuth, requireRole("ADMIN"), (req, res) => {
+  const client = findClientUser(req.params.clientId);
+  if (!client) {
+    return res.status(404).json(errorResponse("Cliente nao encontrado"));
+  }
+
+  res.json(successResponse(getClientSettingsForUser(client)));
+});
+
+app.patch("/api/client-settings/:clientId", requireAuth, requireRole("ADMIN"), validateBody(clientSettingsPatchSchema), async (req, res) => {
+  const client = findClientUser(req.params.clientId);
+  if (!client) {
+    return res.status(404).json(errorResponse("Cliente nao encontrado"));
+  }
+
+  const settings = await upsertClientSettings(client, req.body);
+  res.json(successResponse(settings));
 });
 
 app.get("/api/projects", requireAuth, (req, res) => {
@@ -989,6 +1042,101 @@ function successResponse(data) {
 
 function errorResponse(message) {
   return { success: false, message };
+}
+
+function findClientUser(clientId) {
+  return databaseService.getState().users.find((user) => user.id === clientId && user.role === "CLIENT");
+}
+
+function getClientSettingsForUser(user) {
+  const settings = databaseService.getState().clientSettings
+    .find((item) => item.clientId === user.id);
+
+  return settings || buildClientSettingsDefaults(user);
+}
+
+async function upsertClientSettings(user, patch) {
+  const db = databaseService.getState();
+  const existingSettings = db.clientSettings.find((item) => item.clientId === user.id);
+  const now = new Date().toISOString();
+  const baseSettings = existingSettings || buildClientSettingsDefaults(user);
+  const nextSettings = mergeClientSettings(baseSettings, patch);
+
+  nextSettings.updatedAt = now;
+
+  if (existingSettings) {
+    Object.assign(existingSettings, nextSettings);
+    await databaseService.replaceDocument("clientSettings", existingSettings);
+    return existingSettings;
+  }
+
+  nextSettings.createdAt = now;
+  nextSettings.updatedAt = now;
+  db.clientSettings.push(nextSettings);
+  await databaseService.insertDocument("clientSettings", nextSettings);
+  return nextSettings;
+}
+
+function buildClientSettingsDefaults(user) {
+  const now = new Date().toISOString();
+
+  return {
+    id: databaseService.createObjectId(),
+    clientId: user.id,
+    companyProfile: {
+      displayName: user.company || user.name || "",
+      cnpj: "",
+      phone: user.phone || "",
+      commercialEmail: user.email || "",
+      address: "",
+      logoUrl: "",
+      brandColor: "#4c3ae3",
+    },
+    notifications: {
+      newProjects: true,
+      releases: true,
+      pendingItems: true,
+      installments: true,
+      passwordRecovery: true,
+      meetings: true,
+    },
+    meetingPreferences: {
+      availableStartTime: "09:00",
+      availableEndTime: "18:00",
+      reminderMinutes: 60,
+    },
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+function mergeClientSettings(settings, patch) {
+  return {
+    ...settings,
+    companyProfile: {
+      ...settings.companyProfile,
+      ...trimStringValues(patch.companyProfile),
+    },
+    notifications: {
+      ...settings.notifications,
+      ...(patch.notifications || {}),
+    },
+    meetingPreferences: {
+      ...settings.meetingPreferences,
+      ...(patch.meetingPreferences || {}),
+    },
+  };
+}
+
+function trimStringValues(value) {
+  if (!value) return {};
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [
+      key,
+      typeof item === "string" ? item.trim() : item,
+    ]),
+  );
 }
 
 function getVisibleProjects(user) {

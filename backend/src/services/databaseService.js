@@ -13,6 +13,7 @@ const COLLECTIONS = [
   "installments",
   "notifications",
   "pending",
+  "clientSettings",
   "passwordRecoveryTokens",
 ];
 

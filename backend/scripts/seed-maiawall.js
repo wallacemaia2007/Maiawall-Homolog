@@ -16,6 +16,7 @@ const COLLECTIONS = [
   "installments",
   "notifications",
   "pending",
+  "clientSettings",
   "passwordRecoveryTokens",
 ];
 
@@ -116,6 +117,37 @@ async function main() {
         city: "Rio de Janeiro",
         state: "RJ",
       },
+    },
+  ];
+
+  const clientSettings = [
+    {
+      id: id(),
+      clientId,
+      companyProfile: {
+        displayName: "Empresa Cliente",
+        cnpj: "12.345.678/0001-90",
+        phone: "(21) 98888-7777",
+        commercialEmail: "cliente@maiawall.com",
+        address: "Rua das Flores, 500 - Copacabana, Rio de Janeiro - RJ",
+        logoUrl: "",
+        brandColor: "#4c3ae3",
+      },
+      notifications: {
+        newProjects: true,
+        releases: true,
+        pendingItems: true,
+        installments: true,
+        passwordRecovery: true,
+        meetings: true,
+      },
+      meetingPreferences: {
+        availableStartTime: "09:00",
+        availableEndTime: "18:00",
+        reminderMinutes: 60,
+      },
+      createdAt: now,
+      updatedAt: now,
     },
   ];
 
@@ -822,6 +854,7 @@ async function main() {
     installments,
     notifications,
     pending,
+    clientSettings,
     passwordRecoveryTokens: [],
   };
 
@@ -854,6 +887,7 @@ async function main() {
     db.collection("pending").createIndex({ clientId: 1 }),
     db.collection("pending").createIndex({ projectId: 1 }),
     db.collection("pending").createIndex({ clientId: 1, status: 1 }),
+    db.collection("clientSettings").createIndex({ clientId: 1 }, { unique: true }),
     db.collection("passwordRecoveryTokens").createIndex({ email: 1 }),
     db.collection("passwordRecoveryTokens").createIndex({ tokenHash: 1 }, { unique: true }),
   ]);
