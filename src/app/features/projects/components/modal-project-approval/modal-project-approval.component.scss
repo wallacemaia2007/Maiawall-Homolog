@@ -6,19 +6,19 @@
   display: grid;
   gap: 8px;
   padding: 16px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fafaf9;
+  background: var(--color-bg-secondary);
 }
 
 .approval-content p,
 .approval-content span {
   margin: 0;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 .approval-content strong {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1.05rem;
 }
 
@@ -37,12 +37,12 @@
 
 .primary-button {
   border: 0;
-  background: #16171b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .secondary-button {
-  border: 1px solid #e4e4e1;
-  background: #fff;
-  color: #16171b;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }

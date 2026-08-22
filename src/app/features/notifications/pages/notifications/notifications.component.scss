@@ -15,7 +15,7 @@
 }
 
 .notifications-hero .eyebrow {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -23,14 +23,14 @@
 }
 
 .notifications-hero h2 {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: clamp(2rem, 3vw, 2.8rem);
   font-weight: 650;
 }
 
 .notifications-hero p:not(.eyebrow) {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 .notification-card-actions {
@@ -40,9 +40,9 @@
 }
 
 .secondary-link {
-  border: 1px solid #dededb;
-  background: #fff;
-  color: #16171b;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .mark-all-link:disabled,

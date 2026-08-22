@@ -19,7 +19,7 @@ dt {
 }
 
 .eyebrow {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -29,7 +29,7 @@ dt {
 h2,
 h3,
 h4 {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   letter-spacing: 0;
 }
@@ -80,12 +80,12 @@ h4 {
   padding: 0 10px;
   border: 0;
   background: transparent;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 .back-link:hover {
-  background: #f2f2f0;
-  color: #16171b;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
 }
 
 .back-link svg {
@@ -108,9 +108,9 @@ h4 {
 .project-pending-card,
 .timeline-card,
 .state-card {
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 .project-hero {
@@ -121,7 +121,7 @@ h4 {
 
 .hero-image {
   min-height: 320px;
-  background: #ededeb;
+  background: var(--color-border-light);
 }
 
 .hero-image img {
@@ -170,7 +170,7 @@ dt,
 .timeline-item p,
 .pending-description,
 .timeline-item time {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 .hero-description {
@@ -200,28 +200,28 @@ dt,
 }
 
 .tone-info {
-  background: #eaf3ff;
-  color: #2362a8;
+  background: var(--color-info-bg);
+  color: var(--color-info);
 }
 
 .tone-warning {
-  background: #fff5db;
-  color: #9c6812;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 
 .tone-danger {
-  background: #fff0ee;
-  color: #ad3328;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .tone-success {
-  background: #eaf8ef;
-  color: #1c7c3e;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .tone-neutral {
-  background: #f0f0ef;
-  color: #575a62;
+  background: var(--color-neutral-bg);
+  color: var(--color-neutral);
 }
 
 .hero-meta,
@@ -240,9 +240,9 @@ dt,
   gap: 7px;
   min-height: 84px;
   padding: 14px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fafaf9;
+  background: var(--color-bg-secondary);
 }
 
 dt,
@@ -257,7 +257,7 @@ dt,
 dd,
 .hero-meta strong,
 .link-row strong {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 0.98rem;
   font-weight: 800;
   line-height: 1.35;
@@ -269,12 +269,12 @@ dd,
 }
 
 .progress-label span {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.86rem;
 }
 
 .progress-label strong {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-weight: 800;
 }
 
@@ -282,14 +282,14 @@ dd,
   overflow: hidden;
   height: 8px;
   border-radius: 999px;
-  background: #ededeb;
+  background: var(--color-border-light);
 }
 
 .progress-track span {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--color-primary), #1a9b72);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
 }
 
 .hero-actions,
@@ -306,31 +306,31 @@ dd,
 .state-card button {
   padding: 0 16px;
   border: 0;
-  background: #16171b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .hero-actions .secondary-action,
 .approval-actions .secondary-button {
-  border: 1px solid #d8d8d4;
-  background: #fff;
-  color: #16171b;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .save-feedback {
   padding: 12px 14px;
-  border: 1px solid #d7eddd;
+  border: 1px solid var(--color-success-bg);
   border-radius: 8px;
-  background: #eef8ef;
-  color: #247348;
+  background: var(--color-success-bg);
+  color: var(--color-success);
   font-size: 0.9rem;
   font-weight: 650;
 }
 
 .approval-card {
   align-items: center;
-  border-color: #f0d796;
-  background: #fff8ed;
+  border-color: var(--color-warning-bg);
+  background: var(--color-warning-bg);
 }
 
 .details-grid {
@@ -362,14 +362,14 @@ dd,
   display: grid;
   gap: 7px;
   padding: 14px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fafaf9;
+  background: var(--color-bg-secondary);
 }
 
 .operations-list .latest-delivery {
-  border-color: #d7e6dd;
-  background: #f4fbf6;
+  border-color: var(--color-success-bg);
+  background: var(--color-success-bg);
 }
 
 .operations-list span {
@@ -380,7 +380,7 @@ dd,
 }
 
 .operations-list strong {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1rem;
   font-weight: 800;
   line-height: 1.35;
@@ -401,7 +401,7 @@ dd,
   justify-content: space-between;
   gap: 16px;
   padding: 16px 0;
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .link-row div {
@@ -417,9 +417,9 @@ dd,
 .link-row a {
   flex: 0 0 auto;
   padding: 0 14px;
-  border: 1px solid #d8d8d4;
-  background: #fff;
-  color: #16171b;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .investment-list {
@@ -439,9 +439,9 @@ dd,
   display: grid;
   gap: 12px;
   padding: 14px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 .plan-item {
@@ -450,7 +450,7 @@ dd,
   gap: 12px;
   align-items: center;
   padding: 0 0 12px;
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .plan-item > div {
@@ -460,13 +460,13 @@ dd,
 }
 
 .plan-name {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-weight: 800;
   line-height: 1.35;
 }
 
 .plan-item small {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.82rem;
 }
 
@@ -483,9 +483,9 @@ dd,
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 .project-pending-item.is-unread {
@@ -495,18 +495,18 @@ dd,
 .project-pending-item.priority-high {
   border-color: rgba(212, 67, 51, 0.72);
   border-width: 2px;
-  box-shadow: inset 6px 0 0 #d44333;
+  box-shadow: inset 6px 0 0 var(--color-danger);
 }
 
 .project-pending-item.priority-medium {
   border-color: rgba(214, 157, 32, 0.76);
   border-width: 2px;
-  box-shadow: inset 6px 0 0 #d69d20;
+  box-shadow: inset 6px 0 0 var(--color-warning);
 }
 
 .project-pending-item.priority-low {
   border-color: rgba(36, 118, 72, 0.34);
-  box-shadow: inset 3px 0 0 #247648;
+  box-shadow: inset 3px 0 0 var(--color-success);
 }
 
 .pending-item-top {
@@ -554,33 +554,33 @@ dd,
 .pending-meta span {
   border-radius: 999px;
   padding: 6px 10px;
-  background: #f2f2f0;
-  color: #6b6e76;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   font-weight: 700;
 }
 
 .pending-meta .priority-badge-high {
-  background: #ffe9e5;
-  color: #a73527;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .pending-meta .priority-badge-medium {
-  background: #fff4d7;
-  color: #8a6200;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 
 .pending-meta .priority-badge-low {
-  background: #e4f7ed;
-  color: #247648;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .pending-link {
   width: 100%;
   padding: 0 16px;
-  border: 1px solid #d8d8d4;
-  background: #fff;
-  color: #16171b;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .content-grid {
@@ -601,7 +601,7 @@ dd,
 
 .timeline-item + .timeline-item {
   padding-top: 22px;
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .timeline-dot {

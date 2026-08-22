@@ -31,7 +31,7 @@ dd {
 }
 
 .eyebrow {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -41,7 +41,7 @@ dd {
 h2,
 h3,
 h4 {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 }
 
@@ -64,7 +64,7 @@ h4 {
 .active-count,
 .investment-card p,
 .next-payment p {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 .featured-investment,
@@ -72,9 +72,9 @@ h4 {
 .investment-card,
 .installments-section,
 .empty-state {
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 dt,
@@ -82,7 +82,7 @@ dt,
 .next-payment small,
 .project-name,
 .mini-progress span {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.84rem;
 }
 
@@ -122,23 +122,23 @@ dt,
 }
 
 .status-partially_paid {
-  background: #e8f4fd;
-  color: #1a73e8;
+  background: var(--color-info-bg);
+  color: var(--color-info);
 }
 
 .status-paid {
-  background: #eaf8ef;
-  color: #1c7c3e;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .status-overdue {
-  background: #fff3e7;
-  color: #b45616;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 
 .status-cancelled {
-  background: #f0f0ef;
-  color: #6b6e76;
+  background: var(--color-neutral-bg);
+  color: var(--color-text-secondary);
 }
 
 .investment-facts {
@@ -151,13 +151,13 @@ dt,
   display: grid;
   gap: 6px;
   padding: 16px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fafaf9;
+  background: var(--color-bg-secondary);
 }
 
 dd {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-weight: 700;
 }
 
@@ -170,7 +170,7 @@ dd {
 .progress-label {
   display: flex;
   justify-content: space-between;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -178,13 +178,13 @@ dd {
   overflow: hidden;
   height: 10px;
   border-radius: 999px;
-  background: #ededeb;
+  background: var(--color-border-light);
 }
 
 .progress-track span {
   display: block;
   height: 10px;
-  background: linear-gradient(90deg, var(--color-primary), #1a9b72);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
 }
 
 .money-split {
@@ -197,12 +197,12 @@ dd {
   display: grid;
   gap: 6px;
   padding-top: 18px;
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .money-split strong,
 .next-amount {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1.25rem;
   font-weight: 750;
 }
@@ -224,13 +224,13 @@ dd {
   align-content: start;
   gap: 8px;
   padding: 16px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fafaf9;
+  background: var(--color-bg-secondary);
 }
 
 .next-payment-grid span:not(.installment-badge) {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1rem;
   font-weight: 750;
   line-height: 1.25;
@@ -244,8 +244,8 @@ dd {
   min-height: 40px;
   border: 0;
   border-radius: 8px;
-  background: #16171b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font: inherit;
   font-weight: 700;
   text-decoration: none;
@@ -266,9 +266,9 @@ dd {
   display: grid;
   gap: 16px;
   padding: 20px;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
@@ -277,11 +277,11 @@ dd {
   }
 
   &.paid {
-    border-color: #1c7c3e;
-    background: #f0fdf4;
+    border-color: var(--color-success);
+    background: var(--color-success-bg);
 
     &:hover {
-      border-color: #1c7c3e;
+      border-color: var(--color-success);
       box-shadow: 0 4px 16px rgba(28, 124, 62, 0.12);
     }
   }
@@ -297,7 +297,7 @@ dd {
 .investment-header h4 {
   margin: 0;
   font-size: 1rem;
-  color: #16171b;
+  color: var(--color-text-primary);
 }
 
 .investment-summary {
@@ -305,8 +305,8 @@ dd {
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   padding: 16px;
-  background: #fafaf9;
-  border: 1px solid #ededeb;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
 }
 
@@ -321,12 +321,12 @@ dd {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 .summary-item strong {
   font-size: 0.9rem;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-weight: 600;
 }
 
@@ -337,13 +337,13 @@ dd {
 
 .mini-progress span {
   font-size: 0.8rem;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
 .mini-progress .progress-track {
   height: 6px;
-  background: #f0f0ee;
+  background: var(--color-bg-tertiary);
   border-radius: 3px;
   overflow: hidden;
 }
@@ -356,34 +356,34 @@ dd {
 }
 
 .investment-card.paid .mini-progress .progress-track span {
-  background: #1c7d3e;
+  background: var(--color-success);
 }
 
 .investment-values {
   display: flex;
   justify-content: space-between;
   padding-top: 8px;
-  border-top: 1px solid #f0f0ee;
+  border-top: 1px solid var(--color-border-light);
   font-size: 0.85rem;
   font-weight: 500;
 }
 
 .investment-values .paid {
-  color: #1c7c3e;
+  color: var(--color-success);
 }
 
 .investment-values .remaining {
-  color: #b45616;
+  color: var(--color-warning);
 }
 
 .investment-card a {
   width: max-content;
   padding: 10px 16px;
   margin-top: 4px;
-  border: 1px solid #d8d8d4;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
-  color: #16171b;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
   font: inherit;
   font-weight: 600;
   font-size: 0.85rem;
@@ -396,8 +396,8 @@ dd {
   }
 
   .investment-card.paid &:hover {
-    border-color: #1c7c3e;
-    color: #1c7c3e;
+    border-color: var(--color-success);
+    color: var(--color-success);
   }
 }
 
@@ -411,13 +411,13 @@ dd {
   display: grid;
   gap: 8px;
   padding: 16px;
-  background: #fafaf9;
-  border: 1px solid #ededeb;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
 }
 
 .down-payment-label {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -449,9 +449,9 @@ dd {
 
 .installments-table {
   overflow: hidden;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 .installments-row {
@@ -461,16 +461,16 @@ dd {
   align-items: center;
   min-height: 62px;
   padding: 16px 18px;
-  color: #16171b;
+  color: var(--color-text-primary);
 }
 
 .installments-row + .installments-row {
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .installments-head {
-  background: #fafaf9;
-  color: #6b6e76;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -483,7 +483,7 @@ dd {
 }
 
 .installment-date {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
 }
 
@@ -504,10 +504,10 @@ dd {
   align-items: center;
   justify-content: center;
   padding: 0 16px;
-  border: 1px solid #d8d8d4;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
-  color: #16171b;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
   cursor: pointer;
   font: inherit;
   font-size: 0.85rem;
@@ -550,9 +550,9 @@ dd {
   .installments-row {
     grid-template-columns: 1fr;
     gap: 10px;
-    border: 1px solid #ededeb;
+    border: 1px solid var(--color-border-light);
     border-radius: 8px;
-    background: #fff;
+    background: var(--color-bg-primary);
   }
 
   .installment-status-cell {

@@ -11,7 +11,7 @@
 
 .eyebrow {
   margin: 0;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -20,16 +20,16 @@
 
 .section-header h3 {
   margin: 0;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1.1rem;
   font-weight: 600;
 }
 
 .payments-table {
   overflow: hidden;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 .payments-header {
@@ -39,9 +39,9 @@
   align-items: center;
   min-height: 52px;
   padding: 14px 18px;
-  border-bottom: 1px solid #ededeb;
-  background: #fafaf9;
-  color: #6b6e76;
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -55,16 +55,16 @@
   align-items: center;
   min-height: 62px;
   padding: 16px 18px;
-  color: #16171b;
+  color: var(--color-text-primary);
   transition: background-color var(--motion-fast) ease;
 }
 
 .payments-row + .payments-row {
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .payments-row:hover {
-  background: #fafafa;
+  background: var(--color-bg-secondary);
 }
 
 .col-number {
@@ -74,18 +74,18 @@
 
   strong {
     font-size: 0.96rem;
-    color: #16171b;
+    color: var(--color-text-primary);
     font-weight: 700;
   }
 
   small {
     font-size: 0.7rem;
-    color: #8a8d94;
+    color: var(--color-text-muted);
   }
 }
 
 .col-amount {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 0.95rem;
   font-weight: 700;
 }
@@ -97,12 +97,12 @@
 
   span {
     font-size: 0.9rem;
-    color: #16171b;
+    color: var(--color-text-primary);
   }
 
   small {
     font-size: 0.7rem;
-    color: #8a8d94;
+    color: var(--color-text-muted);
   }
 }
 
@@ -125,29 +125,29 @@
   white-space: nowrap;
 
   &.tone-success {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: var(--color-success-bg);
+    color: var(--color-success);
   }
 
   &.tone-warning {
-    background: #fff8ed;
-    color: #b86b00;
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
   }
 
   &.tone-danger {
-    background: #fef0f0;
-    color: #c0392b;
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
   }
 
   &.tone-neutral {
-    background: #f2f2f0;
-    color: #6b6e76;
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
   }
 }
 
 .paid-at {
   font-size: 0.7rem;
-  color: #2e7d32;
+  color: var(--color-success);
 }
 
 .payments-toggle {
@@ -157,10 +157,10 @@
   align-items: center;
   justify-content: center;
   padding: 0 16px;
-  border: 1px solid #d8d8d4;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
-  color: #16171b;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
   cursor: pointer;
   font: inherit;
   font-size: 0.85rem;
@@ -185,10 +185,10 @@
   gap: 12px;
   padding: 40px 24px;
   text-align: center;
-  border: 1px dashed #e4e4e1;
+  border: 1px dashed var(--color-border);
   border-radius: 12px;
-  background: #fafafa;
-  color: #8a8d94;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
 
   svg {
     width: 48px;
@@ -223,8 +223,8 @@
     padding: 16px;
     border-radius: 8px;
     margin: 0 12px 12px;
-    background: #fff;
-    border: 1px solid #e4e4e1;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
 
     &:last-child {
       margin-bottom: 0;
@@ -232,7 +232,7 @@
   }
 
   .payments-row + .payments-row {
-    border-top: 1px solid #e4e4e1;
+    border-top: 1px solid var(--color-border);
   }
 
   .col-number,
@@ -251,7 +251,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #6b6e76;
+    color: var(--color-text-secondary);
   }
 
   .col-amount::before {
@@ -260,7 +260,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #6b6e76;
+    color: var(--color-text-secondary);
   }
 
   .col-due::before {
@@ -269,7 +269,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #6b6e76;
+    color: var(--color-text-secondary);
   }
 
   .col-status::before {
@@ -278,7 +278,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: #6b6e76;
+    color: var(--color-text-secondary);
   }
 
   .col-status {

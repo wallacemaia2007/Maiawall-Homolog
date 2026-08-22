@@ -11,7 +11,7 @@
 
 .eyebrow {
   margin: 0;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -20,7 +20,7 @@
 
 .section-header h3 {
   margin: 0;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1.1rem;
   font-weight: 600;
 }
@@ -44,13 +44,13 @@
   gap: 12px;
   min-height: 96px;
   padding: 14px 16px;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
   transition: border-color var(--motion-base) ease, box-shadow var(--motion-base) ease;
 
   &:hover {
-    border-color: #d0d0cb;
+    border-color: var(--color-border);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   }
 }
@@ -59,7 +59,7 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  stroke: #2e7d32;
+  stroke: var(--color-success);
   fill: none;
   stroke-width: 2.5;
   stroke-linecap: round;
@@ -75,13 +75,13 @@
 
 .item-name {
   font-weight: 500;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 0.95rem;
 }
 
 .item-description {
   font-size: 0.8rem;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   line-height: 1.4;
 }
 
@@ -89,16 +89,16 @@
 .item-limit,
 .item-status {
   font-size: 0.75rem;
-  color: #8a8d94;
+  color: var(--color-text-muted);
 }
 
 .empty-message {
   margin: 0;
   padding: 24px;
   text-align: center;
-  color: #8a8d94;
+  color: var(--color-text-muted);
   font-size: 0.9rem;
-  border: 1px dashed #e4e4e1;
+  border: 1px dashed var(--color-border);
   border-radius: 10px;
-  background: #fafafa;
+  background: var(--color-bg-secondary);
 }

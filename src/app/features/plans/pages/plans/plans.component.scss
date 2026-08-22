@@ -13,12 +13,12 @@
   justify-content: space-between;
   gap: 24px;
   padding-bottom: 22px;
-  border-bottom: 1px solid #e4e4e1;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .eyebrow {
   margin: 0;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -27,7 +27,7 @@
 
 h2 {
   margin: 0;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: clamp(1.75rem, 3vw, 2.45rem);
   font-weight: 650;
@@ -37,7 +37,7 @@ h2 {
 .plans-hero p:not(.eyebrow) {
   max-width: 680px;
   margin: 0;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
@@ -51,14 +51,14 @@ h2 {
 .plans-overview div {
   min-width: 110px;
   padding: 12px 14px;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 .plans-overview dt {
   margin: 0 0 4px;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -67,7 +67,7 @@ h2 {
 
 .plans-overview dd {
   margin: 0;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1rem;
   font-weight: 700;
 }
@@ -79,9 +79,9 @@ h2 {
 
 .project-plan-section {
   display: grid;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
   overflow: hidden;
 }
 
@@ -94,7 +94,7 @@ h2 {
   min-height: 92px;
   padding: 22px;
   border: 0;
-  background: #fff;
+  background: var(--color-bg-primary);
   cursor: pointer;
   font: inherit;
   text-align: left;
@@ -102,7 +102,7 @@ h2 {
 
 .project-toggle:hover,
 .project-toggle:focus-visible {
-  background: #fafaf9;
+  background: var(--color-bg-secondary);
 }
 
 .project-toggle-meta {
@@ -117,7 +117,7 @@ h2 {
 
 .project-info h3 {
   margin: 0;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1.25rem;
   font-weight: 600;
 }
@@ -127,7 +127,7 @@ h2 {
   height: 22px;
   flex: 0 0 22px;
   fill: none;
-  stroke: #6b6e76;
+  stroke: var(--color-text-secondary);
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 2.2;
@@ -140,7 +140,7 @@ h2 {
 
 .plan-due-alert {
   padding: 12px 22px;
-  border-top: 1px solid #e4e4e1;
+  border-top: 1px solid var(--color-border);
   font-weight: 700;
 }
 
@@ -161,48 +161,48 @@ h2 {
 }
 
 .status-homologation {
-  background: #fff3e7;
-  color: #b45616;
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
 }
 
 .status-changes_requested {
-  background: #ffecec;
-  color: #c0392b;
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .status-approved {
-  background: #eaf8ef;
-  color: #1c7c3e;
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .status-production {
-  background: #e8f4fd;
-  color: #1a73b8;
+  background: var(--color-info-bg);
+  color: var(--color-info);
 }
 
 .status-completed {
-  background: #f0f0ef;
-  color: #6b6e76;
+  background: var(--color-neutral-bg);
+  color: var(--color-text-secondary);
 }
 
 .status-unlinked {
-  background: #f8f0ff;
-  color: #6b3a9f;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
 }
 
 .plans-list {
   display: grid;
   gap: 18px;
   padding: 0 22px 22px;
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .plan-detail-card {
   display: grid;
   gap: 18px;
-  border: 1px solid #ededeb;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
-  background: #fafafa;
+  background: var(--color-bg-secondary);
   padding: 18px;
 }
 
@@ -214,17 +214,17 @@ h2 {
   gap: 16px;
   padding: 60px 24px;
   text-align: center;
-  border: 1px dashed #e4e4e1;
+  border: 1px dashed var(--color-border);
   border-radius: 8px;
-  background: #fafafa;
-  color: #8a8d94;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
 }
 
 .loading-spinner {
   width: 32px;
   height: 32px;
-  border: 3px solid #e4e4e1;
-  border-top-color: #16171b;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-text-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -243,10 +243,10 @@ h2 {
   gap: 16px;
   padding: 60px 24px;
   text-align: center;
-  border: 1px dashed #e4e4e1;
+  border: 1px dashed var(--color-border);
   border-radius: 8px;
-  background: #fafafa;
-  color: #8a8d94;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
 }
 
 .empty-state .eyebrow {
@@ -256,14 +256,14 @@ h2 {
 .empty-state h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #16171b;
+  color: var(--color-text-primary);
 }
 
 .empty-state p {
   margin: 0;
   font-size: 1rem;
   max-width: 400px;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 @media (max-width: 1180px) {

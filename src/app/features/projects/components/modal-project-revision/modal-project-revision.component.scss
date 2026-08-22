@@ -8,7 +8,7 @@
 }
 
 .revision-field span {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 0.92rem;
   font-weight: 700;
 }
@@ -18,10 +18,10 @@
   min-height: 170px;
   resize: vertical;
   box-sizing: border-box;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fafaf9;
-  color: #16171b;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
   font: inherit;
   padding: 12px;
   outline: none;
@@ -42,14 +42,14 @@
 
 .primary-button {
   border: 0;
-  background: #16171b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .secondary-button {
-  border: 1px solid #e4e4e1;
-  background: #fff;
-  color: #16171b;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .primary-button:disabled {

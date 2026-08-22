@@ -63,8 +63,8 @@
   justify-content: space-between;
   gap: 18px;
   padding: 20px 24px;
-  border-color: #e6b94b;
-  background: #fff8ed;
+  border-color: var(--color-warning);
+  background: var(--color-warning-bg);
 
   h3 {
     margin-top: 6px;
@@ -72,7 +72,7 @@
 
   p:not(.eyebrow) {
     margin-top: 6px;
-    color: #8a5a00;
+    color: var(--color-warning);
     line-height: 1.55;
   }
 
@@ -85,15 +85,15 @@
     padding: 0 16px;
     border: 0;
     border-radius: 8px;
-    background: #16171b;
-    color: #fff;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
     cursor: pointer;
     font: inherit;
     font-size: 0.9rem;
     font-weight: 800;
 
     &:hover {
-      background: #2d2f36;
+      background: var(--color-primary-hover);
     }
   }
 }

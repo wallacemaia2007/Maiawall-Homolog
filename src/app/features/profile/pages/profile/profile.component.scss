@@ -22,7 +22,7 @@ p {
 }
 
 .eyebrow {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -30,30 +30,30 @@ p {
 }
 
 h2 {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: clamp(2rem, 3vw, 2.8rem);
   font-weight: 650;
 }
 
 .profile-hero p {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
 }
 
 .profile-skeleton {
   display: grid;
   gap: 16px;
   padding: 32px;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
 }
 
 .skeleton-avatar {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(90deg, #e4e4e1 25%, #ededeb 50%, #e4e4e1 75%);
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-border-light) 50%, var(--color-border) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -61,7 +61,7 @@ h2 {
 .skeleton-row {
   height: 16px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #e4e4e1 25%, #ededeb 50%, #e4e4e1 75%);
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-border-light) 50%, var(--color-border) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -80,9 +80,9 @@ h2 {
 }
 
 .profile-card {
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
   overflow: hidden;
 }
 
@@ -91,7 +91,7 @@ h2 {
   align-items: center;
   gap: 20px;
   padding: 24px;
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .profile-avatar-wrapper {
@@ -111,14 +111,14 @@ h2 {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, var(--color-primary), #1a9b72);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-success));
+  color: var(--color-on-primary);
   font-size: 1.75rem;
   font-weight: 700;
 }
 
 .profile-header-info h3 {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: 1.35rem;
   font-weight: 650;
@@ -131,7 +131,7 @@ h2 {
 
 .profile-email {
   margin-top: 4px;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.95rem;
   overflow-wrap: anywhere;
 }
@@ -145,19 +145,19 @@ h2 {
 }
 
 .profile-feedback--success {
-  border: 1px solid #d7eddd;
-  background: #eef8ef;
-  color: #247348;
+  border: 1px solid var(--color-success-bg);
+  background: var(--color-success-bg);
+  color: var(--color-success);
 }
 
 .profile-feedback--error {
-  border: 1px solid #f2c7c0;
-  background: #fff0ee;
-  color: #ad3328;
+  border: 1px solid var(--color-danger-bg);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .profile-divider {
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
   margin: 0 24px;
 }
 
@@ -166,13 +166,13 @@ h2 {
 }
 
 .section-title {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: 1.05rem;
   font-weight: 650;
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #ededeb;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 .info-grid {
@@ -191,7 +191,7 @@ h2 {
 }
 
 .info-item dt {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -199,12 +199,12 @@ h2 {
 }
 
 .info-item dd {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 0.95rem;
 }
 
 .info-empty {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.95rem;
 }
 
@@ -230,7 +230,7 @@ h2 {
 }
 
 .form-field span {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -240,10 +240,10 @@ h2 {
 .form-field input {
   min-height: 44px;
   width: 100%;
-  border: 1px solid #d8d8d4;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
-  color: #16171b;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
   font: inherit;
   font-size: 0.95rem;
   padding: 0 12px;
@@ -252,12 +252,12 @@ h2 {
 }
 
 .form-field input:focus {
-  border-color: #16171b;
+  border-color: var(--color-text-primary);
   box-shadow: 0 0 0 3px rgba(22, 23, 27, 0.08);
 }
 
 .form-field small {
-  color: #ad3328;
+  color: var(--color-danger);
   font-size: 0.78rem;
   font-weight: 700;
 }
@@ -265,16 +265,16 @@ h2 {
 .form-field .cep-feedback,
 .form-field .cep-feedback--neutral {
   min-height: 16px;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   line-height: 1.25;
 }
 
 .form-field .cep-feedback--success {
-  color: #247348;
+  color: var(--color-success);
 }
 
 .form-field .cep-feedback--error {
-  color: #ad3328;
+  color: var(--color-danger);
 }
 
 .profile-form-actions {
@@ -294,13 +294,13 @@ h2 {
   justify-content: space-between;
   gap: 24px;
   padding: 20px;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fafaf9;
+  background: var(--color-bg-secondary);
 }
 
 .security-info h5 {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: 1.05rem;
   font-weight: 650;
@@ -308,7 +308,7 @@ h2 {
 }
 
 .security-info p {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.9rem;
   line-height: 1.5;
 }
@@ -316,7 +316,7 @@ h2 {
 .security-note {
   margin-top: 8px;
   font-size: 0.82rem;
-  color: #8a8d94;
+  color: var(--color-text-muted);
 }
 
 .btn-change-password,
@@ -338,25 +338,25 @@ h2 {
 .btn-primary,
 .btn-edit-profile {
   border: 0;
-  background: #16171b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .btn-secondary {
-  border: 1px solid #d8d8d4;
-  background: #fff;
-  color: #16171b;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .btn-change-password:hover,
 .btn-primary:hover,
 .btn-edit-profile:hover {
-  background: #1f2023;
+  background: var(--color-primary-hover);
 }
 
 .btn-secondary:hover {
-  border-color: #bdbdb8;
-  background: #f7f7f5;
+  border-color: var(--color-border);
+  background: var(--color-bg-secondary);
 }
 
 .btn-change-password:active,
@@ -388,21 +388,21 @@ h2 {
   min-height: 260px;
   place-content: center;
   padding: 32px;
-  border: 1px solid #e4e4e1;
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-bg-primary);
   text-align: center;
 }
 
 .state-card h3 {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: 1.15rem;
   font-weight: 650;
 }
 
 .state-error h3 {
-  color: #ad3328;
+  color: var(--color-danger);
 }
 
 .state-card button {
@@ -411,8 +411,8 @@ h2 {
   padding: 0 20px;
   border: 0;
   border-radius: 8px;
-  background: #16171b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font: inherit;
   font-weight: 700;
   font-size: 0.9rem;
@@ -421,7 +421,7 @@ h2 {
 }
 
 .state-card button:hover {
-  background: #1f2023;
+  background: var(--color-primary-hover);
 }
 
 .state-card button:active {

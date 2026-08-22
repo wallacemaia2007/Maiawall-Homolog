@@ -12,7 +12,7 @@
 
 .eyebrow {
   margin: 0 0 8px;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -21,7 +21,7 @@
 
 h2 {
   margin: 0;
-  color: #16171b;
+  color: var(--color-text-primary);
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   font-size: clamp(2rem, 3vw, 3rem);
   font-weight: 650;
@@ -31,7 +31,7 @@ h2 {
 p {
   margin: 10px 0 0;
   max-width: 580px;
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 1rem;
 }
 
@@ -42,8 +42,8 @@ p {
   min-height: 42px;
   padding: 0 16px;
   border-radius: 8px;
-  background: #16171b;
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-size: 0.9rem;
   font-weight: 650;
   text-decoration: none;

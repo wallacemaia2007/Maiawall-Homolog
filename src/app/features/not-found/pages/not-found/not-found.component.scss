@@ -3,16 +3,16 @@
   // valores centralizados (tailwind.config, tokens globais, etc.), troque
   // por eles em vez de duplicar — mantive local só para o componente ser
   // independente, igual ao login.
-  --mw-canvas: #FAFAF9;
+  --mw-canvas: var(--color-bg-secondary);
   --mw-panel: #111214;
   --mw-accent: var(--color-primary);
   --mw-accent-hover: var(--color-primary-hover);
   --mw-accent-soft: var(--color-primary-border);
-  --mw-text: #16171B;
-  --mw-text-muted: #6B6E76;
-  --mw-text-faint: #A0A2A8;
-  --mw-border: #E4E4E1;
-  --mw-error: #C4453A;
+  --mw-text: var(--color-text-primary);
+  --mw-text-muted: var(--color-text-secondary);
+  --mw-text-faint: var(--color-text-muted);
+  --mw-border: var(--color-border);
+  --mw-error: var(--color-danger);
 
   display: block;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;

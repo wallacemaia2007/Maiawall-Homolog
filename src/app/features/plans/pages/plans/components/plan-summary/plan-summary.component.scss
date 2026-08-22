@@ -2,8 +2,8 @@
   display: grid;
   gap: 16px;
   padding: 20px;
-  background: #fafaf9;
-  border: 1px solid #ededeb;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
 }
 
@@ -12,7 +12,7 @@
   justify-content: center;
   gap: 32px;
   padding-top: 12px;
-  border-top: 1px solid #ededeb;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .benefit-item {
@@ -23,13 +23,13 @@
 }
 
 .benefit-item .count {
-  color: #16171b;
+  color: var(--color-text-primary);
   font-size: 1.5rem;
   font-weight: 700;
 }
 
 .benefit-item .label {
-  color: #6b6e76;
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
